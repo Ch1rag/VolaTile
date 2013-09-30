@@ -42,7 +42,6 @@ public class GUI {
 	private ArrayList<String> winCommands = new ArrayList<String>();
 	private ArrayList<String> os = new ArrayList<String>();
 
-	// Default Constructor
 	public GUI() {
 	}
 
