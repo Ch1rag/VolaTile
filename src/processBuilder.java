@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class DoProcessBuilder {
+public class processBuilder {
 	private List<String> list = new ArrayList<String>();
 	private List<String> clm = new ArrayList<String>();
 	private File file = new File("/Users/chiragbarot/volatilityFinal/os.txt");
@@ -26,7 +26,7 @@ public class DoProcessBuilder {
 		list.add(s);
 	}
 
-	public void processBuilder() throws IOException, InterruptedException {
+	public void process() throws IOException, InterruptedException {
 
 		// Create and probuilder object
 		ProcessBuilder process = new ProcessBuilder(list);
@@ -61,6 +61,7 @@ public class DoProcessBuilder {
 		p1.destroy();
 		System.out.println("Done!");
 		p1.waitFor();
+		p1.getErrorStream();
 		System.out.println("Click 'Load' to check the output");
 
 		// Clear command..

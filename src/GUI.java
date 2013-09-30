@@ -31,7 +31,7 @@ public class GUI {
 	private JLabel l2;
 	private JTable table;
 	private BufferedReader rf;
-	private DoProcessBuilder pb = new DoProcessBuilder();
+	private processBuilder pb = new processBuilder();
 	private DefaultTableModel tModel;
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
@@ -80,7 +80,7 @@ public class GUI {
 		// Create Panels
 		JPanel panelBL = new JPanel(new BorderLayout());
 		JPanel panelTX = new JPanel(new GridLayout());
-		JPanel panelFL1 = new JPanel(new GridLayout(2,2));
+		JPanel panelFL1 = new JPanel(new GridLayout(2, 2));
 		JPanel panelFL2 = new JPanel(new FlowLayout());
 		panelTX.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -141,13 +141,13 @@ public class GUI {
 
 		// Add components here
 		panelTX.add(scroll);
-		//panelFL1.add(l1,FlowLayout.LEFT);
-		panelFL1.add(runButton,FlowLayout.LEFT);
-		panelFL1.add(cmdList,FlowLayout.LEFT);
-		panelFL1.add(osList,FlowLayout.LEFT);
-		panelFL1.add(clrButton,FlowLayout.LEADING);
-		panelFL1.add(loadButton,FlowLayout.LEADING);
-		
+		// panelFL1.add(l1,FlowLayout.LEFT);
+		panelFL1.add(runButton, FlowLayout.LEFT);
+		panelFL1.add(cmdList, FlowLayout.LEFT);
+		panelFL1.add(osList, FlowLayout.LEFT);
+		panelFL1.add(clrButton, FlowLayout.LEADING);
+		panelFL1.add(loadButton, FlowLayout.LEADING);
+
 		panelBL.add(tabPane, BorderLayout.CENTER);
 
 		// Set frame elements
@@ -185,7 +185,7 @@ public class GUI {
 					pb.editList(cmdList.getSelectedItem().toString());
 
 					// Call ProcessBuilder Method
-					pb.processBuilder();
+					pb.process();
 
 					cmdList.setVisible(false);
 					osList.setVisible(false);
@@ -219,20 +219,21 @@ public class GUI {
 				try {
 					pb.manageFile();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
 
-		// Load Button events
+		/*
+		 * Load Button Event handler switch Function call using Switch JRE 1.7
+		 * support for String switch parameter
+		 */
 		loadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				clrButton.setVisible(true);
 				l1.setVisible(false);
 				tModel.setRowCount(0);
 				readFile();
-				// Using switch
 				int choice = cmdList.getSelectedIndex();
 				switch (choice) {
 				case 0: // Netstat
@@ -252,9 +253,8 @@ public class GUI {
 					tabPane.remove(p3);
 					tabPane.remove(p4);
 					break;
-
 				}
-				case 2: //psxview
+				case 2: // psxview
 				{
 					readPsxview(rf);
 					tabPane.add("TCP", p2);
@@ -282,12 +282,14 @@ public class GUI {
 				default:
 					readRows(rf);
 				}
-
 			}
 		});
 	}
 
-	// Create Table
+	/*
+	 * Create Table Default Rows and Columns Format specified Format table with
+	 * Set attributes
+	 */
 	public void createTable() {
 		// Create Table and table model
 		table = new JTable();
@@ -298,63 +300,47 @@ public class GUI {
 		table.setRowHeight(22);
 		table.setModel(tModel);
 		table.setAutoCreateRowSorter(true);
-
 		tModel.setColumnIdentifiers(columnTitles);
-
 		Enumeration<TableColumn> en = table.getColumnModel().getColumns();
+
 		while (en.hasMoreElements()) {
 			TableColumn tc = en.nextElement();
 			tc.setCellRenderer(new MyTableCellRenderer());
 		}
-
 	}
-    
-	// File Reader
-			public BufferedReader readFile() {
-				FileReader r = null;
-				try {
-					int ch = osList.getSelectedIndex();
-					switch (ch) {
-					case 0: {
-						r = new FileReader(
-								"/Users/chiragbarot/volatilityFinal/os.txt");
-						break;
-					}
-					case 1: {
-						r = new FileReader("C:\\os.txt");
-						break;
-					}
-					// For linux:
-					// case 2:{r = new
-					// FileReader("/Users/chiragbarot/volatilityFinal/os.txt");}
-					}
 
-				} catch (FileNotFoundException e1) {
-					Component frame = null;
-					// TODO Auto-generated catch block
-					JOptionPane.showMessageDialog(frame,
-							"File not found,Please select correct OS");
-					loadButton.setVisible(false);
-					e1.printStackTrace();
-				}
-				return rf = new BufferedReader(r);
-
+	// Read file and return read file object
+	public BufferedReader readFile() {
+		FileReader r = null;
+		try {
+			int ch = osList.getSelectedIndex();
+			switch (ch) {
+			case 0: {
+				r = new FileReader("/Users/chiragbarot/volatilityFinal/os.txt");
+				break;
+			}
+			case 1: {
+				r = new FileReader("C:\\os.txt");
+				break;
+			}
+			// For linux:
+			// case 2:{r = new
+			// FileReader("/Users/chiragbarot/volatilityFinal/os.txt");}
 			}
 
-	// Read file to table
+		} catch (FileNotFoundException e1) {
+			Component frame = null;
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(frame,"File not found,Please select correct OS");
+			loadButton.setVisible(false);
+			e1.printStackTrace();
+		}
+		return rf = new BufferedReader(r);
+
+	}
+
+	// Default function call for switch statement..
 	public void readRows(BufferedReader rf) {
-		/*
-		 * FileReader r = null; try { int ch=osList.getSelectedIndex();
-		 * switch(ch){ case 0:{r = new
-		 * FileReader("/Users/chiragbarot/volatilityFinal/os.txt");} case 1:{r =
-		 * new FileReader("C:\\os.txt");} //For linux: //case 2:{r = new
-		 * FileReader("/Users/chiragbarot/volatilityFinal/os.txt");} }
-		 * 
-		 * } catch (FileNotFoundException e1) { Component frame = null; // TODO
-		 * Auto-generated catch block JOptionPane.showMessageDialog(frame,
-		 * "File not found,Please select correct OS"); e1.printStackTrace(); }
-		 * BufferedReader rf = new BufferedReader(r);
-		 */
 		String line = null;
 		String[] splits;
 		String[] clm;
@@ -365,42 +351,28 @@ public class GUI {
 				i++;
 				if (i >= 2 && !line.contains("--")) {
 					splits = line.split("\\s+");
-					// Add rows here
-
 					tModel.addRow(splits);
 				} else if (!line.contains("--")) {
-
 					clm = line.split("\\s+");
 					for (int j = 0; j < clm.length; j++) {
 						tModel.addColumn(clm[j]);
-
 						tModel.setColumnIdentifiers(clm);
-
 						Enumeration<TableColumn> en = table.getColumnModel()
 								.getColumns();
 						while (en.hasMoreElements()) {
 							TableColumn tc = en.nextElement();
 							tc.setCellRenderer(new MyTableCellRenderer());
 						}
-
 					}
 				}
-
 			}
-
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	// psxview
 	public void readPsxview(BufferedReader rf) {
-		/*
-		 * FileReader r = null; try { r = new FileReader(
-		 * "/Users/chiragbarot/volatilityFinal/output/psxview.txt"); } catch
-		 * (FileNotFoundException e1) { // TODO Auto-generated catch block
-		 * e1.printStackTrace(); } BufferedReader rf = new BufferedReader(r);
-		 */
 		String line = null;
 		String[] splits;
 		String[] clm;
@@ -411,7 +383,6 @@ public class GUI {
 				i++;
 				if (i >= 2 && !line.contains("--")) {
 					splits = line.split("\\s+");
-					// Add rows here
 					tModel.addRow(splits);
 				} else if (!line.contains("--")) {
 					clm = line.split("\\s+");
@@ -425,12 +396,9 @@ public class GUI {
 							TableColumn tc = en.nextElement();
 							tc.setCellRenderer(new MyTableCellRenderer());
 						}
-
 					}
 				}
-
 			}
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -439,12 +407,6 @@ public class GUI {
 
 	// netstat
 	public void readNetstat(BufferedReader rf) {
-		/*
-		 * FileReader r = null; try { r = new FileReader(
-		 * "/Users/chiragbarot/volatilityFinal/output/netstat.txt"); } catch
-		 * (FileNotFoundException e1) { // TODO Auto-generated catch block
-		 * e1.printStackTrace(); } BufferedReader rf = new BufferedReader(r);
-		 */
 		String line = null;
 		String[] splits;
 		try {
@@ -462,12 +424,6 @@ public class GUI {
 
 	// pstree
 	public void readPstree(BufferedReader rf) {
-		/*
-		 * FileReader r = null; try { r = new FileReader(
-		 * "/Users/chiragbarot/volatilityFinal/output/pstree.txt"); } catch
-		 * (FileNotFoundException e1) { // TODO Auto-generated catch block
-		 * e1.printStackTrace(); } BufferedReader rf = new BufferedReader(r);
-		 */
 		String line = null;
 		String[] splits;
 		String[] clm;
@@ -492,27 +448,16 @@ public class GUI {
 							TableColumn tc = en.nextElement();
 							tc.setCellRenderer(new MyTableCellRenderer());
 						}
-
 					}
 				}
-
 			}
-
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	// Notifier
-	// Read file to table
 	public void readNotifiers(BufferedReader rf) {
-		/*
-		 * FileReader r = null; try { r = new
-		 * FileReader("/Users/chiragbarot/volatilityFinal/os.txt"); } catch
-		 * (FileNotFoundException e1) { // TODO Auto-generated catch block
-		 * e1.printStackTrace(); } BufferedReader rf = new BufferedReader(r);
-		 */
 		String line = null;
 		String[] splits;
 		String[] clm;
@@ -524,7 +469,6 @@ public class GUI {
 				i++;
 				if (i >= 2 && !line.contains("--")) {
 					splits = line.split("\\s+");
-					// Add rows here
 					tModel.addRow(splits);
 				} else if (!line.contains("--")) {
 					clm = line.split("\\s+");
@@ -537,27 +481,19 @@ public class GUI {
 						while (en.hasMoreElements()) {
 							TableColumn tc = en.nextElement();
 							tc.setCellRenderer(new MyTableCellRenderer());
-
 						}
 					}
-
 				}
 			}
-
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	// Inner class for table cell renderer
 	public class MyTableCellRenderer extends DefaultTableCellRenderer implements
 			TableCellRenderer {
-
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
-		// Color currColor = Color.white;
 		private final Color alt2 = new Color(235, 244, 250);
 		private final Color alt1 = Color.WHITE;
 		private final Color invalidStatus = Color.RED;
@@ -587,7 +523,8 @@ public class GUI {
 			} else {
 				setBackground(colorAlternator(row));
 			}
-			/*if (isSelected) {
+
+			if (isSelected) {
 				super.setForeground(table.getSelectionForeground());
 				super.setBackground(table.getSelectionBackground());
 			} else {
@@ -595,8 +532,7 @@ public class GUI {
 				super.setBackground(colorAlternator(row));
 			}
 			setFont(table.getFont());
-			setValue(value);*/
-
+			setValue(value);
 			return cell;
 		}
 
@@ -608,5 +544,4 @@ public class GUI {
 			}
 		}
 	}
-
 }
