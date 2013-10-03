@@ -3,6 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -46,12 +47,9 @@ public class GUI {
 	}
 
 	public void storeCmd_Mac() {
-		macCommands.add("mac_netstat");
-		macCommands.add("mac_pstree");
 		macCommands.add("mac_psxview");
-		macCommands.add("mac_dead_procs");
 		macCommands.add("mac_notifiers");
-		macCommands.add("mac_check_sysctl");
+		macCommands.add("mac_pstree");
 		macCommands.add("mac_tasks");
 		macCommands.add("mac_ifconfig");
 	}
@@ -67,6 +65,9 @@ public class GUI {
 		os.add("Linux");
 	}
 
+	/**
+	 * 
+	 */
 	public void makeFrame() {
 		// Create JFrame with content pane and set layout
 		JFrame frame = new JFrame();
@@ -112,6 +113,7 @@ public class GUI {
 		while (iterCmd.hasNext()) {
 			cmdList.addItem(iterCmd.next());
 		}
+
 		// Add os to combobox list
 		osList = new JComboBox();
 		java.util.Iterator<String> iterOs = os.iterator();
@@ -154,19 +156,23 @@ public class GUI {
 		frame.setTitle("VolaTile");
 		frame.setSize(700, 900);
 		frame.setVisible(true);
+		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Populate available commands for selected OS
 		osList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// int index=osList.getSelectedIndex();
+
+				// setItems();
 
 				if (osList.getSelectedIndex() == 0) {
-					// cmdList.removeAllItems();
+					cmdList.removeAllItems();
 					java.util.Iterator<String> iterCmd = macCommands.iterator();
 					while (iterCmd.hasNext()) {
 						cmdList.addItem(iterCmd.next());
 					}
-				} else {
+				} else if (osList.getSelectedIndex() == 1) {
 					cmdList.removeAllItems();
 					java.util.Iterator<String> iterOs = winCommands.iterator();
 					while (iterOs.hasNext()) {
@@ -216,18 +222,16 @@ public class GUI {
 				osList.setVisible(true);
 				tModel.setColumnIdentifiers(columnTitles);
 
-				try {
-					pb.manageFile();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				/*
+				 * try { pb.manageFile(); } catch (IOException e1) {
+				 * e1.printStackTrace(); }
+				 */
 			}
 		});
 
-		/*
-		 * Load Button Event handler switch Function call using Switch JRE 1.7
-		 * support for String switch parameter
-		 */
+		// * Load Button Event handler switch Function call using Switch JRE 1.7
+		// * support for String switch parameter
+		//
 		loadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				clrButton.setVisible(true);
@@ -236,16 +240,8 @@ public class GUI {
 				readFile();
 				int choice = cmdList.getSelectedIndex();
 				switch (choice) {
-				case 0: // Netstat
-				{
-					readNetstat(rf);
-					tabPane.add("TCP", p2);
-					tabPane.add("UDP", p3);
-					tabPane.remove(p4);
-					tabPane.remove(p1);
-					break;
-				}
-				case 1:// pstree
+				
+				case 0:// pstree
 				{
 					readPstree(rf);
 					tabPane.add("Pid", p1);
@@ -263,33 +259,24 @@ public class GUI {
 					tabPane.remove(p1);
 					break;
 				}
-				case 3: {
-					readNetstat(rf);
-					tabPane.add("TCP", p2);
-					tabPane.add("UDP", p3);
-					tabPane.remove(p4);
-					tabPane.remove(p1);
-					break;
-				}
-				case 4: {
-					readNotifiers(rf);
-					tabPane.add("TCP", p2);
-					tabPane.add("UDP", p3);
-					tabPane.remove(p4);
-					tabPane.remove(p1);
-					break;
-				}
+
 				default:
 					readRows(rf);
+					tabPane.add("Connection", p2);
+					tabPane.add("UDP", p3);
+					tabPane.remove(p4);
+					tabPane.remove(p1);
+
 				}
 			}
 		});
-	}
 
-	/*
-	 * Create Table Default Rows and Columns Format specified Format table with
-	 * Set attributes
-	 */
+	}
+	
+	
+//	 * Create Table Default Rows and Columns Format specified Format table with
+//	 * Set attributes
+//	 
 	public void createTable() {
 		// Create Table and table model
 		table = new JTable();
@@ -300,6 +287,7 @@ public class GUI {
 		table.setRowHeight(22);
 		table.setModel(tModel);
 		table.setAutoCreateRowSorter(true);
+		table.setCellSelectionEnabled(true);
 		tModel.setColumnIdentifiers(columnTitles);
 		Enumeration<TableColumn> en = table.getColumnModel().getColumns();
 
@@ -405,23 +393,6 @@ public class GUI {
 		}
 	}
 
-	// netstat
-	public void readNetstat(BufferedReader rf) {
-		String line = null;
-		String[] splits;
-		try {
-			while ((line = rf.readLine()) != null) {
-				splits = line.split("\\s+");
-				// Add rows here
-				tModel.addRow(splits);
-			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	// pstree
 	public void readPstree(BufferedReader rf) {
 		String line = null;
@@ -456,40 +427,7 @@ public class GUI {
 		}
 	}
 
-	// Notifier
-	public void readNotifiers(BufferedReader rf) {
-		String line = null;
-		String[] splits;
-		String[] clm;
-
-		int i = 0;
-
-		try {
-			while ((line = rf.readLine()) != null) {
-				i++;
-				if (i >= 2 && !line.contains("--")) {
-					splits = line.split("\\s+");
-					tModel.addRow(splits);
-				} else if (!line.contains("--")) {
-					clm = line.split("\\s+");
-					for (int j = 0; j < clm.length; j++) {
-						tModel.addColumn(clm[j]);
-						tModel.setColumnIdentifiers(clm);
-
-						Enumeration<TableColumn> en = table.getColumnModel()
-								.getColumns();
-						while (en.hasMoreElements()) {
-							TableColumn tc = en.nextElement();
-							tc.setCellRenderer(new MyTableCellRenderer());
-						}
-					}
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
+	
 	// Inner class for table cell renderer
 	public class MyTableCellRenderer extends DefaultTableCellRenderer implements
 			TableCellRenderer {
@@ -511,6 +449,14 @@ public class GUI {
 
 			Object o = table.getModel().getValueAt(row, column);
 			String s = "";
+			if (isSelected) {
+				super.setForeground(Color.BLACK);
+				super.setBackground(table.getSelectionBackground());
+			} else {
+				super.setBackground(colorAlternator(row));
+			}
+			setFont(table.getFont());
+			setValue(value);
 
 			if (o != null) {
 				s = o.toString();
@@ -522,17 +468,7 @@ public class GUI {
 				}
 			} else {
 				setBackground(colorAlternator(row));
-			}
-
-			if (isSelected) {
-				super.setForeground(table.getSelectionForeground());
-				super.setBackground(table.getSelectionBackground());
-			} else {
-				super.setForeground(Color.black);
-				super.setBackground(colorAlternator(row));
-			}
-			setFont(table.getFont());
-			setValue(value);
+			}	
 			return cell;
 		}
 
