@@ -1,8 +1,13 @@
 import java.awt.*;
 import java.awt.event.*;
+
+import javax.accessibility.AccessibleContext;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -26,17 +31,22 @@ public class GUI {
 	private JComboBox cmdList;
 	private JComboBox osList;
 	private JTextArea textArea;
+	private JTextArea p1Text;
 	private JButton clrButton;
-	private JScrollPane scroll;
+	private JScrollPane scrollTable;
+	private JScrollPane scroll_p1Text;
 	private JLabel l1;
 	private JLabel l2;
 	private JTable table;
 	private BufferedReader rf;
 	private processBuilder pb = new processBuilder();
+	private lsof obj;
 	private DefaultTableModel tModel;
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
 	private JTabbedPane tabPane;
+	private JButton inspectButton;
+	private Object data;
 
 	// Array list to store strings of commands
 	private ArrayList<String> macCommands = new ArrayList<String>();
@@ -65,6 +75,9 @@ public class GUI {
 		os.add("Linux");
 	}
 
+	/**
+	 * 
+	 */
 	/**
 	 * 
 	 */
@@ -126,11 +139,19 @@ public class GUI {
 		runButton = new JButton("Run");
 		clrButton = new JButton("Clear");
 		loadButton = new JButton("Load");
+		inspectButton =new JButton("Inspect");
+
+		// Text area to add to tab panels
+		p1Text = new JTextArea(100,100);
+		p1Text.setEditable(false);
+		p1Text.setLineWrap(true);
+
 		textArea = new JTextArea(10, 10);
 		textArea.setText("Click 'Run'");
 		textArea.add(table);
 
-		scroll = new JScrollPane(table);
+		scrollTable = new JScrollPane(table);
+		scroll_p1Text = new JScrollPane(p1Text);
 		loadButton.setVisible(false);
 		clrButton.setVisible(false);
 		runButton.setVisible(true);
@@ -142,15 +163,21 @@ public class GUI {
 		cp.add(panelTX);
 
 		// Add components here
-		panelTX.add(scroll);
+		panelTX.add(scrollTable);
+		panelBL.add(scroll_p1Text);
 		// panelFL1.add(l1,FlowLayout.LEFT);
 		panelFL1.add(runButton, FlowLayout.LEFT);
 		panelFL1.add(cmdList, FlowLayout.LEFT);
 		panelFL1.add(osList, FlowLayout.LEFT);
 		panelFL1.add(clrButton, FlowLayout.LEADING);
 		panelFL1.add(loadButton, FlowLayout.LEADING);
+		panelFL1.add(inspectButton, FlowLayout.RIGHT);
 
 		panelBL.add(tabPane, BorderLayout.CENTER);
+
+		// table panel add components
+
+		p1.add(p1Text);
 
 		// Set frame elements
 		frame.setTitle("VolaTile");
@@ -162,9 +189,6 @@ public class GUI {
 		// Populate available commands for selected OS
 		osList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// int index=osList.getSelectedIndex();
-
-				// setItems();
 
 				if (osList.getSelectedIndex() == 0) {
 					cmdList.removeAllItems();
@@ -240,7 +264,7 @@ public class GUI {
 				readFile();
 				int choice = cmdList.getSelectedIndex();
 				switch (choice) {
-				
+
 				case 0:// pstree
 				{
 					readPstree(rf);
@@ -250,7 +274,7 @@ public class GUI {
 					tabPane.remove(p4);
 					break;
 				}
-				case 2: // psxview
+				case 1: // psxview
 				{
 					readPsxview(rf);
 					tabPane.add("TCP", p2);
@@ -262,21 +286,70 @@ public class GUI {
 
 				default:
 					readRows(rf);
-					tabPane.add("Connection", p2);
-					tabPane.add("UDP", p3);
-					tabPane.remove(p4);
-					tabPane.remove(p1);
 
 				}
 			}
 		});
 
+		// Table selection
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		boolean ROW_SELECTED = true;
+		if (ROW_SELECTED) {
+			ListSelectionModel rowSL = table.getSelectionModel();
+			rowSL.addListSelectionListener(new ListSelectionListener() {
+
+				public void valueChanged(ListSelectionEvent e) {
+					if (e.getValueIsAdjusting())
+						return;
+
+					ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+					if (lsm.isSelectionEmpty()) {
+						p1Text.setText("No rows are selected.");
+					} else {
+						int selectedRow = lsm.getMinSelectionIndex();
+						int clm = table.getSelectedColumn();
+						data = table.getModel().getValueAt(selectedRow,
+								clm);
+						p1Text.setText(data.toString());
+						String PID=data.toString();
+						obj = new lsof(PID);
+						try {
+							obj.readFile();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+					}
+
+				}
+
+			});
+        
+		} else {
+			table.setRowSelectionAllowed(false);
+		}
+		
+		//Connection or lsof
+		inspectButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					obj.readFile();
+					p1Text.append(obj.toString());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+ 
+			}	
+		});
+
 	}
-	
-	
-//	 * Create Table Default Rows and Columns Format specified Format table with
-//	 * Set attributes
-//	 
+
+	// * Create Table Default Rows and Columns Format specified Format table
+	// with
+	// * Set attributes
+	//
 	public void createTable() {
 		// Create Table and table model
 		table = new JTable();
@@ -311,15 +384,14 @@ public class GUI {
 				r = new FileReader("C:\\os.txt");
 				break;
 			}
-			// For linux:
-			// case 2:{r = new
-			// FileReader("/Users/chiragbarot/volatilityFinal/os.txt");}
+
 			}
 
 		} catch (FileNotFoundException e1) {
 			Component frame = null;
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(frame,"File not found,Please select correct OS");
+			JOptionPane.showMessageDialog(frame,
+					"File not found,Please select correct OS");
 			loadButton.setVisible(false);
 			e1.printStackTrace();
 		}
@@ -353,6 +425,7 @@ public class GUI {
 						}
 					}
 				}
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -427,7 +500,6 @@ public class GUI {
 		}
 	}
 
-	
 	// Inner class for table cell renderer
 	public class MyTableCellRenderer extends DefaultTableCellRenderer implements
 			TableCellRenderer {
@@ -468,7 +540,7 @@ public class GUI {
 				}
 			} else {
 				setBackground(colorAlternator(row));
-			}	
+			}
 			return cell;
 		}
 
