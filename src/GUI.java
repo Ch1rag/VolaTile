@@ -1,14 +1,12 @@
 import java.awt.*;
 import java.awt.event.*;
 
-import javax.accessibility.AccessibleContext;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -39,8 +37,9 @@ public class GUI {
 	private JLabel l2;
 	private JTable table;
 	private BufferedReader rf;
-	private processBuilder pb = new processBuilder();
-	private lsof obj;
+	private ProcessBuilderClass pb = new ProcessBuilderClass();
+	private ThreadExecutor td=new ThreadExecutor();
+	private LsofThread obj;
 	private DefaultTableModel tModel;
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
@@ -75,12 +74,7 @@ public class GUI {
 		os.add("Linux");
 	}
 
-	/**
-	 * 
-	 */
-	/**
-	 * 
-	 */
+	
 	public void makeFrame() {
 		// Create JFrame with content pane and set layout
 		JFrame frame = new JFrame();
@@ -94,7 +88,7 @@ public class GUI {
 		// Create Panels
 		JPanel panelBL = new JPanel(new BorderLayout());
 		JPanel panelTX = new JPanel(new GridLayout());
-		JPanel panelFL1 = new JPanel(new GridLayout(2, 2));
+		JPanel panelFL1 = new JPanel(new GridLayout(4, 4));
 		JPanel panelFL2 = new JPanel(new FlowLayout());
 		panelTX.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -155,6 +149,7 @@ public class GUI {
 		loadButton.setVisible(false);
 		clrButton.setVisible(false);
 		runButton.setVisible(true);
+		inspectButton.setVisible(false);
 
 		// panelFL2.add(panelBL);
 		cp.add(panelBL, BorderLayout.SOUTH);
@@ -171,7 +166,8 @@ public class GUI {
 		panelFL1.add(osList, FlowLayout.LEFT);
 		panelFL1.add(clrButton, FlowLayout.LEADING);
 		panelFL1.add(loadButton, FlowLayout.LEADING);
-		panelFL1.add(inspectButton, FlowLayout.RIGHT);
+		panelFL1.add(inspectButton, FlowLayout.LEADING);
+		
 
 		panelBL.add(tabPane, BorderLayout.CENTER);
 
@@ -185,7 +181,7 @@ public class GUI {
 		frame.setVisible(true);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 		// Populate available commands for selected OS
 		osList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -210,27 +206,17 @@ public class GUI {
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				try {
-					pb.List();
-					pb.editList(cmdList.getSelectedItem().toString());
-
-					// Call ProcessBuilder Method
-					pb.process();
-
-					cmdList.setVisible(false);
-					osList.setVisible(false);
-					l1.setVisible(false);
-					loadButton.setVisible(true);
-					runButton.setVisible(false);
-					clrButton.setVisible(false);
-
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				pb.List();
+				pb.editList(cmdList.getSelectedItem().toString());
+				pb.run();
+				
+				inspectButton.setVisible(false);
+				cmdList.setVisible(false);
+				osList.setVisible(false);
+				l1.setVisible(false);
+				loadButton.setVisible(true);
+				runButton.setVisible(false);
+				clrButton.setVisible(false);
 			}
 		});
 
@@ -246,19 +232,15 @@ public class GUI {
 				osList.setVisible(true);
 				tModel.setColumnIdentifiers(columnTitles);
 
-				/*
-				 * try { pb.manageFile(); } catch (IOException e1) {
-				 * e1.printStackTrace(); }
-				 */
 			}
 		});
 
 		// * Load Button Event handler switch Function call using Switch JRE 1.7
 		// * support for String switch parameter
-		//
 		loadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				clrButton.setVisible(true);
+				inspectButton.setVisible(false);
 				l1.setVisible(false);
 				tModel.setRowCount(0);
 				readFile();
@@ -304,15 +286,15 @@ public class GUI {
 
 					ListSelectionModel lsm = (ListSelectionModel) e.getSource();
 					if (lsm.isSelectionEmpty()) {
-						p1Text.setText("No rows are selected.");
+						System.out.println("No rows are selected.");
 					} else {
 						int selectedRow = lsm.getMinSelectionIndex();
 						int clm = table.getSelectedColumn();
 						data = table.getModel().getValueAt(selectedRow,
 								clm);
-						p1Text.setText(data.toString());
 						String PID=data.toString();
-						obj = new lsof(PID);
+						obj = new LsofThread(PID);
+						inspectButton.setVisible(true);
 						try {
 							obj.readFile();
 						} catch (IOException e1) {
@@ -335,6 +317,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					obj.readFile();
+					
 					p1Text.append(obj.toString());
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block

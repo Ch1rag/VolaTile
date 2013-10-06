@@ -1,25 +1,38 @@
-package kunday;
+import java.io.*;
+import java.util.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ThreadedLsofProcessBuilder extends ThreadedProcessBuilder {
-
+public class ProcessBuilderClass implements Runnable{
 	private List<String> list = new ArrayList<String>();
+	private List<String> clm = new ArrayList<String>();
 	
-	public ThreadedLsofProcessBuilder(List<String> list2) {
-		 this.list = list2;
+	private File file = new File("/Users/chiragbarot/volatilityFinal/os.txt");
+
+
+	public void List() {
+		list.add("python");
+		list.add("vol.py");
+		list.add("--profile=Mac10_8_4_64bitx64");
+		list.add("-f");
+		list.add("ram_dump.mach-o");
+		list.add("--output-file=os.txt");
 	}
 
-	@Override
-	public Object call() throws Exception {
-
-		ProcessBuilder process = new ProcessBuilder(list);
+	public void editList(String s) {
 		
+		list.add(s);
+	}
+	
+
+	public void run() {
+		try{
+			
+		// Create and probuilder object
+			
+		ProcessBuilder process = new ProcessBuilder(list);
+		System.out.println("Executing Task One");
+		
+		 System.out.println("List of commands" + process.command());
 		Process p1=process.start();
 		
 		
@@ -28,12 +41,13 @@ public class ThreadedLsofProcessBuilder extends ThreadedProcessBuilder {
 
 		// System.out.println("DIR=>" + process.directory());
 
-		// System.out.println("List of commands" + process.command());
+		
 		String s = "Process is running..";
 		System.out.println(s);
 		p1=process.start();
 		
 		String text = "Please wait..";
+		
 		System.out.println(text);
 
 		InputStream is = p1.getInputStream();
@@ -48,6 +62,7 @@ public class ThreadedLsofProcessBuilder extends ThreadedProcessBuilder {
 		}
 		br.close();
 		p1.destroy();
+		Thread.sleep(1000);
 		System.out.println("Done!");
 		p1.waitFor();
 		p1.getErrorStream();
@@ -55,8 +70,22 @@ public class ThreadedLsofProcessBuilder extends ThreadedProcessBuilder {
 				
 		// Clear command..
 		list.clear();
-		// TODO Auto-generated method stub
-		return null;
+		}
+		
+		catch(Throwable e){
+			e.printStackTrace();
+		}
+		
+		
+		
+	}
+	@Override
+	public String toString() {
+		return "DoProcessBuilder [list=" + list + ", clm=" + clm + ", file="
+				+ file + "]";
 	}
 
+	public void print(){
+		System.out.println(toString());
+	}
 }
