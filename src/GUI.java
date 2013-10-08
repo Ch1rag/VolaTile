@@ -1,7 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-
-
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -29,23 +27,27 @@ public class GUI {
 	private JComboBox cmdList;
 	private JComboBox osList;
 	private JTextArea textArea;
+	//table text areas
 	private JTextArea p1Text;
+	private JTextArea p2Text;
+	private JTextArea p3Text;
+	private JTextArea p4Text;
+	
 	private JButton clrButton;
 	private JScrollPane scrollTable;
 	private JScrollPane scroll_p1Text;
-	private JLabel l1;
-	private JLabel l2;
 	private JTable table;
 	private BufferedReader rf;
 	private ProcessBuilderClass pb = new ProcessBuilderClass();
-	private ThreadExecutor td=new ThreadExecutor();
-	private LsofThread obj;
+	private Connections connection;
+	private Sockets socket;
 	private DefaultTableModel tModel;
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
 	private JTabbedPane tabPane;
 	private JButton inspectButton;
 	private Object data;
+	//private String OS=null;
 
 	// Array list to store strings of commands
 	private ArrayList<String> macCommands = new ArrayList<String>();
@@ -54,13 +56,15 @@ public class GUI {
 
 	public GUI() {
 	}
+	
 
 	public void storeCmd_Mac() {
-		macCommands.add("mac_psxview");
-		macCommands.add("mac_notifiers");
+		macCommands.add("pslist");
+		macCommands.add("psxview");
+		/*macCommands.add("mac_notifiers");
 		macCommands.add("mac_pstree");
 		macCommands.add("mac_tasks");
-		macCommands.add("mac_ifconfig");
+		macCommands.add("mac_ifconfig");*/
 	}
 
 	public void storeCmd_Win() {
@@ -68,10 +72,10 @@ public class GUI {
 		winCommands.add("pstree");
 	}
 
-	public void storeOs() {
-		os.add("Mac");
-		os.add("Windows");
-		os.add("Linux");
+	public void storeOS(String OS) {
+		os.add(OS);
+		/*os.add("Windows");
+		os.add("Linux");*/
 	}
 
 	
@@ -100,18 +104,18 @@ public class GUI {
 
 		// panels for tabs
 		final JPanel p1 = new JPanel();
-		tabPane.addTab("tab 1", p1);
+		tabPane.addTab("Connections", p1);
 		tabPane.setMnemonicAt(0, KeyEvent.VK_1);
 
 		final JPanel p2 = new JPanel();
-		tabPane.addTab("tab 2", p2);
+		tabPane.addTab("Sockets", p2);
 		tabPane.setMnemonicAt(1, KeyEvent.VK_2);
 
 		final JPanel p3 = new JPanel();
-		tabPane.addTab("tab 3", p3);
+		tabPane.addTab("Threads", p3);
 
 		final JPanel p4 = new JPanel();
-		tabPane.addTab("tab 4", p4);
+		tabPane.addTab("none", p4);
 		tabPane.setPreferredSize(new Dimension(300, 300));
 
 		// Add commands to combobox list
@@ -123,30 +127,39 @@ public class GUI {
 
 		// Add os to combobox list
 		osList = new JComboBox();
+		osList.setEditable(false);
 		java.util.Iterator<String> iterOs = os.iterator();
 		while (iterOs.hasNext()) {
 			osList.addItem(iterOs.next());
 		}
 
 		// Define Components and initialize them
-		l1 = new JLabel("Select OS: ");
+		
+		
 		runButton = new JButton("Run");
 		clrButton = new JButton("Clear");
 		loadButton = new JButton("Load");
 		inspectButton =new JButton("Inspect");
 
 		// Text area to add to tab panels
-		p1Text = new JTextArea(100,100);
+		p1Text = new JTextArea(50,50);
 		p1Text.setEditable(false);
 		p1Text.setLineWrap(true);
+		
+		// Text area to add to tab panels
+	    p2Text = new JTextArea(50,50);
+	    p2Text.setEditable(false);
+		p2Text.setLineWrap(true);
+		
 
 		textArea = new JTextArea(10, 10);
 		textArea.setText("Click 'Run'");
 		textArea.add(table);
 
+		
 		scrollTable = new JScrollPane(table);
 		scroll_p1Text = new JScrollPane(p1Text);
-		loadButton.setVisible(false);
+		//loadButton.setVisible(false);
 		clrButton.setVisible(false);
 		runButton.setVisible(true);
 		inspectButton.setVisible(false);
@@ -167,13 +180,15 @@ public class GUI {
 		panelFL1.add(clrButton, FlowLayout.LEADING);
 		panelFL1.add(loadButton, FlowLayout.LEADING);
 		panelFL1.add(inspectButton, FlowLayout.LEADING);
+	
+		panelBL.add(tabPane, BorderLayout.CENTER);
 		
 
-		panelBL.add(tabPane, BorderLayout.CENTER);
-
 		// table panel add components
-
 		p1.add(p1Text);
+		p2.add(p2Text);
+		/*p3.add(p3Text);
+		p4.add(p4Text);*/
 
 		// Set frame elements
 		frame.setTitle("VolaTile");
@@ -186,13 +201,13 @@ public class GUI {
 		osList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (osList.getSelectedIndex() == 0) {
+				if(osList.getSelectedItem().toString().contains("Mac")) {
 					cmdList.removeAllItems();
 					java.util.Iterator<String> iterCmd = macCommands.iterator();
 					while (iterCmd.hasNext()) {
 						cmdList.addItem(iterCmd.next());
 					}
-				} else if (osList.getSelectedIndex() == 1) {
+				} else if (osList.getSelectedItem().toString().contains("Win")) {
 					cmdList.removeAllItems();
 					java.util.Iterator<String> iterOs = winCommands.iterator();
 					while (iterOs.hasNext()) {
@@ -205,7 +220,7 @@ public class GUI {
 		// Button event handler
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				
 				pb.List();
 				pb.editList(cmdList.getSelectedItem().toString());
 				pb.run();
@@ -213,7 +228,6 @@ public class GUI {
 				inspectButton.setVisible(false);
 				cmdList.setVisible(false);
 				osList.setVisible(false);
-				l1.setVisible(false);
 				loadButton.setVisible(true);
 				runButton.setVisible(false);
 				clrButton.setVisible(false);
@@ -241,7 +255,6 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				clrButton.setVisible(true);
 				inspectButton.setVisible(false);
-				l1.setVisible(false);
 				tModel.setRowCount(0);
 				readFile();
 				int choice = cmdList.getSelectedIndex();
@@ -249,20 +262,19 @@ public class GUI {
 
 				case 0:// pstree
 				{
-					readPstree(rf);
-					tabPane.add("Pid", p1);
-					tabPane.add("Uid", p2);
-					tabPane.remove(p3);
-					tabPane.remove(p4);
+					readPslist(rf);
 					break;
 				}
 				case 1: // psxview
 				{
-					readPsxview(rf);
-					tabPane.add("TCP", p2);
-					tabPane.add("UDP", p3);
-					tabPane.remove(p4);
-					tabPane.remove(p1);
+					loadButton.setVisible(true);
+					try {
+						readPsxview();
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
 					break;
 				}
 
@@ -288,19 +300,54 @@ public class GUI {
 					if (lsm.isSelectionEmpty()) {
 						System.out.println("No rows are selected.");
 					} else {
+						p1Text.setText("");
+						p2Text.setText("");
 						int selectedRow = lsm.getMinSelectionIndex();
 						int clm = table.getSelectedColumn();
-						data = table.getModel().getValueAt(selectedRow,
-								clm);
-						String PID=data.toString();
-						obj = new LsofThread(PID);
-						inspectButton.setVisible(true);
-						try {
-							obj.readFile();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+						
+						switch(clm){
+						case 0:{
+							data = table.getModel().getValueAt(selectedRow,
+									clm);
+							System.out.println("Selected value is:"+data.toString());
+							break;
 						}
+						case 1:{
+							data = table.getModel().getValueAt(selectedRow,
+									clm);
+							System.out.println("Selected value is:"+data.toString());
+							break;
+						}
+						case 2:{
+							
+							data = table.getModel().getValueAt(selectedRow,
+									clm);
+							String PID=data.toString();
+							connection = new Connections(PID);
+							socket=new Sockets(PID);
+							//inspectButton.setVisible(true);
+							try {
+								connection.readFile();
+								p1Text.append(connection.toString());
+								socket.readFile();
+								p2Text.append(socket.toString());
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							
+							break;
+						}
+						default:{
+							System.out.println("No rows are selected");
+						}
+							
+						
+						
+						
+						}
+						
+						
 						
 					}
 
@@ -312,7 +359,7 @@ public class GUI {
 			table.setRowSelectionAllowed(false);
 		}
 		
-		//Connection or lsof
+		/*//Connection or lsof
 		inspectButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -325,7 +372,7 @@ public class GUI {
 				}
  
 			}	
-		});
+		});*/
 
 	}
 
@@ -360,7 +407,7 @@ public class GUI {
 			int ch = osList.getSelectedIndex();
 			switch (ch) {
 			case 0: {
-				r = new FileReader("/Users/chiragbarot/volatilityFinal/os.txt");
+				r = new FileReader("/Users/chiragbarot/volatility/output.txt");
 				break;
 			}
 			case 1: {
@@ -416,14 +463,16 @@ public class GUI {
 	}
 
 	// psxview
-	public void readPsxview(BufferedReader rf) {
+	public void readPsxview() throws FileNotFoundException {
+		FileReader r = new FileReader("/Users/chiragbarot/volatility/psxview.txt");
+		BufferedReader br=new BufferedReader(r);
 		String line = null;
 		String[] splits;
 		String[] clm;
 		int i = 0;
 
 		try {
-			while ((line = rf.readLine()) != null) {
+			while ((line = br.readLine()) != null) {
 				i++;
 				if (i >= 2 && !line.contains("--")) {
 					splits = line.split("\\s+");
@@ -450,7 +499,7 @@ public class GUI {
 	}
 
 	// pstree
-	public void readPstree(BufferedReader rf) {
+	public void readPslist(BufferedReader rf) {
 		String line = null;
 		String[] splits;
 		String[] clm;

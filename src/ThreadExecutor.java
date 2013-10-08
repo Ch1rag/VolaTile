@@ -6,7 +6,9 @@ public class ThreadExecutor {
 	private static ExecutorService service = null;
 	private static volatile Future taskOneResults = null;
 	private static volatile Future taskTwoResults = null;
-	private LsofThread lsof=new LsofThread();
+
+	private Connections conn=new Connections();
+	private Sockets socket=new Sockets();
 	
 	public void executor() throws InterruptedException{
 		service = Executors.newCachedThreadPool();
@@ -21,17 +23,16 @@ public class ThreadExecutor {
 			if (taskTwoResults == null
 					|| taskTwoResults.isDone()
 					|| taskTwoResults.isCancelled()){
-				taskTwoResults = service.submit(lsof);
+				taskTwoResults = service.submit(conn);
+				taskTwoResults = service.submit(socket);
 				service.shutdown();
-			}
-			else{
-				System.out.println("Please wait.....");
 			}
 			if (taskOneResults == null
 					|| taskOneResults.isDone()
 					|| taskOneResults.isCancelled()){   	
 				//taskOneResults = service.submit(lt);	
-			} 		
+			} 	
+			
 	}
 	
 }

@@ -6,16 +6,16 @@ public class ProcessBuilderClass implements Runnable{
 	private List<String> list = new ArrayList<String>();
 	private List<String> clm = new ArrayList<String>();
 	
-	private File file = new File("/Users/chiragbarot/volatilityFinal/os.txt");
+	private File file = new File("/Users/chiragbarot/volatility/output.txt");
 
 
 	public void List() {
 		list.add("python");
 		list.add("vol.py");
-		list.add("--profile=Mac10_8_4_64bitx64");
+		list.add("--profile=WinXPSP2x86");
 		list.add("-f");
-		list.add("ram_dump.mach-o");
-		list.add("--output-file=os.txt");
+		list.add("ram_dump.vmem");
+		list.add("--output-file=output.txt");
 	}
 
 	public void editList(String s) {
@@ -30,26 +30,18 @@ public class ProcessBuilderClass implements Runnable{
 		// Create and probuilder object
 			
 		ProcessBuilder process = new ProcessBuilder(list);
-		System.out.println("Executing Task One");
+		System.out.println("Executing Process one(pslist)");
 		
-		 System.out.println("List of commands" + process.command());
 		Process p1=process.start();
 		
-		
 		// get the working directory for volatility folder..using .directory..
-		process.directory(new File("/Users/chiragbarot/volatilityFinal"));
+		process.directory(new File("/Users/chiragbarot/volatility"));
 
 		// System.out.println("DIR=>" + process.directory());
-
-		
-		String s = "Process is running..";
-		System.out.println(s);
+		Thread.sleep(1000);
+	
 		p1=process.start();
 		
-		String text = "Please wait..";
-		
-		System.out.println(text);
-
 		InputStream is = p1.getInputStream();
 		InputStreamReader isr = new InputStreamReader(is);
 		BufferedReader br = new BufferedReader(isr);
@@ -63,10 +55,9 @@ public class ProcessBuilderClass implements Runnable{
 		br.close();
 		p1.destroy();
 		Thread.sleep(1000);
-		System.out.println("Done!");
 		p1.waitFor();
 		p1.getErrorStream();
-		System.out.println("Click 'Load' to check the output");
+		System.out.println("Process one is completed!");
 				
 		// Clear command..
 		list.clear();

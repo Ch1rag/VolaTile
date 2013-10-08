@@ -11,13 +11,17 @@ public class VolaTile{
 	public static void main(String[] args) throws IOException, InterruptedException{
 		// TODO Auto-generated method stub	
 	 
+		
+		//find OS
+		String os=null;
+		os=System.getProperties().getProperty("os.name");
+		System.out.println(os);
 		// Call threader
 		ThreadExecutor te=new ThreadExecutor();
 		te.executor();
 		
 		GUI frame=new GUI();
-		
-		frame.storeOs();
+		frame.storeOS(os);
 		frame.storeCmd_Mac();
 		frame.storeCmd_Win();
 		frame.makeFrame();
