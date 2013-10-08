@@ -5,30 +5,27 @@ import java.util.*;
 public class ProcessBuilderClass implements Runnable{
 	private List<String> list = new ArrayList<String>();
 	private List<String> clm = new ArrayList<String>();
-	
+	private String profile;
 	private File file = new File("/Users/chiragbarot/volatility/output.txt");
-
-
-	public void List() {
-		list.add("python");
-		list.add("vol.py");
-		list.add("--profile=WinXPSP2x86");
-		list.add("-f");
-		list.add("ram_dump.vmem");
-		list.add("--output-file=output.txt");
-	}
-
-	public void editList(String s) {
-		
-		list.add(s);
-	}
 	
+	public ProcessBuilderClass(String profile){
+		this.profile=profile;
+	}
+
 
 	public void run() {
+		while(true){
 		try{
 			
-		// Create and probuilder object
+			list.add("python");
+			list.add("vol.py");
+			list.add("--profile=WinXPSP2x86");
+			list.add("-f");
+			list.add("ram_dump.vmem");
+			list.add("--output-file=output.txt");
 			
+		// Create and probuilder object
+			list.add(profile);
 		ProcessBuilder process = new ProcessBuilder(list);
 		System.out.println("Executing Process one(pslist)");
 		
@@ -63,10 +60,12 @@ public class ProcessBuilderClass implements Runnable{
 		list.clear();
 		}
 		
+		
 		catch(Throwable e){
 			e.printStackTrace();
 		}
 		
+		}
 		
 		
 	}

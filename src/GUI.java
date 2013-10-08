@@ -38,9 +38,11 @@ public class GUI {
 	private JScrollPane scroll_p1Text;
 	private JTable table;
 	private BufferedReader rf;
-	private ProcessBuilderClass pb = new ProcessBuilderClass();
+	
+	//private ProcessBuilderClass pb = new ProcessBuilderClass();
 	private Connections connection;
 	private Sockets socket;
+	private Threads thread;
 	private DefaultTableModel tModel;
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
@@ -151,7 +153,11 @@ public class GUI {
 	    p2Text.setEditable(false);
 		p2Text.setLineWrap(true);
 		
-
+		// Text area to add to tab panels
+	    p3Text = new JTextArea(10,40);
+	    p3Text.setEditable(false);
+		p3Text.setLineWrap(true);
+		
 		textArea = new JTextArea(10, 10);
 		textArea.setText("Click 'Run'");
 		textArea.add(table);
@@ -159,7 +165,7 @@ public class GUI {
 		
 		scrollTable = new JScrollPane(table);
 		scroll_p1Text = new JScrollPane(p1Text);
-		//loadButton.setVisible(false);
+		loadButton.setVisible(false);
 		clrButton.setVisible(false);
 		runButton.setVisible(true);
 		inspectButton.setVisible(false);
@@ -187,8 +193,8 @@ public class GUI {
 		// table panel add components
 		p1.add(p1Text);
 		p2.add(p2Text);
-		/*p3.add(p3Text);
-		p4.add(p4Text);*/
+		p3.add(p3Text);
+		//p4.add(p4Text);
 
 		// Set frame elements
 		frame.setTitle("VolaTile");
@@ -221,19 +227,23 @@ public class GUI {
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				pb.List();
-				pb.editList(cmdList.getSelectedItem().toString());
-				pb.run();
+				String profile=cmdList.getSelectedItem().toString();
+				ProcessBuilderClass pb=new ProcessBuilderClass(profile);
+				Thread td=new Thread(pb);
+				td.start();
+				new ThreadExecutor(td);
+			
+				//new Thread (new ProcessBuilderClass(profile)).start();
 				
 				inspectButton.setVisible(false);
 				cmdList.setVisible(false);
 				osList.setVisible(false);
-				loadButton.setVisible(true);
 				runButton.setVisible(false);
 				clrButton.setVisible(false);
+				loadButton.setVisible(true);
 			}
 		});
-
+		
 		// Clear button events
 		clrButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -323,14 +333,19 @@ public class GUI {
 							data = table.getModel().getValueAt(selectedRow,
 									clm);
 							String PID=data.toString();
+							
+							thread=new Threads(PID);
 							connection = new Connections(PID);
 							socket=new Sockets(PID);
+						
 							//inspectButton.setVisible(true);
 							try {
 								connection.readFile();
 								p1Text.append(connection.toString());
 								socket.readFile();
 								p2Text.append(socket.toString());
+								thread.readFile();
+								p3Text.append(thread.toString());
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();

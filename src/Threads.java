@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Sockets implements Runnable {
+public class Threads implements Runnable {
 
 	private List<String> list = new ArrayList<String>();
 	private String PID;
@@ -16,11 +16,11 @@ public class Sockets implements Runnable {
 	private ArrayList<String> connections = new ArrayList<String>();
 
 	// Deafult Constructor
-	Sockets() {
+	Threads() {
 	}
 
 	// Overloaded constructor
-	Sockets(String pid) {
+	Threads(String pid) {
 		PID = pid;
 	}
 
@@ -36,11 +36,11 @@ public class Sockets implements Runnable {
 			list.add("--profile=WinXPSP2x86");
 			list.add("-f");
 			list.add("ram_dump.vmem");
-			list.add("--output-file=Sockets.txt");
-			list.add("sockets");
+			list.add("--output-file=Threads.txt");
+			list.add("threads");
 
 			ProcessBuilder process = new ProcessBuilder(list);
-			System.out.println("Executing Process Three(Sockets)");
+			System.out.println("Executing Process Four(Threads)");
 
 			Process p2 =process.start();
 
@@ -65,7 +65,7 @@ public class Sockets implements Runnable {
 			}
 			br.close();
 			p2.destroy();
-			System.out.println("Process three is completed!");
+			System.out.println("Process four is completed!");
 			
 			//Process two psxview
 			
@@ -78,10 +78,11 @@ public class Sockets implements Runnable {
 	public ArrayList<String> readFile() throws IOException {
 		BufferedReader br = null;
 		try {
-			fr = new FileReader("/Users/chiragbarot/volatility/Sockets.txt");
+			fr = new FileReader("/Users/chiragbarot/volatility/Threads.txt");
 			br = new BufferedReader(fr);
 
 			String line;
+			//String[] splits;
 			int i=0;
 			do{
 				line = br.readLine();
@@ -89,12 +90,15 @@ public class Sockets implements Runnable {
 				connections.add(line+"\n");
 				i++;
 			}while(i!=2);
-	
+
 			while ((line = br.readLine()) != null) {
-				if (line.contains(PID) == true) {
+				//splits = line.split("--");
+				if (line.contentEquals(PID) == true) {
+					
 						System.out.println(line);
 						connections.add(line +"\n");
-					}
+					
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

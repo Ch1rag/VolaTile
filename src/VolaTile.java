@@ -15,8 +15,7 @@ public class VolaTile{
 		//find OS
 		String os=null;
 		os=System.getProperties().getProperty("os.name");
-		System.out.println(os);
-		// Call threader
+		//System.out.println(os);
 		ThreadExecutor te=new ThreadExecutor();
 		te.executor();
 		
@@ -25,6 +24,9 @@ public class VolaTile{
 		frame.storeCmd_Mac();
 		frame.storeCmd_Win();
 		frame.makeFrame();
+		
+		
+		
 		
 		
 	}

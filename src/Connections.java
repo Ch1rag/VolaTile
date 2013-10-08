@@ -38,7 +38,7 @@ public class Connections implements Runnable {
 			list.add("--profile=WinXPSP2x86");
 			list.add("-f");
 			list.add("ram_dump.vmem");
-			list.add("--output-file=connections.txt");
+			list.add("--output-file=Connections.txt");
 			list.add("connections");
 
 			ProcessBuilder process = new ProcessBuilder(list);
@@ -80,7 +80,7 @@ public class Connections implements Runnable {
 	public ArrayList<String> readFile() throws IOException {
 		BufferedReader br = null;
 		try {
-			fr = new FileReader("/Users/chiragbarot/volatility/connections.txt");
+			fr = new FileReader("/Users/chiragbarot/volatility/Connections.txt");
 			br = new BufferedReader(fr);
 
 			String line;
@@ -95,7 +95,7 @@ public class Connections implements Runnable {
 			while ((line = br.readLine()) != null) {
 				if (line.contains(PID) == true) {
 						System.out.println(line);
-						connections.add(line + "\t"+"\n");
+						connections.add(line+"\n");
 					}
 			}
 		} catch (Exception e) {
