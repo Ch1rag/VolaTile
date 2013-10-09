@@ -14,7 +14,7 @@ public class ProcessBuilderClass implements Runnable{
 
 
 	public void run() {
-		while(true){
+		
 		try{
 			
 			list.add("python");
@@ -35,7 +35,6 @@ public class ProcessBuilderClass implements Runnable{
 		process.directory(new File("/Users/chiragbarot/volatility"));
 
 		// System.out.println("DIR=>" + process.directory());
-		Thread.sleep(1000);
 	
 		p1=process.start();
 		
@@ -51,7 +50,6 @@ public class ProcessBuilderClass implements Runnable{
 		}
 		br.close();
 		p1.destroy();
-		Thread.sleep(1000);
 		p1.waitFor();
 		p1.getErrorStream();
 		System.out.println("Process one is completed!");
@@ -60,15 +58,12 @@ public class ProcessBuilderClass implements Runnable{
 		list.clear();
 		}
 		
-		
 		catch(Throwable e){
 			e.printStackTrace();
 		}
 		
 		}
 		
-		
-	}
 	@Override
 	public String toString() {
 		return "DoProcessBuilder [list=" + list + ", clm=" + clm + ", file="

@@ -43,6 +43,7 @@ public class GUI {
 	private Connections connection;
 	private Sockets socket;
 	private Threads thread;
+	private Handles handle;
 	private DefaultTableModel tModel;
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
@@ -94,30 +95,33 @@ public class GUI {
 		// Create Panels
 		JPanel panelBL = new JPanel(new BorderLayout());
 		JPanel panelTX = new JPanel(new GridLayout());
-		JPanel panelFL1 = new JPanel(new GridLayout(4, 4));
-		JPanel panelFL2 = new JPanel(new FlowLayout());
+		JPanel panelFL1 = new JPanel(new GridLayout(2, 2));
+		//JPanel panelFL2 = new JPanel(new FlowLayout());
+		
+		//set border
 		panelTX.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-		panelTX.setBorder(new TitledBorder(new EtchedBorder(), "Display Area"));
-		panelFL1.setBorder(new TitledBorder(new EtchedBorder(), "North"));
+        panelBL.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panelBL.setBorder(new TitledBorder(new EtchedBorder(), "Tabs Area"));
+		panelTX.setBorder(new TitledBorder(new EtchedBorder(), "Table Area"));
+		panelFL1.setBorder(new TitledBorder(new EtchedBorder(), "Profile Selection"));
 
 		// create tab pane
 		tabPane = new JTabbedPane();
 
 		// panels for tabs
-		final JPanel p1 = new JPanel();
+		final JPanel p1 = new JPanel(new GridLayout());
 		tabPane.addTab("Connections", p1);
-		tabPane.setMnemonicAt(0, KeyEvent.VK_1);
+		
 
-		final JPanel p2 = new JPanel();
+		final JPanel p2 = new JPanel(new GridLayout());
 		tabPane.addTab("Sockets", p2);
-		tabPane.setMnemonicAt(1, KeyEvent.VK_2);
+		
 
-		final JPanel p3 = new JPanel();
+		final JPanel p3 = new JPanel(new GridLayout());
 		tabPane.addTab("Threads", p3);
 
-		final JPanel p4 = new JPanel();
-		tabPane.addTab("none", p4);
+		final JPanel p4 = new JPanel(new GridLayout());
+		tabPane.addTab("Handles", p4);
 		tabPane.setPreferredSize(new Dimension(300, 300));
 
 		// Add commands to combobox list
@@ -145,21 +149,29 @@ public class GUI {
 
 		// Text area to add to tab panels
 		p1Text = new JTextArea(50,50);
+		p1Text.setBackground(Color.LIGHT_GRAY);
 		p1Text.setEditable(false);
 		p1Text.setLineWrap(true);
 		
 		// Text area to add to tab panels
 	    p2Text = new JTextArea(50,50);
+	    p2Text.setBackground(Color.LIGHT_GRAY);
 	    p2Text.setEditable(false);
 		p2Text.setLineWrap(true);
 		
 		// Text area to add to tab panels
 	    p3Text = new JTextArea(10,40);
+	    p3Text.setBackground(Color.LIGHT_GRAY);
 	    p3Text.setEditable(false);
 		p3Text.setLineWrap(true);
 		
-		textArea = new JTextArea(10, 10);
-		textArea.setText("Click 'Run'");
+		// Text area to add to tab panels
+	    p4Text = new JTextArea(10,40);
+	    p4Text.setBackground(Color.LIGHT_GRAY);
+	    p4Text.setEditable(false);
+		p4Text.setLineWrap(true);
+		
+		textArea = new JTextArea(30, 30);
 		textArea.add(table);
 
 		
@@ -173,12 +185,12 @@ public class GUI {
 		// panelFL2.add(panelBL);
 		cp.add(panelBL, BorderLayout.SOUTH);
 		cp.add(panelFL1, BorderLayout.NORTH);
-		cp.add(panelFL2, BorderLayout.WEST);
 		cp.add(panelTX);
 
 		// Add components here
 		panelTX.add(scrollTable);
 		panelBL.add(scroll_p1Text);
+		
 		// panelFL1.add(l1,FlowLayout.LEFT);
 		panelFL1.add(runButton, FlowLayout.LEFT);
 		panelFL1.add(cmdList, FlowLayout.LEFT);
@@ -188,13 +200,12 @@ public class GUI {
 		panelFL1.add(inspectButton, FlowLayout.LEADING);
 	
 		panelBL.add(tabPane, BorderLayout.CENTER);
-		
 
 		// table panel add components
 		p1.add(p1Text);
 		p2.add(p2Text);
 		p3.add(p3Text);
-		//p4.add(p4Text);
+		p4.add(p4Text);
 
 		// Set frame elements
 		frame.setTitle("VolaTile");
@@ -313,12 +324,12 @@ public class GUI {
 						p1Text.setText("");
 						p2Text.setText("");
 						int selectedRow = lsm.getMinSelectionIndex();
-						int clm = table.getSelectedColumn();
+						//int clm = table.getSelectedColumn();
 						
-						switch(clm){
+						switch(selectedRow){
 						case 0:{
-							data = table.getModel().getValueAt(selectedRow,
-									clm);
+							//data = table.getModel().getValueAt(selectedRow,clm);
+							data
 							System.out.println("Selected value is:"+data.toString());
 							break;
 						}
@@ -330,22 +341,29 @@ public class GUI {
 						}
 						case 2:{
 							
-							data = table.getModel().getValueAt(selectedRow,
-									clm);
+							data = table.;
+							
 							String PID=data.toString();
 							
 							thread=new Threads(PID);
 							connection = new Connections(PID);
 							socket=new Sockets(PID);
+							handle=new Handles(PID);
 						
 							//inspectButton.setVisible(true);
 							try {
 								connection.readFile();
 								p1Text.append(connection.toString());
+								
 								socket.readFile();
 								p2Text.append(socket.toString());
+								
 								thread.readFile();
 								p3Text.append(thread.toString());
+								
+								handle.readFile();
+								p4Text.append(handle.toString());
+								
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -394,11 +412,10 @@ public class GUI {
 	// * Create Table Default Rows and Columns Format specified Format table
 	// with
 	// * Set attributes
-	//
 	public void createTable() {
 		// Create Table and table model
 		table = new JTable();
-		table.setBackground(Color.white);
+		table.setBackground(Color.DARK_GRAY);
 		tModel = new DefaultTableModel(0, 0);
 
 		// Table row settings
