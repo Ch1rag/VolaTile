@@ -7,13 +7,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 public class Handles implements Runnable {
 
 	private List<String> list = new ArrayList<String>();
 	private String PID;
 	private FileReader fr = null;
-	private ArrayList<String> connections = new ArrayList<String>();
+	private ArrayList<String> handles = new ArrayList<String>();
 
 	// Deafult Constructor
 	Handles() {
@@ -40,7 +41,7 @@ public class Handles implements Runnable {
 			list.add("handles");
 
 			ProcessBuilder process = new ProcessBuilder(list);
-			System.out.println("Executing Process Two(Handles)");
+			System.out.println("Executing Process Five(Handles)");
 
 			Process p2 =process.start();
 
@@ -65,7 +66,7 @@ public class Handles implements Runnable {
 			}
 			br.close();
 			p2.destroy();
-			System.out.println("Process four is completed!");
+			System.out.println("Process Five is completed!");
 			
 			//Process two psxview
 			
@@ -80,20 +81,20 @@ public class Handles implements Runnable {
 		try {
 			fr = new FileReader("/Users/chiragbarot/volatility/Handles.txt");
 			br = new BufferedReader(fr);
-
+            int i=0;
 			String line;
-			int i=0;
 			do{
 				line = br.readLine();
-				System.out.println(line);
-				connections.add(line+"\n");
+				//System.out.println(line);
+		        handles.add(" "+line+"\n");
 				i++;
 			}while(i!=2);
 	
 			while ((line = br.readLine()) != null) {
-				if (line.contains(PID) == true) {
-						System.out.println(line);
-						connections.add(line+"\n");
+				//Matcher m = p.matcher(line);
+				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
+						//System.out.println(line);
+						handles.add(line+"\n");
 					}
 			}
 		} catch (Exception e) {
@@ -102,13 +103,14 @@ public class Handles implements Runnable {
 		} finally {
 			br.close();
 		}
-		return connections;
+		return handles;
 	}
 
 	@Override
 	public String toString() {
 		
-		return ""+connections;
+		
+		return ""+handles;
 
 	}
 }

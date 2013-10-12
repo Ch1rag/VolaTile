@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -7,13 +6,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Threads implements Runnable {
 
 	private List<String> list = new ArrayList<String>();
 	private String PID;
 	private FileReader fr = null;
-	private ArrayList<String> connections = new ArrayList<String>();
+	private ArrayList<String> threads = new ArrayList<String>();
+	private Pattern p = Pattern.compile("---");
 
 	// Deafult Constructor
 	Threads() {
@@ -42,7 +44,7 @@ public class Threads implements Runnable {
 			ProcessBuilder process = new ProcessBuilder(list);
 			System.out.println("Executing Process Four(Threads)");
 
-			Process p2 =process.start();
+			Process p2 = process.start();
 
 			// get the working directory for volatility folder..using
 			// .directory..
@@ -50,8 +52,8 @@ public class Threads implements Runnable {
 
 			// System.out.println("DIR=>" + process.directory());
 
-			//System.out.println("List of commands" + process.command());
-			
+			// System.out.println("List of commands" + process.command());
+
 			p2 = process.start();
 
 			InputStream is = p2.getInputStream();
@@ -66,9 +68,8 @@ public class Threads implements Runnable {
 			br.close();
 			p2.destroy();
 			System.out.println("Process four is completed!");
-			
-			//Process two psxview
-			
+
+			// Process two psxview
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -80,39 +81,33 @@ public class Threads implements Runnable {
 		try {
 			fr = new FileReader("/Users/chiragbarot/volatility/Threads.txt");
 			br = new BufferedReader(fr);
-
 			String line;
-			//String[] splits;
-			int i=0;
-			do{
-				line = br.readLine();
-				System.out.println(line);
-				connections.add(line+"\n");
-				i++;
-			}while(i!=2);
 
 			while ((line = br.readLine()) != null) {
-				//splits = line.split("--");
-				if (line.contentEquals(PID) == true) {
-					
+				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
+					System.out.println(line);
+					threads.add(line + "\n");
+					while ((line = br.readLine()) != null
+							&& (!line.contains("ETHREAD") == true)) {
 						System.out.println(line);
-						connections.add(line +"\n");
-					
+						threads.add(line + "\n");
+					}
 				}
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("File not found!!");
 		} finally {
 			br.close();
 		}
-		return connections;
+		return threads;
 	}
 
 	@Override
 	public String toString() {
-		
-		return ""+connections;
+
+		return "" + threads;
 
 	}
 }

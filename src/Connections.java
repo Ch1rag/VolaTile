@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class Connections implements Runnable {
 			ProcessBuilder process = new ProcessBuilder(list);
 			System.out.println("Executing Process Two(Connections)");
 
-			Process p2 =process.start();
+			Process p2 = process.start();
 
 			// get the working directory for volatility folder..using
 			// .directory..
@@ -52,8 +53,8 @@ public class Connections implements Runnable {
 
 			// System.out.println("DIR=>" + process.directory());
 
-			//System.out.println("List of commands" + process.command());
-			
+			// System.out.println("List of commands" + process.command());
+
 			p2 = process.start();
 
 			InputStream is = p2.getInputStream();
@@ -68,9 +69,8 @@ public class Connections implements Runnable {
 			br.close();
 			p2.destroy();
 			System.out.println("Process two is completed!");
-			
-			//Process two psxview
-			
+
+			// Process two psxview
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -84,19 +84,19 @@ public class Connections implements Runnable {
 			br = new BufferedReader(fr);
 
 			String line;
-			int i=0;
-			do{
+			int i = 0;
+			do {
 				line = br.readLine();
-				System.out.println(line);
-				connections.add(line+"\n");
+				//System.out.println(line);
+				connections.add(" " + line + "\n");
 				i++;
-			}while(i!=2);
-	
+			} while (i != 2);
+			// int id=Integer.parseInt(PID);
 			while ((line = br.readLine()) != null) {
-				if (line.contains(PID) == true) {
-						System.out.println(line);
-						connections.add(line+"\n");
-					}
+				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
+					//System.out.println(line);
+					connections.add(line + "\n");
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -109,8 +109,9 @@ public class Connections implements Runnable {
 
 	@Override
 	public String toString() {
-		
-		return ""+connections;
+
+		return "" + connections;
 
 	}
+
 }

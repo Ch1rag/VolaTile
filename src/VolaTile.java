@@ -16,8 +16,8 @@ public class VolaTile{
 		String os=null;
 		os=System.getProperties().getProperty("os.name");
 		//System.out.println(os);
-		ThreadExecutor te=new ThreadExecutor();
-		te.executor();
+		//ThreadExecutor te=new ThreadExecutor();
+		//te.executor();
 		
 		GUI frame=new GUI();
 		frame.storeOS(os);

@@ -13,7 +13,7 @@ public class Sockets implements Runnable {
 	private List<String> list = new ArrayList<String>();
 	private String PID;
 	private FileReader fr = null;
-	private ArrayList<String> connections = new ArrayList<String>();
+	private ArrayList<String> sockets = new ArrayList<String>();
 
 	// Deafult Constructor
 	Sockets() {
@@ -85,15 +85,15 @@ public class Sockets implements Runnable {
 			int i=0;
 			do{
 				line = br.readLine();
-				System.out.println(line);
-				connections.add(line+"\n");
+				//System.out.println(line);
+				sockets.add(" "+line+"\n");
 				i++;
 			}while(i!=2);
 	
 			while ((line = br.readLine()) != null) {
-				if (line.contains(PID) == true) {
-						System.out.println(line);
-						connections.add(line +"\n");
+				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
+						//System.out.println(line);
+						sockets.add(line +"\n");
 					}
 			}
 		} catch (Exception e) {
@@ -102,13 +102,13 @@ public class Sockets implements Runnable {
 		} finally {
 			br.close();
 		}
-		return connections;
+		return sockets;
 	}
 
 	@Override
 	public String toString() {
 		
-		return ""+connections;
+		return ""+sockets;
 
 	}
 }

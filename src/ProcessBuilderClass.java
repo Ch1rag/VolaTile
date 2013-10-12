@@ -4,9 +4,7 @@ import java.util.*;
 
 public class ProcessBuilderClass implements Runnable{
 	private List<String> list = new ArrayList<String>();
-	private List<String> clm = new ArrayList<String>();
 	private String profile;
-	private File file = new File("/Users/chiragbarot/volatility/output.txt");
 	
 	public ProcessBuilderClass(String profile){
 		this.profile=profile;
@@ -64,13 +62,13 @@ public class ProcessBuilderClass implements Runnable{
 		
 		}
 		
-	@Override
-	public String toString() {
+	//@Override
+	/*public String toString() {
 		return "DoProcessBuilder [list=" + list + ", clm=" + clm + ", file="
 				+ file + "]";
 	}
 
 	public void print(){
 		System.out.println(toString());
-	}
+	}*/
 }

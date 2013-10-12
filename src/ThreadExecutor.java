@@ -8,6 +8,7 @@ public class ThreadExecutor implements Runnable {
 	private static ExecutorService service = null;
 	private static volatile Future threadResult;
 	private static volatile Future processResult;
+	private Future future;
 	private Thread td=new Thread();
 	
 	ThreadExecutor(){
@@ -27,13 +28,14 @@ public class ThreadExecutor implements Runnable {
 	public void run() { // run the services
 	    {
 	    	threadResult=service.submit(new Threads());
+	    	future=service.submit(new Handles());
 	    	service.submit(new Sockets());
 	    	service.submit(new Connections());
-	    	service.submit(new Handles());
+	    	
 	    	
 	         try {
-				if(threadResult.get()==null || threadResult.isDone()
-						|| threadResult.isCancelled()){
+				if((threadResult.get()==null && future.get()==null)|| (threadResult.isDone() && future.isDone())
+						|| (threadResult.isCancelled()&&future.isCancelled())){
 					 
 					processResult=service.submit(td);
 					service.shutdown();

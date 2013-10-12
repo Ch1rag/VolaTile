@@ -16,6 +16,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author chirag Barot
@@ -34,8 +37,13 @@ public class GUI {
 	private JTextArea p4Text;
 	
 	private JButton clrButton;
+	
 	private JScrollPane scrollTable;
 	private JScrollPane scroll_p1Text;
+	private JScrollPane scroll_p2Text;
+	private JScrollPane scroll_p3Text;
+	private JScrollPane scroll_p4Text;
+	
 	private JTable table;
 	private BufferedReader rf;
 	
@@ -50,6 +58,7 @@ public class GUI {
 	private JTabbedPane tabPane;
 	private JButton inspectButton;
 	private Object data;
+	private Color bg = new Color(249, 246, 244);
 	//private String OS=null;
 
 	// Array list to store strings of commands
@@ -149,34 +158,47 @@ public class GUI {
 
 		// Text area to add to tab panels
 		p1Text = new JTextArea(50,50);
-		p1Text.setBackground(Color.LIGHT_GRAY);
+		p1Text.setBackground(bg);
 		p1Text.setEditable(false);
 		p1Text.setLineWrap(true);
+		p1Text.getCaretPosition();
+		p1Text.setFont(new Font ("Monaco",Font.LAYOUT_LEFT_TO_RIGHT,12));
 		
 		// Text area to add to tab panels
 	    p2Text = new JTextArea(50,50);
-	    p2Text.setBackground(Color.LIGHT_GRAY);
+	    p2Text.setBackground(bg);
 	    p2Text.setEditable(false);
 		p2Text.setLineWrap(true);
+		p2Text.getCaretPosition();
+		p2Text.setFont(new Font ("Monaco",Font.LAYOUT_LEFT_TO_RIGHT,12));
 		
 		// Text area to add to tab panels
 	    p3Text = new JTextArea(10,40);
-	    p3Text.setBackground(Color.LIGHT_GRAY);
+	    p3Text.setBackground(bg);
 	    p3Text.setEditable(false);
 		p3Text.setLineWrap(true);
+		p3Text.getCaretPosition();
+		p3Text.setFont(new Font ("Monaco",Font.LAYOUT_LEFT_TO_RIGHT,12));
 		
 		// Text area to add to tab panels
 	    p4Text = new JTextArea(10,40);
-	    p4Text.setBackground(Color.LIGHT_GRAY);
+	    p4Text.setBackground(bg);
 	    p4Text.setEditable(false);
 		p4Text.setLineWrap(true);
+		p4Text.getCaretPosition();
+		p4Text.setFont(new Font ("Monaco",Font.LAYOUT_LEFT_TO_RIGHT,12));
 		
 		textArea = new JTextArea(30, 30);
+		textArea.setBackground(bg);
 		textArea.add(table);
 
-		
+		//Add scroll bar to tab panels
 		scrollTable = new JScrollPane(table);
 		scroll_p1Text = new JScrollPane(p1Text);
+		scroll_p2Text = new JScrollPane(p2Text);
+		scroll_p3Text = new JScrollPane(p3Text);
+		scroll_p4Text = new JScrollPane(p4Text);
+		
 		loadButton.setVisible(false);
 		clrButton.setVisible(false);
 		runButton.setVisible(true);
@@ -190,6 +212,9 @@ public class GUI {
 		// Add components here
 		panelTX.add(scrollTable);
 		panelBL.add(scroll_p1Text);
+		panelBL.add(scroll_p2Text);
+		panelBL.add(scroll_p3Text);
+		panelBL.add(scroll_p4Text);
 		
 		// panelFL1.add(l1,FlowLayout.LEFT);
 		panelFL1.add(runButton, FlowLayout.LEFT);
@@ -202,10 +227,10 @@ public class GUI {
 		panelBL.add(tabPane, BorderLayout.CENTER);
 
 		// table panel add components
-		p1.add(p1Text);
-		p2.add(p2Text);
-		p3.add(p3Text);
-		p4.add(p4Text);
+		p1.add(scroll_p1Text);
+		p2.add(scroll_p2Text);
+		p3.add(scroll_p3Text);
+		p4.add(scroll_p4Text);
 
 		// Set frame elements
 		frame.setTitle("VolaTile");
@@ -255,7 +280,7 @@ public class GUI {
 			}
 		});
 		
-		// Clear button events
+		/*// Clear button events
 		clrButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -268,7 +293,7 @@ public class GUI {
 				tModel.setColumnIdentifiers(columnTitles);
 
 			}
-		});
+		});*/
 
 		// * Load Button Event handler switch Function call using Switch JRE 1.7
 		// * support for String switch parameter
@@ -281,7 +306,7 @@ public class GUI {
 				int choice = cmdList.getSelectedIndex();
 				switch (choice) {
 
-				case 0:// pstree
+				case 0:// pslist
 				{
 					readPslist(rf);
 					break;
@@ -323,13 +348,15 @@ public class GUI {
 					} else {
 						p1Text.setText("");
 						p2Text.setText("");
+						p3Text.setText("");
+						p4Text.setText("");
 						int selectedRow = lsm.getMinSelectionIndex();
-						//int clm = table.getSelectedColumn();
-						
-						switch(selectedRow){
+						int clm = table.getSelectedColumn();
+
+						switch(clm){
 						case 0:{
-							//data = table.getModel().getValueAt(selectedRow,clm);
-							data
+							data = table.getModel().getValueAt(selectedRow,clm);
+
 							System.out.println("Selected value is:"+data.toString());
 							break;
 						}
@@ -340,48 +367,62 @@ public class GUI {
 							break;
 						}
 						case 2:{
-							
-							data = table.;
-							
+
+							data = table.getModel().getValueAt(selectedRow,clm);
+
 							String PID=data.toString();
-							
+
 							thread=new Threads(PID);
 							connection = new Connections(PID);
 							socket=new Sockets(PID);
 							handle=new Handles(PID);
-						
+
 							//inspectButton.setVisible(true);
 							try {
-								connection.readFile();
-								p1Text.append(connection.toString());
-								
-								socket.readFile();
-								p2Text.append(socket.toString());
-								
-								thread.readFile();
-								p3Text.append(thread.toString());
-								
-								handle.readFile();
-								p4Text.append(handle.toString());
-								
+
+								ArrayList<String> connections =new ArrayList<String>();
+								connections=connection.readFile();
+								Iterator<String> con=connections.iterator();
+
+								while(con.hasNext()){
+									p1Text.append(con.next());}
+
+
+								ArrayList<String> sockets =new ArrayList<String>();
+								sockets=socket.readFile();
+								Iterator<String> soc=sockets.iterator();
+
+								while(soc.hasNext()){
+									p2Text.append(soc.next());}
+
+								ArrayList<String> threads =new ArrayList<String>();
+								threads=thread.readFile();
+								Iterator<String> thd=threads.iterator();
+
+								while(thd.hasNext()){
+									p3Text.append(thd.next());}
+
+								ArrayList<String> handles =new ArrayList<String>();
+								handles=handle.readFile();
+								Iterator<String> hnd=handles.iterator();
+
+								while(hnd.hasNext()){
+									p4Text.append(hnd.next());}
+
+
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-							
+
 							break;
 						}
 						default:{
 							System.out.println("No rows are selected");
 						}
-							
-						
-						
-						
-						}
-						
-						
-						
+
+						}	
+
 					}
 
 				}
@@ -467,10 +508,12 @@ public class GUI {
 		String[] splits;
 		String[] clm;
 		int i = 0;
+		
 
 		try {
 			while ((line = rf.readLine()) != null) {
 				i++;
+					
 				if (i >= 2 && !line.contains("--")) {
 					splits = line.split("\\s+");
 					tModel.addRow(splits);
@@ -487,7 +530,6 @@ public class GUI {
 						}
 					}
 				}
-
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -502,10 +544,13 @@ public class GUI {
 		String[] splits;
 		String[] clm;
 		int i = 0;
+		
 
 		try {
 			while ((line = br.readLine()) != null) {
 				i++;
+				
+				
 				if (i >= 2 && !line.contains("--")) {
 					splits = line.split("\\s+");
 					tModel.addRow(splits);
@@ -523,6 +568,7 @@ public class GUI {
 						}
 					}
 				}
+				
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -536,20 +582,31 @@ public class GUI {
 		String[] splits;
 		String[] clm;
 		int i = 0;
-
+		
+		String s="\\s+";
+		Pattern pattern = Pattern.compile("\\s+");
+		Matcher matcher = pattern.matcher(s);
+		boolean found = matcher.find();
+    
+		
 		try {
 			while ((line = rf.readLine()) != null) {
 				i++;
+				/*if(i==1 && found){
+					while ((line = rf.readLine()) != null){
+					splits = line.split("\\s+");
+					tModel.addRow(splits);*/
 				if (i >= 2 && !line.contains("--")) {
 					splits = line.split("\\s+");
 					// Add rows here
 					tModel.addRow(splits);
+					
 				} else if (!line.contains("--")) {
 					clm = line.split("\\s+");
 					for (int j = 0; j < clm.length; j++) {
 						tModel.addColumn(clm[j]);
 						tModel.setColumnIdentifiers(clm);
-
+						
 						Enumeration<TableColumn> en = table.getColumnModel()
 								.getColumns();
 						while (en.hasMoreElements()) {
@@ -568,7 +625,8 @@ public class GUI {
 	public class MyTableCellRenderer extends DefaultTableCellRenderer implements
 			TableCellRenderer {
 		private static final long serialVersionUID = 1L;
-		private final Color alt2 = new Color(235, 244, 250);
+		private final Color alt2 = new Color(249, 246, 244);
+		//private final Color alt2 = new Color(235, 244, 250);
 		private final Color alt1 = Color.WHITE;
 		private final Color invalidStatus = Color.RED;
 
@@ -589,6 +647,7 @@ public class GUI {
 				super.setForeground(Color.BLACK);
 				super.setBackground(table.getSelectionBackground());
 			} else {
+				
 				super.setBackground(colorAlternator(row));
 			}
 			setFont(table.getFont());
@@ -601,9 +660,11 @@ public class GUI {
 					setBackground(invalidStatus);
 				} else {
 					setBackground(colorAlternator(row));
+					
 				}
 			} else {
 				setBackground(colorAlternator(row));
+				
 			}
 			return cell;
 		}
