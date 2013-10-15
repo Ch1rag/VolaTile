@@ -27,27 +27,35 @@ public class VolaTile{
 	 * @throws IOException 
 	 */
 	
+	
 	public static void main(String[] args) throws IOException, InterruptedException{
 		// TODO Auto-generated method stub	
-	 
-		
+	
 		//find OS
 		String os=null;
 		os=System.getProperties().getProperty("os.name");
-		//System.out.println(os);
-		//ThreadExecutor te=new ThreadExecutor();
-		//te.executor();
 		
-		GUI frame=new GUI();
+		Configuration config=new Configuration(os);
+		config.addOs();
+		config.selectFile();
+		//ImageInfo info=new ImageInfo();
+		//info.readFile();
+		
+	
+		
+	
+		/*ThreadExecutor te=new ThreadExecutor();		
+		te.executor();*/
+		//new Thread (new ProcessBuilderClass("pslist")).start();
+		/*GUI frame=new GUI(dumpFile);
 		frame.storeOS(os);
 		frame.storeCmd_Mac();
 		frame.storeCmd_Win();
-		frame.makeFrame();
+		frame.makeFrame();*/
 		
 		
-		
+	}
 		
 		
 	}
 
-}

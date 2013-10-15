@@ -20,75 +20,78 @@
  
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 
 public class ProcessBuilderClass implements Runnable{
 	private List<String> list = new ArrayList<String>();
 	private String profile;
+	private String dumpFile;
 	
-	public ProcessBuilderClass(String profile){
+
+	public ProcessBuilderClass(String profile,String dumpFile){
 		this.profile=profile;
+		this.dumpFile=dumpFile;
 	}
 
-
 	public void run() {
-		
+
 		try{
-			
 			list.add("python");
 			list.add("vol.py");
 			list.add("--profile=WinXPSP2x86");
 			list.add("-f");
-			list.add("ram_dump.vmem");
+			list.add(dumpFile);
+			//list.add("ram_dump.vmem");
 			list.add("--output-file=output.txt");
-			
-		// Create and probuilder object
+			// Create and probuilder object
 			list.add(profile);
-		ProcessBuilder process = new ProcessBuilder(list);
-		System.out.println("Executing Process one(pslist)");
-		
-		Process p1=process.start();
-		
-		// get the working directory for volatility folder..using .directory..
-		process.directory(new File("/Users/chiragbarot/volatility"));
+			ProcessBuilder process = new ProcessBuilder(list);
+			System.out.println("Executing Process one(pslist)");
 
-		// System.out.println("DIR=>" + process.directory());
-	
-		p1=process.start();
-		
-		InputStream is = p1.getInputStream();
-		InputStreamReader isr = new InputStreamReader(is);
-		BufferedReader br = new BufferedReader(isr);
+			Process p1=process.start();
 
-		String line;
+			// get the working directory for volatility folder..using .directory..
+			process.directory(new File("/Users/chiragbarot/volatility"));
 
-		while ((line = br.readLine()) != null) {
-			System.out.println(line.split("\\s+"));
-		
+			// System.out.println("DIR=>" + process.directory());
+			System.out.println("List of commands" + process.command());
+			p1=process.start();
+
+			InputStream is = p1.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+
+			String line;
+
+			while ((line = br.readLine()) != null) {
+				System.out.println(line.split("\\s+"));
+
+			}
+			br.close();
+			p1.destroy();
+			p1.waitFor();
+			p1.getErrorStream();
+			String done="Process one is completed!";
+			System.out.println(done);
+       
+			// Clear command..
+			list.clear();
+			
 		}
-		br.close();
-		p1.destroy();
-		p1.waitFor();
-		p1.getErrorStream();
-		System.out.println("Process one is completed!");
-				
-		// Clear command..
-		list.clear();
-		}
-		
+
 		catch(Throwable e){
 			e.printStackTrace();
 		}
-		
-		}
-		
-	//@Override
-	/*public String toString() {
-		return "DoProcessBuilder [list=" + list + ", clm=" + clm + ", file="
-				+ file + "]";
+
 	}
 
-	public void print(){
-		System.out.println(toString());
-	}*/
+
+
 }
+
+
+
