@@ -33,6 +33,10 @@ public class Sockets implements Runnable {
 	private String PID;
 	private FileReader fr = null;
 	private ArrayList<String> sockets = new ArrayList<String>();
+	private String command="handles";
+	private String user;
+	private String profile;
+	private String dumpFile;
 
 	// Deafult Constructor
 	Sockets() {
@@ -41,6 +45,11 @@ public class Sockets implements Runnable {
 	// Overloaded constructor
 	Sockets(String pid) {
 		PID = pid;
+	}
+	public Sockets(String dumpFile,String profile, String user){
+		this.profile=profile;
+		this.dumpFile=dumpFile;
+		this.user=user;	
 	}
 
 	public String getPID() {
@@ -52,11 +61,12 @@ public class Sockets implements Runnable {
 		try {
 			list.add("python");
 			list.add("vol.py");
-			list.add("--profile=WinXPSP2x86");
+			list.add("--profile="+profile);
 			list.add("-f");
-			list.add("ram_dump.vmem");
-			list.add("--output-file=Sockets.txt");
-			list.add("sockets");
+			list.add(dumpFile);
+			list.add("--output-file="+command+".txt");
+			list.add(command);
+
 
 			ProcessBuilder process = new ProcessBuilder(list);
 			System.out.println("Executing Process Three(Sockets)");

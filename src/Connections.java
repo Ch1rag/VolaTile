@@ -37,30 +37,37 @@ public class Connections implements Runnable {
 	private String PID;
 	private FileReader fr = null;
 	private ArrayList<String> connections = new ArrayList<String>();
-	private String command;
+	private String command="connections";
 	private String user;
 	private String profile;
 	private String dumpFile;
+	
 
-	// Deafult Constructor
-	Connections() {
-	}
-
+	
 	// Overloaded constructor
 	Connections(String pid) {
 		PID = pid;
 	}
-	public Connections(String command,String dumpFile,String profile, String user){
+	public Connections(String dumpFile,String profile, String user){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
-		this.command="connections";
-		this.user=user;
-		
+		this.user=user;	
 	}
-
+	// Deafult Constructor
+		Connections() {
+		}
+  /* public String getDump(){
+	   return dumpFile;
+   }
+   public String getProfile(){
+	   return profile;
+   }
+   public String getUser(){
+	   return user;
+   }
 	public String getPID() {
 		return PID;
-	}
+	}*/
 
 	public void run() {
 		// process two..

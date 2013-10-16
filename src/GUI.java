@@ -91,6 +91,7 @@ public class GUI {
 	private String dumpFile;
 	private String user;
 
+	public GUI(){}
 	public GUI(String dumpFile,String profile,String user) {
 		this.dumpFile=dumpFile;
 		this.profile=profile;
@@ -296,8 +297,7 @@ public class GUI {
 		final SwingWorker worker = new SwingWorker<String, Void>() {
 			@Override
 			public String doInBackground() throws InterruptedException {
-				command = cmdList.getSelectedItem().toString();
-				// String profile=cmdList.getSelectedItem().toString();
+				
 				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,user);
 				Thread td = new Thread(pb);
 				td.start();
@@ -308,7 +308,6 @@ public class GUI {
 
 			@Override
 			public void done() {
-
 				try {
 					textArea.setText(get());
 					loadButton.setVisible(true);
@@ -327,17 +326,17 @@ public class GUI {
 		// Button event handler
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				worker.execute();
-				
-
-				// new Thread (new ProcessBuilderClass(profile)).start();
-
+				command = cmdList.getSelectedItem().toString();
 				cmdList.setVisible(false);
 				osList.setVisible(false);
 				runButton.setVisible(false);
 				loadButton.setVisible(false);
 				textArea.setText("");
 
+				worker.execute();
+				// new Thread (new ProcessBuilderClass(profile)).start();
+
+				
 			}
 		});
 

@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Threads implements Runnable {
@@ -35,7 +34,10 @@ public class Threads implements Runnable {
 	private String PID;
 	private FileReader fr = null;
 	private ArrayList<String> threads = new ArrayList<String>();
-	private Pattern p = Pattern.compile("---");
+	private String command="handles";
+	private String user;
+	private String profile;
+	private String dumpFile;
 
 	// Deafult Constructor
 	Threads() {
@@ -44,6 +46,11 @@ public class Threads implements Runnable {
 	// Overloaded constructor
 	Threads(String pid) {
 		PID = pid;
+	}
+	public Threads(String dumpFile,String profile, String user){
+		this.profile=profile;
+		this.dumpFile=dumpFile;
+		this.user=user;	
 	}
 
 	public String getPID() {
@@ -55,12 +62,12 @@ public class Threads implements Runnable {
 		try {
 			list.add("python");
 			list.add("vol.py");
-			list.add("--profile=WinXPSP2x86");
+			list.add("--profile="+profile);
 			list.add("-f");
-			list.add("ram_dump.vmem");
-			list.add("--output-file=Threads.txt");
-			list.add("threads");
-
+			list.add(dumpFile);
+			list.add("--output-file="+command+".txt");
+			list.add(command);
+			
 			ProcessBuilder process = new ProcessBuilder(list);
 			System.out.println("Executing Process Four(Threads)");
 
@@ -68,7 +75,7 @@ public class Threads implements Runnable {
 
 			// get the working directory for volatility folder..using
 			// .directory..
-			process.directory(new File("/Users/chiragbarot/volatility"));
+			process.directory(new File(user+"/volatility"));
 
 			// System.out.println("DIR=>" + process.directory());
 

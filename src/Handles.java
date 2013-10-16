@@ -34,6 +34,10 @@ public class Handles implements Runnable {
 	private String PID;
 	private FileReader fr = null;
 	private ArrayList<String> handles = new ArrayList<String>();
+	private String command="handles";
+	private String user;
+	private String profile;
+	private String dumpFile;
 
 	// Deafult Constructor
 	Handles() {
@@ -42,6 +46,12 @@ public class Handles implements Runnable {
 	// Overloaded constructor
 	Handles(String pid) {
 		PID = pid;
+	}
+	
+	public Handles(String dumpFile,String profile, String user){
+		this.profile=profile;
+		this.dumpFile=dumpFile;
+		this.user=user;	
 	}
 
 	public String getPID() {
@@ -53,11 +63,11 @@ public class Handles implements Runnable {
 		try {
 			list.add("python");
 			list.add("vol.py");
-			list.add("--profile=WinXPSP2x86");
+			list.add("--profile="+profile);
 			list.add("-f");
-			list.add("ram_dump.vmem");
-			list.add("--output-file=Handles.txt");
-			list.add("handles");
+			list.add(dumpFile);
+			list.add("--output-file="+command+".txt");
+			list.add(command);
 
 			ProcessBuilder process = new ProcessBuilder(list);
 			System.out.println("Executing Process Five(Handles)");
@@ -66,7 +76,7 @@ public class Handles implements Runnable {
 
 			// get the working directory for volatility folder..using
 			// .directory..
-			process.directory(new File("/Users/chiragbarot/volatility"));
+			process.directory(new File(user+"/volatility"));
 
 			// System.out.println("DIR=>" + process.directory());
 

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -46,30 +45,31 @@ public class Configuration{
 	private String user;
 	private String version;
 	private String arch;
+	private String profile;
 
 	public Configuration(){
 		os=System.getProperties().getProperty("os.name");
 		user=System.getProperties().getProperty("user.home");
 		version=System.getProperties().getProperty("os.version");
 		arch=System.getProperties().getProperty("os.arch");
-			
+
 	}
 	public void addOs(){
 		osProfiles.add("WinXPSP2x86");
 		osProfiles.add("Mac");
 	}
-	
-	
+
+
 	public void selectFile(){
-		
+
 		frame=new JFrame();
 		final Container cp = frame.getContentPane();
-		
+
 		cp.setLayout(new BorderLayout());
-		JPanel p1=new JPanel(new GridLayout(1,1));
+		JPanel p1=new JPanel(new GridLayout());
 		JPanel p2=new JPanel(new GridLayout(1,1));
 		JPanel p3=new JPanel(new GridLayout(1,1));
-		
+
 		p1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		p2.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		p2.setBorder(new TitledBorder(new EtchedBorder(), "Profile Info"));
@@ -81,48 +81,48 @@ public class Configuration{
 		openGUI=new JButton("Open VolaTile");
 		profileButton=new JButton("Detect Profile");
 		osCombo=new JComboBox();
-		
-		
+
+
 		java.util.Iterator<String> iterCmd = osProfiles.iterator();
 		while (iterCmd.hasNext()) {
 			osCombo.addItem(iterCmd.next());
 		}
-		
-		text = new JTextArea(5,5);
+
+		text = new JTextArea(10,20);
 		text.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		text.setBorder(new TitledBorder(new EtchedBorder(), "System Info"));
-		
+
 		text.setEditable(false);
 		text.setLineWrap(true);
 		text.getCaretPosition();
 		text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
-		
-		
+
+
 		p1.add(selectDump,FlowLayout.LEFT);
 		p1.add(osCombo,FlowLayout.LEFT);
-		
+
 		p2.add(text,BorderLayout.NORTH);
-		
+
 		p3.add(openGUI,BorderLayout.EAST);
 		p3.add(profileButton,BorderLayout.WEST);
-		
+
 		cp.add(p1,BorderLayout.NORTH);
 		cp.add(p2,BorderLayout.CENTER);
 		cp.add(p3,BorderLayout.SOUTH);
-        
+
 		openGUI.setVisible(false);
 		profileButton.setVisible(false);
 		text.setVisible(true);
 		osCombo.setVisible(true);
 
-		text.append("Detected OS:"+os+"\n");
-		text.append("Version:"+version+"\n");
-		text.append("OS Arch:"+arch+"\n");
-		text.append("Current User:"+user+"\n");
+		text.append("Detected OS:"+"\t"+os+"\n");
+		text.append("Version    :"+"\t"+version+"\n");
+		text.append("OS Arch    :"+"\t"+arch+"\n");
 		
-		
+
+
 		selectFile=new JFileChooser();
-	
+
 		selectFile.setCurrentDirectory(new File(user+"/volatility"));
 
 		selectDump.addActionListener(new ActionListener() {
@@ -133,82 +133,144 @@ public class Configuration{
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = selectFile.getSelectedFile();
 					fileName=file.getName();
-					text.setText("Selected dump file is:"+file.getName());
+					text.append("Selected dump file is:"+file.getName());
 					profileButton.setVisible(true);
 					openGUI.setVisible(true);
 				}
 			}
 		});
-		final SwingWorker worker = new SwingWorker<Void, Void>() {
-			   private Void future;
-				@Override
-				public Void doInBackground() throws InterruptedException {
-					new ImageInfo(fileName);
-					text.setText("");
-					text.setVisible(true);
-					text.setBorder(new TitledBorder(new EtchedBorder(), "Detected Profile"));
-					text = new JTextArea(20,50);
-					try {
-						readFile();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					return future;
+		final SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+			private Void future;
+			@Override
+			public Void doInBackground() throws InterruptedException {
+				new ImageInfo(fileName);
+				text.setText("");
+				text.setVisible(true);
+				text.setBorder(new TitledBorder(new EtchedBorder(), "Detected Profile"));
+                
+				try {
+					readFile();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
+				return future;
+			}
 
-				@Override
-				public void done() {
+			@Override
+			public void done() {
 
-					try {
-						if(get()==null){
-							osCombo.setVisible(true);
-							openGUI.setVisible(true);				
-						}
-						
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ExecutionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				try {
+					if(get()==null){
+						osCombo.setVisible(true);
+						openGUI.setVisible(true);	
+						System.out.println(profile);
 					}
 
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
-			};
+			}
 
+		};
 		
+		final SwingWorker<Future, Void> worker1 = new SwingWorker<Future, Void>() {
+			private Future<?> future;
+			@Override
+			public Future<?> doInBackground() throws InterruptedException {
+				text.setText("VolaTile loading...Please wait..!!");
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				selectDump.setVisible(false);
+				profile=osCombo.getSelectedItem().toString();
+
+				Connections con=new Connections(fileName,profile, user);
+				Thread conThread = new Thread(con);
+				
+				Handles hnd=new Handles(fileName,profile, user);
+				Thread hndThread = new Thread(hnd);
+				
+				Sockets soc=new Sockets(fileName,profile, user);
+				Thread socThread = new Thread(soc);
+				
+				Threads thd=new Threads(fileName,profile, user);
+				Thread thdThread = new Thread(thd);
+				
+				ThreadExecutor te=new ThreadExecutor(conThread,hndThread,socThread,thdThread);	
+				
+				try {
+					future=te.executor();	
+					
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				return future;
+			}
+
+			@Override
+			public void done() {
+
+				try {
+					if(future.get()==null){
+						gui();
+					}
+
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+		};
+
 		profileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				text.setVisible(true);
+				text.setText("Profile detection may take some time,Please wait..!!");
 				worker.execute();
-				}
+
+			}
 		});
+		
 		
 		openGUI.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				selectDump.setVisible(false);
-				String profile=osCombo.getSelectedItem().toString();
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				GUI frame=new GUI(fileName,profile,user);
-				frame.storeOS(os);
-				frame.storeCmd_Mac();
-				frame.storeCmd_Win();
-				frame.makeFrame();	
 				
+               worker1.execute();
 			}	
 		});
+		
 		// Set frame elements
 		frame.setTitle("Configuration");
-		frame.setSize(100, 100);
+		frame.setSize(200, 200);
 		frame.setVisible(true);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 	}
 	
+	public void gui(){
+
+		GUI gui=new GUI(fileName,profile,user);
+		gui.storeOS(os);
+		gui.storeCmd_Mac();
+		gui.storeCmd_Win();
+		gui.makeFrame();	
+	}
+
 	public void readFile() throws IOException {
 
 		FileReader r = null;
@@ -216,7 +278,7 @@ public class Configuration{
 			r = new FileReader("/Users/chiragbarot/volatility/imageinfo.txt");
 			BufferedReader br = new BufferedReader(r);
 			String line;
-			
+
 			while ((line = br.readLine()) != null) {
 				text.append(line+"\n");
 			}
@@ -224,9 +286,9 @@ public class Configuration{
 			e1.printStackTrace();
 
 		}
-     
+
 
 	}
 
-	
+
 }

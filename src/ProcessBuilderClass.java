@@ -60,8 +60,8 @@ public class ProcessBuilderClass implements Runnable{
 			// get the working directory for volatility folder..using .directory..
 			process.directory(new File(user+"/volatility"));
 
-			System.out.println("DIR=>" + process.directory());
-			System.out.println("List of commands" + process.command());
+			//System.out.println("DIR=>" + process.directory());
+			//System.out.println("List of commands" + process.command());
 			p1=process.start();
 
 			InputStream is = p1.getInputStream();

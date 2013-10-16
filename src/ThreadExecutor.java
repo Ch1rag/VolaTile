@@ -30,29 +30,41 @@ public class ThreadExecutor implements Runnable {
 	private static volatile Future processResult;
 	private Future future;
 	private Thread td=new Thread();
+	private Thread tdCon=new Thread();
+	private Thread tdSoc=new Thread();
+	private Thread tdThd=new Thread();
+	private Thread tdHnd=new Thread();
 	
-	ThreadExecutor(){
+	/*ThreadExecutor(){
 		
-	}
+	}*/
 	ThreadExecutor(Thread td){
 		this.td=td;
 	}
-	public void executor() throws InterruptedException,IOException{
+	
+	ThreadExecutor(Thread tdCon,Thread tdSoc,Thread tdThd,Thread tdHnd){
+		this.tdCon=tdCon;
+		this.tdSoc=tdSoc;
+		this.tdThd=tdThd;
+		this.tdHnd=tdHnd;
+	}
+	
+	public Future<?> executor() throws InterruptedException,IOException{
 		service = Executors.newCachedThreadPool();
 			try{
-				run();
+				call();
 			} catch (Exception e) {
 				System.err.println("Caught exception: " + e.getMessage());
 			}
+			return future;
 		}	
-	public void run() { // run the services
+	public Future<?> call() { // run the services
 	    {
-	    	threadResult=service.submit(new Threads());
-	    	future=service.submit(new Handles());
-	    	service.submit(new Sockets());
-	    	service.submit(new Connections());
-	    	
-	    	
+	    	threadResult=service.submit(tdThd);
+	    	future=service.submit(tdHnd);
+	    	service.submit(tdSoc);
+	    	service.submit(tdCon);
+	    	    	
 	         try {
 				if((threadResult.get()==null && future.get()==null)|| (threadResult.isDone() && future.isDone())
 						|| (threadResult.isCancelled()&&future.isCancelled())){
@@ -72,8 +84,14 @@ public class ThreadExecutor implements Runnable {
 			}
 	       }
 	   
-	    
+	    return threadResult;
 	    }
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	}
 
