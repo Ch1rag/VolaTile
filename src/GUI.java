@@ -79,6 +79,7 @@ public class GUI {
 			"", "" };
 	private JTabbedPane tabPane;
 	private JButton inspectButton;
+	private String profile;
 	private Object data;
 	private Color bg = new Color(249, 246, 244);
 	// private String OS=null;
@@ -88,9 +89,12 @@ public class GUI {
 	private ArrayList<String> winCommands = new ArrayList<String>();
 	private ArrayList<String> os = new ArrayList<String>();
 	private String dumpFile;
+	private String user;
 
-	public GUI(String dumpFile) {
+	public GUI(String dumpFile,String profile,String user) {
 		this.dumpFile=dumpFile;
+		this.profile=profile;
+		this.user=user;
 	}
 
 	public void storeCmd_Mac() {
@@ -294,7 +298,7 @@ public class GUI {
 			public String doInBackground() throws InterruptedException {
 				command = cmdList.getSelectedItem().toString();
 				// String profile=cmdList.getSelectedItem().toString();
-				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile);
+				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,user);
 				Thread td = new Thread(pb);
 				td.start();
 				Thread.sleep(10000);
@@ -324,13 +328,15 @@ public class GUI {
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				worker.execute();
+				
 
 				// new Thread (new ProcessBuilderClass(profile)).start();
 
 				cmdList.setVisible(false);
 				osList.setVisible(false);
 				runButton.setVisible(false);
-				// loadButton.setVisible(true);
+				loadButton.setVisible(false);
+				textArea.setText("");
 
 			}
 		});
@@ -559,12 +565,12 @@ public class GUI {
 	public BufferedReader readFile() {
 		FileReader r = null;
 		try {
-			r = new FileReader("/Users/chiragbarot/volatility/output.txt");
+			r = new FileReader("/Users/chiragbarot/volatility/"+command+".txt");
 		} catch (FileNotFoundException e1) {
 			Component frame = null;
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(frame,
-					"File not found,Please select correct OS");
+					"File not found");
 			loadButton.setVisible(false);
 			e1.printStackTrace();
 			

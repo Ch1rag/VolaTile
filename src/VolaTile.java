@@ -33,9 +33,10 @@ public class VolaTile{
 	
 		//find OS
 		String os=null;
-		os=System.getProperties().getProperty("os.name");
+		String user=null;
+		System.getProperties().list(System.out);
 		
-		Configuration config=new Configuration(os);
+		Configuration config=new Configuration();
 		config.addOs();
 		config.selectFile();
 		//ImageInfo info=new ImageInfo();

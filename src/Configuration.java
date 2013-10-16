@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -35,23 +36,29 @@ public class Configuration{
 	private JFrame frame;
 	private JFileChooser selectFile;
 	private JButton selectDump;
-	private JLabel l1;
-	private JLabel l2;
-	private JLabel l3;
 	private String fileName;
 	private JButton openGUI;
 	private String os;
-	private JButton findImage;
+	private JButton profileButton;
 	private JComboBox osCombo;
 	private List<String> osProfiles=new ArrayList<String>(); 
 	private JTextArea text;
-	
-	
-	public Configuration(String os){this.os=os;}
+	private String user;
+	private String version;
+	private String arch;
+
+	public Configuration(){
+		os=System.getProperties().getProperty("os.name");
+		user=System.getProperties().getProperty("user.home");
+		version=System.getProperties().getProperty("os.version");
+		arch=System.getProperties().getProperty("os.arch");
+			
+	}
 	public void addOs(){
 		osProfiles.add("WinXPSP2x86");
 		osProfiles.add("Mac");
 	}
+	
 	
 	public void selectFile(){
 		
@@ -59,17 +66,20 @@ public class Configuration{
 		final Container cp = frame.getContentPane();
 		
 		cp.setLayout(new BorderLayout());
-		JPanel p1=new JPanel(new GridLayout(2,2));
-		JPanel p2=new JPanel(new BorderLayout());
+		JPanel p1=new JPanel(new GridLayout(1,1));
+		JPanel p2=new JPanel(new GridLayout(1,1));
+		JPanel p3=new JPanel(new GridLayout(1,1));
 		
-		p1.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		p2.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		p1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		p2.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		p2.setBorder(new TitledBorder(new EtchedBorder(), "Profile Info"));
 		p1.setBorder(new TitledBorder(new EtchedBorder(),"Profile Selection"));
+		p3.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		p3.setBorder(new TitledBorder(new EtchedBorder(),""));
 
 		selectDump=new JButton("Select Image");
 		openGUI=new JButton("Open VolaTile");
-		findImage=new JButton("Detect Profile");
+		profileButton=new JButton("Detect Profile");
 		osCombo=new JComboBox();
 		
 		
@@ -78,46 +88,42 @@ public class Configuration{
 			osCombo.addItem(iterCmd.next());
 		}
 		
-		text = new JTextArea(20,60);
+		text = new JTextArea(5,5);
 		text.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		text.setBorder(new TitledBorder(new EtchedBorder(), "Detected Profile"));
+		text.setBorder(new TitledBorder(new EtchedBorder(), "System Info"));
 		
 		text.setEditable(false);
 		text.setLineWrap(true);
 		text.getCaretPosition();
 		text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
-		l1=new JLabel();
-		l2=new JLabel();
-		l3=new JLabel();
 		
+		
+		p1.add(selectDump,FlowLayout.LEFT);
 		p1.add(osCombo,FlowLayout.LEFT);
-		p1.add(openGUI,FlowLayout.LEFT);
-		p1.add(l3,FlowLayout.LEFT);
-		p1.add(findImage,FlowLayout.LEFT);
-		p1.add(selectDump,FlowLayout.CENTER);
-		
 		
 		p2.add(text,BorderLayout.NORTH);
-		p2.add(l1,BorderLayout.SOUTH);
-		p2.add(l2,FlowLayout.LEFT);
 		
-		
-		
-		openGUI.setVisible(false);
-		findImage.setVisible(false);
-		text.setVisible(false);
-		osCombo.setVisible(false);
-		
+		p3.add(openGUI,BorderLayout.EAST);
+		p3.add(profileButton,BorderLayout.WEST);
 		
 		cp.add(p1,BorderLayout.NORTH);
 		cp.add(p2,BorderLayout.CENTER);
+		cp.add(p3,BorderLayout.SOUTH);
+        
+		openGUI.setVisible(false);
+		profileButton.setVisible(false);
+		text.setVisible(true);
+		osCombo.setVisible(true);
 
-
-		l2.setText("Detected OS is:"+os+"\n");
+		text.append("Detected OS:"+os+"\n");
+		text.append("Version:"+version+"\n");
+		text.append("OS Arch:"+arch+"\n");
+		text.append("Current User:"+user+"\n");
+		
+		
 		selectFile=new JFileChooser();
-		selectFile.setCurrentDirectory(new File("/Users/chiragbarot/volatility"));
-		
-		
+	
+		selectFile.setCurrentDirectory(new File(user+"/volatility"));
 
 		selectDump.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -126,11 +132,10 @@ public class Configuration{
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = selectFile.getSelectedFile();
-					//This is where a real application would open the file.
 					fileName=file.getName();
-					l1.setText("Selected dump file is:"+file.getName());
-					findImage.setVisible(true);
-					
+					text.setText("Selected dump file is:"+file.getName());
+					profileButton.setVisible(true);
+					openGUI.setVisible(true);
 				}
 			}
 		});
@@ -141,7 +146,8 @@ public class Configuration{
 					new ImageInfo(fileName);
 					text.setText("");
 					text.setVisible(true);
-					l3.setText("Detecting profile");
+					text.setBorder(new TitledBorder(new EtchedBorder(), "Detected Profile"));
+					text = new JTextArea(20,50);
 					try {
 						readFile();
 					} catch (IOException e1) {
@@ -157,8 +163,7 @@ public class Configuration{
 					try {
 						if(get()==null){
 							osCombo.setVisible(true);
-							openGUI.setVisible(true);
-							l3.setVisible(false);
+							openGUI.setVisible(true);				
 						}
 						
 					} catch (InterruptedException e) {
@@ -174,25 +179,26 @@ public class Configuration{
 			};
 
 		
-		findImage.addActionListener(new ActionListener() {
+		profileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				l3.setText("Detecting profile"); 
+				
 				text.setVisible(true);
 				worker.execute();
 				}
 		});
 		
-
 		openGUI.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				selectDump.setVisible(false);
-				GUI frame=new GUI(fileName);
+				String profile=osCombo.getSelectedItem().toString();
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				GUI frame=new GUI(fileName,profile,user);
 				frame.storeOS(os);
 				frame.storeCmd_Mac();
 				frame.storeCmd_Win();
-				frame.makeFrame();
-			}
-
+				frame.makeFrame();	
+				
+			}	
 		});
 		// Set frame elements
 		frame.setTitle("Configuration");
@@ -218,7 +224,7 @@ public class Configuration{
 			e1.printStackTrace();
 
 		}
-
+     
 
 	}
 

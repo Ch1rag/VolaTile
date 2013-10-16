@@ -37,6 +37,10 @@ public class Connections implements Runnable {
 	private String PID;
 	private FileReader fr = null;
 	private ArrayList<String> connections = new ArrayList<String>();
+	private String command;
+	private String user;
+	private String profile;
+	private String dumpFile;
 
 	// Deafult Constructor
 	Connections() {
@@ -45,6 +49,13 @@ public class Connections implements Runnable {
 	// Overloaded constructor
 	Connections(String pid) {
 		PID = pid;
+	}
+	public Connections(String command,String dumpFile,String profile, String user){
+		this.profile=profile;
+		this.dumpFile=dumpFile;
+		this.command="connections";
+		this.user=user;
+		
 	}
 
 	public String getPID() {
@@ -56,11 +67,11 @@ public class Connections implements Runnable {
 		try {
 			list.add("python");
 			list.add("vol.py");
-			list.add("--profile=WinXPSP2x86");
+			list.add("--profile="+profile);
 			list.add("-f");
-			list.add("ram_dump.vmem");
-			list.add("--output-file=Connections.txt");
-			list.add("connections");
+			list.add(dumpFile);
+			list.add("--output-file="+command+".txt");
+			list.add(command);
 
 			ProcessBuilder process = new ProcessBuilder(list);
 			System.out.println("Executing Process Two(Connections)");
@@ -69,7 +80,7 @@ public class Connections implements Runnable {
 
 			// get the working directory for volatility folder..using
 			// .directory..
-			process.directory(new File("/Users/chiragbarot/volatility"));
+			process.directory(new File(user+"/volatility"));
 
 			// System.out.println("DIR=>" + process.directory());
 
