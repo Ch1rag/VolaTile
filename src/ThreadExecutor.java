@@ -42,7 +42,7 @@ public class ThreadExecutor implements Runnable {
 		this.td=td;
 	}
 	
-	ThreadExecutor(Thread tdCon,Thread tdSoc,Thread tdThd,Thread tdHnd){
+	ThreadExecutor(Thread tdCon,Thread tdHnd,Thread tdSoc,Thread tdThd){
 		this.tdCon=tdCon;
 		this.tdSoc=tdSoc;
 		this.tdThd=tdThd;
@@ -56,7 +56,7 @@ public class ThreadExecutor implements Runnable {
 			} catch (Exception e) {
 				System.err.println("Caught exception: " + e.getMessage());
 			}
-			return future;
+			return processResult;
 		}	
 	public Future<?> call() { // run the services
 	    {
@@ -84,7 +84,7 @@ public class ThreadExecutor implements Runnable {
 			}
 	       }
 	   
-	    return threadResult;
+	    return processResult;
 	    }
 
 	@Override

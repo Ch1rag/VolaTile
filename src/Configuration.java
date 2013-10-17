@@ -56,7 +56,7 @@ public class Configuration{
 	}
 	public void addOs(){
 		osProfiles.add("WinXPSP2x86");
-		osProfiles.add("Mac");
+		osProfiles.add("Mac10_8_4_64bitx64");
 	}
 
 
@@ -66,9 +66,9 @@ public class Configuration{
 		final Container cp = frame.getContentPane();
 
 		cp.setLayout(new BorderLayout());
-		JPanel p1=new JPanel(new GridLayout());
+		final JPanel p1=new JPanel(new GridLayout());
 		JPanel p2=new JPanel(new GridLayout(1,1));
-		JPanel p3=new JPanel(new GridLayout(1,1));
+		final JPanel p3=new JPanel(new GridLayout(1,1));
 
 		p1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		p2.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -114,6 +114,7 @@ public class Configuration{
 		profileButton.setVisible(false);
 		text.setVisible(true);
 		osCombo.setVisible(true);
+		p3.setVisible(false);
 
 		text.append("Detected OS:"+"\t"+os+"\n");
 		text.append("Version    :"+"\t"+version+"\n");
@@ -134,6 +135,7 @@ public class Configuration{
 					File file = selectFile.getSelectedFile();
 					fileName=file.getName();
 					text.append("Selected dump file is:"+file.getName());
+					p3.setVisible(true);
 					profileButton.setVisible(true);
 					openGUI.setVisible(true);
 				}
@@ -142,7 +144,7 @@ public class Configuration{
 		final SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			private Void future;
 			@Override
-			public Void doInBackground() throws InterruptedException {
+			public Void doInBackground() throws InterruptedException, IOException {
 				new ImageInfo(fileName);
 				text.setText("");
 				text.setVisible(true);
@@ -183,7 +185,9 @@ public class Configuration{
 			private Future<?> future;
 			@Override
 			public Future<?> doInBackground() throws InterruptedException {
-				text.setText("VolaTile loading...Please wait..!!");
+				p1.setVisible(false);
+				profileButton.setVisible(false);
+				text.setText("VolaTile is loading..Please wait...");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				selectDump.setVisible(false);
 				profile=osCombo.getSelectedItem().toString();
@@ -239,7 +243,7 @@ public class Configuration{
 			public void actionPerformed(ActionEvent e) {
 
 				text.setVisible(true);
-				text.setText("Profile detection may take some time,Please wait..!!");
+				text.setText("Profile detection may take some time,Please wait..");
 				worker.execute();
 
 			}
@@ -255,7 +259,7 @@ public class Configuration{
 		
 		// Set frame elements
 		frame.setTitle("Configuration");
-		frame.setSize(200, 200);
+		frame.setSize(300, 300);
 		frame.setVisible(true);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -265,7 +269,7 @@ public class Configuration{
 	public void gui(){
 
 		GUI gui=new GUI(fileName,profile,user);
-		gui.storeOS(os);
+		gui.storeOS(profile);
 		gui.storeCmd_Mac();
 		gui.storeCmd_Win();
 		gui.makeFrame();	

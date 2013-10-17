@@ -78,7 +78,7 @@ public class GUI {
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
 	private JTabbedPane tabPane;
-	private JButton inspectButton;
+	private JButton configButton;
 	private String profile;
 	private Object data;
 	private Color bg = new Color(249, 246, 244);
@@ -99,21 +99,22 @@ public class GUI {
 	}
 
 	public void storeCmd_Mac() {
-		macCommands.add("pslist");
-		macCommands.add("psxview");
-		/*
-		 * macCommands.add("mac_notifiers"); macCommands.add("mac_pstree");
-		 * macCommands.add("mac_tasks"); macCommands.add("mac_ifconfig");
-		 */
+		macCommands.add("mac_pslist");
+		macCommands.add("mac_psxview");	
+		 macCommands.add("mac_notifiers"); 
+		 macCommands.add("mac_pstree");
+		 macCommands.add("mac_tasks");
+		 macCommands.add("mac_ifconfig");
+		 
 	}
 
 	public void storeCmd_Win() {
-		winCommands.add("netstat");
-		winCommands.add("pstree");
+		winCommands.add("pslist");
+		winCommands.add("psxview");
 	}
 
-	public void storeOS(String OS) {
-		os.add(OS);
+	public void storeOS(String profile) {
+		os.add(profile);
 		/*
 		 * os.add("Windows"); os.add("Linux");
 		 */
@@ -173,11 +174,24 @@ public class GUI {
 
 		// Add commands to combobox list
 		cmdList = new JComboBox();
-		java.util.Iterator<String> iterCmd = macCommands.iterator();
+		java.util.Iterator<String> iterCmd = winCommands.iterator();
 		while (iterCmd.hasNext()) {
-			cmdList.addItem(iterCmd.next());
+			cmdList.addItem(iterCmd.next());	
 		}
-
+		
+		if (profile.contains("Mac")==true) {
+			cmdList.removeAllItems();
+			java.util.Iterator<String> Cmd = macCommands.iterator();
+			while (Cmd.hasNext()) {
+				cmdList.addItem(Cmd.next());
+			}
+		} else if (profile.contains("Win")==true) {
+			cmdList.removeAllItems();
+			java.util.Iterator<String> iterOs = winCommands.iterator();
+			while (iterOs.hasNext()) {
+				cmdList.addItem(iterOs.next());
+			}
+		}
 		// Add os to combobox list
 		osList = new JComboBox();
 		osList.setEditable(false);
@@ -185,12 +199,33 @@ public class GUI {
 		while (iterOs.hasNext()) {
 			osList.addItem(iterOs.next());
 		}
+		
+		/*// Populate available commands for selected OS
+				osList.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+
+						if (osList.getSelectedItem().toString().contains("Mac")) {
+							cmdList.removeAllItems();
+							java.util.Iterator<String> iterCmd = macCommands.iterator();
+							while (iterCmd.hasNext()) {
+								cmdList.addItem(iterCmd.next());
+							}
+						} else if (osList.getSelectedItem().toString().contains("Win")) {
+							cmdList.removeAllItems();
+							java.util.Iterator<String> iterOs = winCommands.iterator();
+							while (iterOs.hasNext()) {
+								cmdList.addItem(iterOs.next());
+							}
+						}
+					}
+				});*/
+
 
 		// Define Components and initialize them
 
 		runButton = new JButton("Run");
 		loadButton = new JButton("Load");
-		inspectButton = new JButton("Inspect");
+		configButton = new JButton("Config");
 
 		// Text area to add to tab panels
 		p1Text = new JTextArea(50, 50);
@@ -237,7 +272,7 @@ public class GUI {
 
 		loadButton.setVisible(false);
 		runButton.setVisible(true);
-		inspectButton.setVisible(false);
+		configButton.setVisible(false);
 
 		// panelFL2.add(panelBL);
 		// cp.add(panelBL, BorderLayout.SOUTH);
@@ -257,7 +292,7 @@ public class GUI {
 		panelFL1.add(cmdList, FlowLayout.LEFT);
 		panelFL1.add(osList, FlowLayout.LEFT);
 		panelFL1.add(loadButton, FlowLayout.LEADING);
-		panelFL1.add(inspectButton, FlowLayout.LEADING);
+		panelFL1.add(configButton, FlowLayout.LEADING);
 
 		panelBL.add(tabPane, BorderLayout.CENTER);
 
@@ -274,30 +309,11 @@ public class GUI {
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		// Populate available commands for selected OS
-		osList.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				if (osList.getSelectedItem().toString().contains("Mac")) {
-					cmdList.removeAllItems();
-					java.util.Iterator<String> iterCmd = macCommands.iterator();
-					while (iterCmd.hasNext()) {
-						cmdList.addItem(iterCmd.next());
-					}
-				} else if (osList.getSelectedItem().toString().contains("Win")) {
-					cmdList.removeAllItems();
-					java.util.Iterator<String> iterOs = winCommands.iterator();
-					while (iterOs.hasNext()) {
-						cmdList.addItem(iterOs.next());
-					}
-				}
-			}
-		});
-
-		final SwingWorker worker = new SwingWorker<String, Void>() {
-			@Override
+		
+		/*final SwingWorker worker = new SwingWorker<String, Void>() {
+			
 			public String doInBackground() throws InterruptedException {
-				
+				command = cmdList.getSelectedItem().toString();
 				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,user);
 				Thread td = new Thread(pb);
 				td.start();
@@ -311,6 +327,13 @@ public class GUI {
 				try {
 					textArea.setText(get());
 					loadButton.setVisible(true);
+					
+					cmdList.setVisible(false);
+					osList.setVisible(false);
+					runButton.setVisible(false);
+					textArea.setText("");
+					tModel.setRowCount(0);
+					tModel.setColumnIdentifiers(columnTitles);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -321,19 +344,34 @@ public class GUI {
 
 			}
 
-		};
+		};*/
 
 		// Button event handler
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				command = cmdList.getSelectedItem().toString();
+				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,user);
+				Thread td = new Thread(pb);
+				td.start();
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				new ThreadExecutor(td);
+				//worker.execute();
+				//textArea.setText(get());
+				loadButton.setVisible(true);
+				
 				cmdList.setVisible(false);
 				osList.setVisible(false);
 				runButton.setVisible(false);
-				loadButton.setVisible(false);
 				textArea.setText("");
-
-				worker.execute();
+				tModel.setRowCount(0);
+				tModel.setColumnIdentifiers(columnTitles);
+				
+				
 				// new Thread (new ProcessBuilderClass(profile)).start();
 
 				
