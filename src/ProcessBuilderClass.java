@@ -31,13 +31,13 @@ public class ProcessBuilderClass implements Runnable{
 	private String command;
 	private String dumpFile;
 	private String profile;
-	private String user;
+	private String path;
 	
-	public ProcessBuilderClass(String command,String dumpFile,String profile, String user){
+	public ProcessBuilderClass(String command,String dumpFile,String profile, String path){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
 		this.command=command;
-		this.user=user;
+		this.path=path;
 	}
 
 	public void run() {
@@ -53,12 +53,12 @@ public class ProcessBuilderClass implements Runnable{
 			
 			ProcessBuilder process = new ProcessBuilder(list);
 			
-			System.out.println("Executing Process one(pslist)");
+			System.out.println("Executing Process one("+command+")");
 
 			Process p1=process.start();
 
 			// get the working directory for volatility folder..using .directory..
-			process.directory(new File(user+"/volatility"));
+			process.directory(new File(path));
 
 			//System.out.println("DIR=>" + process.directory());
 			//System.out.println("List of commands" + process.command());

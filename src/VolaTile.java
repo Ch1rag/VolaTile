@@ -16,7 +16,7 @@
  * @version number, date last changed and author’s initials &/or what changed (very brief)
  * @author    (can have multiple authors)
  */
- 
+
 import java.io.IOException;
 
 public class VolaTile{
@@ -26,18 +26,18 @@ public class VolaTile{
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
-	
-	
+
+
 	public static void main(String[] args) throws IOException, InterruptedException{
 		// TODO Auto-generated method stub	
-	
-		
+
+
 		Configuration config=new Configuration();
 		config.addOs();
 		config.selectFile();
-		
+
 	}
-		
-		
-	}
+
+
+}
 

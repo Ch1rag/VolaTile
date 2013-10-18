@@ -46,6 +46,7 @@ public class Configuration{
 	private String version;
 	private String arch;
 	private String profile;
+	private String path;
 
 	public Configuration(){
 		os=System.getProperties().getProperty("os.name");
@@ -123,8 +124,9 @@ public class Configuration{
 
 
 		selectFile=new JFileChooser();
-
-		selectFile.setCurrentDirectory(new File(user+"/volatility"));
+		
+		
+		//selectFile.setCurrentDirectory(new File(user+"/volatility"));
 
 		selectDump.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -132,6 +134,7 @@ public class Configuration{
 				int returnVal = selectFile.showOpenDialog(selectDump);
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					path=selectFile.getSelectedFile().getParent();
 					File file = selectFile.getSelectedFile();
 					fileName=file.getName();
 					text.append("Selected dump file is:"+file.getName());
@@ -192,16 +195,16 @@ public class Configuration{
 				selectDump.setVisible(false);
 				profile=osCombo.getSelectedItem().toString();
 
-				Connections con=new Connections(fileName,profile, user);
+				Connections con=new Connections(fileName,profile,path);
 				Thread conThread = new Thread(con);
 				
-				Handles hnd=new Handles(fileName,profile, user);
+				Handles hnd=new Handles(fileName,profile, path);
 				Thread hndThread = new Thread(hnd);
 				
-				Sockets soc=new Sockets(fileName,profile, user);
+				Sockets soc=new Sockets(fileName,profile, path);
 				Thread socThread = new Thread(soc);
 				
-				Threads thd=new Threads(fileName,profile, user);
+				Threads thd=new Threads(fileName,profile, path);
 				Thread thdThread = new Thread(thd);
 				
 				ThreadExecutor te=new ThreadExecutor(conThread,hndThread,socThread,thdThread);	
@@ -223,7 +226,7 @@ public class Configuration{
 			public void done() {
 
 				try {
-					if(future.get()==null){
+					if(future.get()==null || future.isDone()){
 						gui();
 					}
 
@@ -268,7 +271,7 @@ public class Configuration{
 	
 	public void gui(){
 
-		GUI gui=new GUI(fileName,profile,user);
+		GUI gui=new GUI(fileName,profile,path);
 		gui.storeOS(profile);
 		gui.storeCmd_Mac();
 		gui.storeCmd_Win();

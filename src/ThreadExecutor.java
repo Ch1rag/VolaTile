@@ -26,9 +26,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 public class ThreadExecutor implements Runnable {
 	private static ExecutorService service = null;
-	private static volatile Future threadResult;
-	private static volatile Future processResult;
-	private Future future;
+	private Future<?> threadResult;
+	private Future<?> processResult;
+	private Future<?> hndResults;
+	private Future<?> socResults;
+	private Future<?> conResults;
 	private Thread td=new Thread();
 	private Thread tdCon=new Thread();
 	private Thread tdSoc=new Thread();
@@ -61,13 +63,13 @@ public class ThreadExecutor implements Runnable {
 	public Future<?> call() { // run the services
 	    {
 	    	threadResult=service.submit(tdThd);
-	    	future=service.submit(tdHnd);
-	    	service.submit(tdSoc);
-	    	service.submit(tdCon);
+	    	hndResults=service.submit(tdHnd);
+	    	socResults=service.submit(tdSoc);
+	    	conResults=service.submit(tdCon);
 	    	    	
 	         try {
-				if((threadResult.get()==null && future.get()==null)|| (threadResult.isDone() && future.isDone())
-						|| (threadResult.isCancelled()&&future.isCancelled())){
+				if((threadResult.get()==null && hndResults.get()==null)|| (threadResult.isDone() && hndResults.isDone())
+						|| (threadResult.isCancelled()&&hndResults.isCancelled())){
 					 
 					processResult=service.submit(td);
 					service.shutdown();

@@ -33,24 +33,25 @@ public class Sockets implements Runnable {
 	private String PID;
 	private FileReader fr = null;
 	private ArrayList<String> sockets = new ArrayList<String>();
-	private String command="handles";
-	private String user;
+	private String command="sockets";
+	private String path;
 	private String profile;
 	private String dumpFile;
 
-	// Deafult Constructor
-	Sockets() {
-	}
-
+	
 	// Overloaded constructor
 	Sockets(String pid) {
 		PID = pid;
 	}
-	public Sockets(String dumpFile,String profile, String user){
+	public Sockets(String dumpFile,String profile, String path){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
-		this.user=user;	
+		this.path=path;	
 	}
+	// Deafult Constructor
+		Sockets() {
+		}
+
 
 	public String getPID() {
 		return PID;
@@ -75,7 +76,7 @@ public class Sockets implements Runnable {
 
 			// get the working directory for volatility folder..using
 			// .directory..
-			process.directory(new File("/Users/chiragbarot/volatility"));
+			process.directory(new File(path));
 
 			// System.out.println("DIR=>" + process.directory());
 

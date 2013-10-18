@@ -34,8 +34,8 @@ public class Threads implements Runnable {
 	private String PID;
 	private FileReader fr = null;
 	private ArrayList<String> threads = new ArrayList<String>();
-	private String command="handles";
-	private String user;
+	private String command="threads";
+	private String path;
 	private String profile;
 	private String dumpFile;
 
@@ -47,10 +47,10 @@ public class Threads implements Runnable {
 	Threads(String pid) {
 		PID = pid;
 	}
-	public Threads(String dumpFile,String profile, String user){
+	public Threads(String dumpFile,String profile, String path){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
-		this.user=user;	
+		this.path=path;	
 	}
 
 	public String getPID() {
@@ -75,7 +75,7 @@ public class Threads implements Runnable {
 
 			// get the working directory for volatility folder..using
 			// .directory..
-			process.directory(new File(user+"/volatility"));
+			process.directory(new File(path));
 
 			// System.out.println("DIR=>" + process.directory());
 

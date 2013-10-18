@@ -38,9 +38,9 @@ public class Connections implements Runnable {
 	private FileReader fr = null;
 	private ArrayList<String> connections = new ArrayList<String>();
 	private String command="connections";
-	private String user;
 	private String profile;
 	private String dumpFile;
+	private String path;
 	
 
 	
@@ -48,26 +48,14 @@ public class Connections implements Runnable {
 	Connections(String pid) {
 		PID = pid;
 	}
-	public Connections(String dumpFile,String profile, String user){
+	public Connections(String dumpFile,String profile, String path){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
-		this.user=user;	
+		this.path=path;	
 	}
 	// Deafult Constructor
 		Connections() {
 		}
-  /* public String getDump(){
-	   return dumpFile;
-   }
-   public String getProfile(){
-	   return profile;
-   }
-   public String getUser(){
-	   return user;
-   }
-	public String getPID() {
-		return PID;
-	}*/
 
 	public void run() {
 		// process two..
@@ -87,7 +75,7 @@ public class Connections implements Runnable {
 
 			// get the working directory for volatility folder..using
 			// .directory..
-			process.directory(new File(user+"/volatility"));
+			process.directory(new File(path));
 
 			// System.out.println("DIR=>" + process.directory());
 

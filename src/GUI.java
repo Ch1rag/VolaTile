@@ -89,13 +89,13 @@ public class GUI {
 	private ArrayList<String> winCommands = new ArrayList<String>();
 	private ArrayList<String> os = new ArrayList<String>();
 	private String dumpFile;
-	private String user;
+	private String path;
 
 	public GUI(){}
-	public GUI(String dumpFile,String profile,String user) {
+	public GUI(String dumpFile,String profile,String path) {
 		this.dumpFile=dumpFile;
 		this.profile=profile;
-		this.user=user;
+		this.path=path;
 	}
 
 	public void storeCmd_Mac() {
@@ -350,7 +350,7 @@ public class GUI {
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				command = cmdList.getSelectedItem().toString();
-				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,user);
+				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,path);
 				Thread td = new Thread(pb);
 				td.start();
 				try {
@@ -407,7 +407,6 @@ public class GUI {
 				}
 				case 1: // psxview
 				{
-					loadButton.setVisible(true);
 					try {
 						readPsxview(rf);
 						tabPane.addTab("pslist", p1);
@@ -424,7 +423,6 @@ public class GUI {
 
 				default:
 					readRows(rf);
-
 				}
 				runButton.setVisible(true);
 				osList.setVisible(true);
@@ -461,7 +459,8 @@ public class GUI {
 							clm=2;
 						}
 						case 2: {
-							tabPane.setSelectedComponent(p1);
+							tabPane.getSelectedComponent();
+							
 							data = table.getModel()
 									.getValueAt(selectedRow, clm);
 
@@ -514,7 +513,9 @@ public class GUI {
                           
 							break;
 						}
-						case 3:
+						case 3:{
+							tabPane.getSelectedComponent();
+						}
 						case 4:{
 							tabPane.setSelectedComponent(p3);
 							clm=2;
