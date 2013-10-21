@@ -40,6 +40,7 @@ public class Handles implements Callable<Object> {
 	private String path;
 	private String profile;
 	private String dumpFile;
+	private String vol;
 
 	// Deafult Constructor
 	/*Handles() {
@@ -50,10 +51,11 @@ public class Handles implements Callable<Object> {
 		PID = pid;
 	}
 	
-	public Handles(String dumpFile,String profile, String path){
+	public Handles(String dumpFile,String profile, String path,String vol){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
 		this.path=path;	
+		this.vol=vol;
 	}
 
 	public String getPID() {
@@ -64,7 +66,7 @@ public class Handles implements Callable<Object> {
 		// process two..
 		try {
 			list.add("python");
-			list.add("vol.py");
+			list.add(vol);
 			list.add("--profile="+profile);
 			list.add("-f");
 			list.add(dumpFile);
@@ -111,7 +113,7 @@ public class Handles implements Callable<Object> {
 	public ArrayList<String> readFile() throws IOException {
 		BufferedReader br = null;
 		try {
-			fr = new FileReader("/Users/chiragbarot/volatility/Handles.txt");
+			fr = new FileReader(path+"/"+command+".txt");
 			br = new BufferedReader(fr);
             int i=0;
 			String line;

@@ -32,19 +32,21 @@ public class ProcessBuilderClass implements Runnable{
 	private String dumpFile;
 	private String profile;
 	private String path;
+	private String vol;
 	
-	public ProcessBuilderClass(String command,String dumpFile,String profile, String path){
+	public ProcessBuilderClass(String command,String dumpFile,String profile, String path,String vol){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
 		this.command=command;
 		this.path=path;
+		this.vol=vol;
 	}
 
 	public void run() {
 
 		try{
 			list.add("python");
-			list.add("vol.py");
+			list.add(vol);
 			list.add("--profile="+profile);
 			list.add("-f");
 			list.add(dumpFile);

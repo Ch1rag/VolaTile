@@ -43,6 +43,7 @@ public class Connections implements Callable<Object> {
 	private String profile;
 	private String dumpFile;
 	private String path;
+	private String vol;
 	
 
 	
@@ -50,10 +51,11 @@ public class Connections implements Callable<Object> {
 	Connections(String pid) {
 		PID = pid;
 	}
-	public Connections(String dumpFile,String profile, String path){
+	public Connections(String dumpFile,String profile, String path,String vol){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
 		this.path=path;	
+		this.vol=vol;
 	}
 	// Deafult Constructor
 		/*Connections() {
@@ -64,7 +66,7 @@ public class Connections implements Callable<Object> {
 		// process two..
 		try {
 			list.add("python");
-			list.add("vol.py");
+			list.add(vol);
 			list.add("--profile="+profile);
 			list.add("-f");
 			list.add(dumpFile);
@@ -110,7 +112,7 @@ public class Connections implements Callable<Object> {
 	public ArrayList<String> readFile() throws IOException {
 		BufferedReader br = null;
 		try {
-			fr = new FileReader("/Users/chiragbarot/volatility/Connections.txt");
+			fr = new FileReader(path+"/"+command+".txt");
 			br = new BufferedReader(fr);
 
 			String line;

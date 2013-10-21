@@ -40,6 +40,7 @@ public class Threads implements Callable<Object> {
 	private String path;
 	private String profile;
 	private String dumpFile;
+	private String vol;
 
 	// Deafult Constructor
 	/*Threads() {
@@ -49,10 +50,11 @@ public class Threads implements Callable<Object> {
 	Threads(String pid) {
 		PID = pid;
 	}
-	public Threads(String dumpFile,String profile, String path){
+	public Threads(String dumpFile,String profile, String path,String vol){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
 		this.path=path;	
+		this.vol=vol;
 	}
 
 	public String getPID() {
@@ -63,7 +65,7 @@ public class Threads implements Callable<Object> {
 		// process two..
 		try {
 			list.add("python");
-			list.add("vol.py");
+			list.add(vol);
 			list.add("--profile="+profile);
 			list.add("-f");
 			list.add(dumpFile);
@@ -109,7 +111,7 @@ public class Threads implements Callable<Object> {
 	public ArrayList<String> readFile() throws IOException {
 		BufferedReader br = null;
 		try {
-			fr = new FileReader("/Users/chiragbarot/volatility/Threads.txt");
+			fr = new FileReader(path+"/"+command+".txt");
 			br = new BufferedReader(fr);
 			String line;
 

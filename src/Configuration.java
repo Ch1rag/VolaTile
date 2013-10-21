@@ -35,30 +35,31 @@ public class Configuration{
 	private JFrame frame;
 	private JFileChooser selectFile;
 	private JButton selectDump;
+	private JButton volButton;
 	private String fileName;
+	private String vol;
 	private JButton openGUI;
 	private String os;
 	private JButton profileButton;
 	private JComboBox osCombo;
 	private List<String> osProfiles=new ArrayList<String>(); 
-	private JTextArea text;
-	private String user;
+	private JTextArea text;;
 	private String version;
 	private String arch;
 	private String profile;
 	private String path;
+	private JFileChooser selectVol;
+	private String volPath;
 
 	public Configuration(){
 		os=System.getProperties().getProperty("os.name");
 		version=System.getProperties().getProperty("os.version");
 		arch=System.getProperties().getProperty("os.arch");
-
 	}
 	public void addOs(){
 		osProfiles.add("WinXPSP2x86");
 		osProfiles.add("Mac10_8_4_64bitx64");
 	}
-
 
 	public void selectFile(){
 
@@ -66,7 +67,7 @@ public class Configuration{
 		final Container cp = frame.getContentPane();
 
 		cp.setLayout(new BorderLayout());
-		final JPanel p1=new JPanel(new GridLayout());
+		final JPanel p1=new JPanel(new GridLayout(2,2));
 		JPanel p2=new JPanel(new GridLayout(1,1));
 		final JPanel p3=new JPanel(new GridLayout(1,1));
 
@@ -78,6 +79,7 @@ public class Configuration{
 		p3.setBorder(new TitledBorder(new EtchedBorder(),""));
 
 		selectDump=new JButton("Select Image");
+		volButton=new JButton("vol.py");
 		openGUI=new JButton("Open VolaTile");
 		profileButton=new JButton("Detect Profile");
 		osCombo=new JComboBox();
@@ -100,6 +102,7 @@ public class Configuration{
 
 		p1.add(selectDump,FlowLayout.LEFT);
 		p1.add(osCombo,FlowLayout.LEFT);
+		p1.add(volButton,FlowLayout.LEFT);
 
 		p2.add(text,BorderLayout.NORTH);
 
@@ -121,9 +124,26 @@ public class Configuration{
 		text.append("OS Arch    :"+"\t"+arch+"\n");
 		
 		selectFile=new JFileChooser();
+		selectVol=new JFileChooser();
 		
 		
 		//selectFile.setCurrentDirectory(new File(user+"/volatility"));
+		volButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				int returnVal = selectVol.showOpenDialog(volButton);
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					volPath=selectVol.getSelectedFile().getParent();
+					selectFile.setCurrentDirectory(new File(volPath));
+					File volFile = selectVol.getSelectedFile();
+					vol=volFile.getName();
+					text.append("volatility python filename:"+vol+"\n");
+					
+					
+				}
+			}
+		});
 
 		selectDump.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -132,8 +152,9 @@ public class Configuration{
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					path=selectFile.getSelectedFile().getParent();
-					selectFile.setCurrentDirectory(new File(path));
+					//selectFile.setCurrentDirectory(new File(path));
 					File file = selectFile.getSelectedFile();
+					System.out.println(path);
 					fileName=file.getName();
 					text.append("Selected dump file is:"+file.getName());
 					p3.setVisible(true);
@@ -146,7 +167,7 @@ public class Configuration{
 			private Void future;
 			@Override
 			public Void doInBackground() throws InterruptedException, IOException {
-				new ImageInfo(fileName,path);
+				new ImageInfo(fileName,path,vol);
 				text.setText("");
 				text.setVisible(true);
 				text.setBorder(new TitledBorder(new EtchedBorder(), "Detected Profile"));
@@ -263,7 +284,8 @@ public class Configuration{
 			public void actionPerformed(ActionEvent e) {
 				profile=osCombo.getSelectedItem().toString();
                //worker1.execute();
-				GUI gui=new GUI(fileName,profile,path);
+				System.out.println(vol);
+				GUI gui=new GUI(fileName,profile,path,vol);
 				gui.storeOS(profile);
 				gui.storeCmd_Mac();
 				gui.storeCmd_Win();
@@ -294,7 +316,7 @@ public class Configuration{
 
 		FileReader r = null;
 		try {
-			r = new FileReader("/Users/chiragbarot/volatility/imageinfo.txt");
+			r = new FileReader(path+"imageinfo.txt");
 			BufferedReader br = new BufferedReader(r);
 			String line;
 

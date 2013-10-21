@@ -83,6 +83,7 @@ public class GUI {
 	private JTabbedPane tabPane;
 	private JButton configButton;
 	private String profile;
+	private String vol;
 	private Object data;
 	private Color bg = new Color(249, 246, 244);
 	// private String OS=null;
@@ -97,10 +98,11 @@ public class GUI {
 
 	public GUI(){
 	}
-	public GUI(String dumpFile,String profile,String path) {
+	public GUI(String dumpFile,String profile,String path,String vol) {
 		this.dumpFile=dumpFile;
 		this.profile=profile;
 		this.path=path;
+		this.vol=vol;
 	}
 
 	public void storeCmd_Mac() {
@@ -120,9 +122,6 @@ public class GUI {
 
 	public void storeOS(String profile) {
 		os.add(profile);
-		/*
-		 * os.add("Windows"); os.add("Linux");
-		 */
 	}
 
 	public void makeFrame() {
@@ -132,15 +131,15 @@ public class GUI {
 		final Container cp = frame.getContentPane();
 		cp.setLayout(new BorderLayout());
 
-		/*// create table
+		// create table
 		createTable();
-*/
+
 		// Create Panels
 		JPanel panelBL = new JPanel(new BorderLayout());
 		final JPanel panelTX = new JPanel(new GridLayout());
 		final JPanel panelFL1 = new JPanel(new GridLayout(1, 1));
 		panelFL1.setVisible(true);
-		splitPane.setDividerLocation(500);
+		
 		// JPanel panelFL2 = new JPanel(new FlowLayout());
 
 		// set border
@@ -158,6 +157,7 @@ public class GUI {
 		// Create a split pane with the two scroll panes in it.
 		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelTX, panelBL);
 		splitPane.setOneTouchExpandable(true);
+		splitPane.setDividerLocation(500);
 		
 
 		// Provide minimum sizes for the two components in the split pane
@@ -269,8 +269,6 @@ public class GUI {
 		textArea = new JTextArea(30, 30);
 		textArea.setBackground(bg);
 		textArea.append("text area");
-		// create table
-		createTable();
 
 		textArea.add(table);
 		
@@ -367,18 +365,18 @@ public class GUI {
 			public ArrayList<Future<?>> doInBackground() throws InterruptedException, ExecutionException {
 				
 				
-				Connections con=new Connections(dumpFile,profile,path);
+				Connections con=new Connections(dumpFile,profile,path,vol);
 				//Thread conThread = new Thread(con);
 				
 				
-				Handles hnd=new Handles(dumpFile,profile, path);
+				Handles hnd=new Handles(dumpFile,profile, path,vol);
 				//Thread hndThread = new Thread(hnd);
 				
 				
-				Sockets soc=new Sockets(dumpFile,profile, path);
+				Sockets soc=new Sockets(dumpFile,profile, path,vol);
 				//Thread socThread = new Thread(soc);
 				
-				Threads thd=new Threads(dumpFile,profile, path);
+				Threads thd=new Threads(dumpFile,profile, path,vol);
 				//Thread thdThread = new Thread(thd);
 				
 				ThreadExecutor te=new ThreadExecutor(con,hnd,soc,thd);	
@@ -428,7 +426,7 @@ public class GUI {
 				if(futures.get(3).isDone()==true){
 					panelFL1.setVisible(true);
 					panelTX.setVisible(true);
-					
+				
 					loadButton.setVisible(true);
 					
 				}
@@ -443,7 +441,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 			   
 				command = cmdList.getSelectedItem().toString();
-				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,path);
+				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,path,vol);
 				Random random=new Random();
 				int time=random.nextInt(10000);
 				Thread td = new Thread(pb);
@@ -699,7 +697,7 @@ public class GUI {
 	public BufferedReader readFile() {
 		FileReader r = null;
 		try {
-			r = new FileReader("/Users/chiragbarot/volatility/"+command+".txt");
+			r = new FileReader(path+"/"+command+".txt");
 		} catch (FileNotFoundException e1) {
 			Component frame = null;
 			// TODO Auto-generated catch block

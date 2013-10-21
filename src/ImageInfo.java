@@ -14,13 +14,13 @@ import javax.swing.JOptionPane;
 
 public class ImageInfo {
 	private List<String> list = new ArrayList<String>();
-	private String path;
+	
 
 	public ImageInfo(){}
-	public ImageInfo(String fileName,String path) throws IOException, InterruptedException {
+	public ImageInfo(String fileName,String path,String vol) throws IOException, InterruptedException {
 		if(fileName.contains("mach-o")){
 			list.add("python");
-			list.add("vol.py");
+			list.add(vol);
 			list.add("--info");
 			list.add("|");
 			list.add("grep");
@@ -72,7 +72,7 @@ public class ImageInfo {
 				Process p1=process.start();
 
 				// get the working directory for volatility folder..using .directory..
-				process.directory(new File("/Users/chiragbarot/volatility"));
+				process.directory(new File(path));
 
 				//System.out.println("DIR=>" + process.directory());
 				System.out.println("List of commands" + process.command());

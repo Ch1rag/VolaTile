@@ -39,16 +39,18 @@ public class Sockets implements Callable<Object> {
 	private String path;
 	private String profile;
 	private String dumpFile;
+	private String vol;
 
 	
 	// Overloaded constructor
 	Sockets(String pid) {
 		PID = pid;
 	}
-	public Sockets(String dumpFile,String profile, String path){
+	public Sockets(String dumpFile,String profile, String path,String vol){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
 		this.path=path;	
+		this.vol=vol;
 	}
 	// Deafult Constructor
 		/*Sockets() {
@@ -63,7 +65,7 @@ public class Sockets implements Callable<Object> {
 		// process two..
 		try {
 			list.add("python");
-			list.add("vol.py");
+			list.add(vol);
 			list.add("--profile="+profile);
 			list.add("-f");
 			list.add(dumpFile);
@@ -111,7 +113,7 @@ public class Sockets implements Callable<Object> {
 	public ArrayList<String> readFile() throws IOException {
 		BufferedReader br = null;
 		try {
-			fr = new FileReader("/Users/chiragbarot/volatility/Sockets.txt");
+			fr = new FileReader(path+"/"+command+".txt");
 			br = new BufferedReader(fr);
 
 			String line;
