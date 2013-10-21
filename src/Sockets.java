@@ -26,8 +26,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
-public class Sockets implements Runnable {
+public class Sockets implements Callable<Object> {
 
 	private List<String> list = new ArrayList<String>();
 	private String PID;
@@ -49,15 +51,15 @@ public class Sockets implements Runnable {
 		this.path=path;	
 	}
 	// Deafult Constructor
-		Sockets() {
-		}
+		/*Sockets() {
+		}*/
 
 
 	public String getPID() {
 		return PID;
 	}
 
-	public void run() {
+	public Future<?> call() {
 		// process two..
 		try {
 			list.add("python");
@@ -103,6 +105,7 @@ public class Sockets implements Runnable {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public ArrayList<String> readFile() throws IOException {

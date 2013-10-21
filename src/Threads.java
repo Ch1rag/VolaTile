@@ -26,9 +26,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
-public class Threads implements Runnable {
+public class Threads implements Callable<Object> {
 
 	private List<String> list = new ArrayList<String>();
 	private String PID;
@@ -40,8 +42,8 @@ public class Threads implements Runnable {
 	private String dumpFile;
 
 	// Deafult Constructor
-	Threads() {
-	}
+	/*Threads() {
+	}*/
 
 	// Overloaded constructor
 	Threads(String pid) {
@@ -57,7 +59,7 @@ public class Threads implements Runnable {
 		return PID;
 	}
 
-	public void run() {
+	public Future<?> call() {
 		// process two..
 		try {
 			list.add("python");
@@ -101,6 +103,7 @@ public class Threads implements Runnable {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public ArrayList<String> readFile() throws IOException {

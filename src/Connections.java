@@ -30,8 +30,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
-public class Connections implements Runnable {
+public class Connections implements Callable<Object> {
 
 	private List<String> list = new ArrayList<String>();
 	private String PID;
@@ -54,10 +56,11 @@ public class Connections implements Runnable {
 		this.path=path;	
 	}
 	// Deafult Constructor
-		Connections() {
-		}
+		/*Connections() {
+		}*/
 
-	public void run() {
+	public Future<?> call() {
+		
 		// process two..
 		try {
 			list.add("python");
@@ -101,6 +104,7 @@ public class Connections implements Runnable {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public ArrayList<String> readFile() throws IOException {

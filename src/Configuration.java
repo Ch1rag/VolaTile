@@ -50,7 +50,6 @@ public class Configuration{
 
 	public Configuration(){
 		os=System.getProperties().getProperty("os.name");
-		user=System.getProperties().getProperty("user.home");
 		version=System.getProperties().getProperty("os.version");
 		arch=System.getProperties().getProperty("os.arch");
 
@@ -83,7 +82,7 @@ public class Configuration{
 		profileButton=new JButton("Detect Profile");
 		osCombo=new JComboBox();
 
-
+		
 		java.util.Iterator<String> iterCmd = osProfiles.iterator();
 		while (iterCmd.hasNext()) {
 			osCombo.addItem(iterCmd.next());
@@ -121,8 +120,6 @@ public class Configuration{
 		text.append("Version    :"+"\t"+version+"\n");
 		text.append("OS Arch    :"+"\t"+arch+"\n");
 		
-
-
 		selectFile=new JFileChooser();
 		
 		
@@ -135,6 +132,7 @@ public class Configuration{
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					path=selectFile.getSelectedFile().getParent();
+					selectFile.setCurrentDirectory(new File(path));
 					File file = selectFile.getSelectedFile();
 					fileName=file.getName();
 					text.append("Selected dump file is:"+file.getName());
@@ -148,7 +146,7 @@ public class Configuration{
 			private Void future;
 			@Override
 			public Void doInBackground() throws InterruptedException, IOException {
-				new ImageInfo(fileName);
+				new ImageInfo(fileName,path);
 				text.setText("");
 				text.setVisible(true);
 				text.setBorder(new TitledBorder(new EtchedBorder(), "Detected Profile"));
@@ -184,10 +182,11 @@ public class Configuration{
 
 		};
 		
-		final SwingWorker<Future, Void> worker1 = new SwingWorker<Future, Void>() {
-			private Future<?> future;
+		/*final SwingWorker<ArrayList<Future<?>>, Void> worker1 = new SwingWorker<ArrayList<Future<?>>, Void>() {
+			//private Future<?> future;
+			private ArrayList<Future<?>> futures=new ArrayList<Future<?>>();
 			@Override
-			public Future<?> doInBackground() throws InterruptedException {
+			public ArrayList<Future<?>> doInBackground() throws InterruptedException, ExecutionException {
 				p1.setVisible(false);
 				profileButton.setVisible(false);
 				text.setText("VolaTile is loading..Please wait...");
@@ -197,6 +196,7 @@ public class Configuration{
 
 				Connections con=new Connections(fileName,profile,path);
 				Thread conThread = new Thread(con);
+				
 				
 				Handles hnd=new Handles(fileName,profile, path);
 				Thread hndThread = new Thread(hnd);
@@ -209,8 +209,9 @@ public class Configuration{
 				
 				ThreadExecutor te=new ThreadExecutor(conThread,hndThread,socThread,thdThread);	
 				
+				
 				try {
-					future=te.executor();	
+					futures=te.executor();
 					
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
@@ -219,16 +220,21 @@ public class Configuration{
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				return future;
+				return futures;
 			}
 
 			@Override
 			public void done() {
 
 				try {
-					if(future.get()==null || future.isDone()){
+					for(Future<?> future:futures){
+						
+					}
+					if(futures.get(2).get()==null || futures.get(2).isDone()){
 						gui();
 					}
+					
+					
 
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -241,7 +247,7 @@ public class Configuration{
 			}
 
 		};
-
+*/
 		profileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -255,8 +261,14 @@ public class Configuration{
 		
 		openGUI.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				profile=osCombo.getSelectedItem().toString();
+               //worker1.execute();
+				GUI gui=new GUI(fileName,profile,path);
+				gui.storeOS(profile);
+				gui.storeCmd_Mac();
+				gui.storeCmd_Win();
+				gui.makeFrame();	
 				
-               worker1.execute();
 			}	
 		});
 		
@@ -269,14 +281,14 @@ public class Configuration{
 
 	}
 	
-	public void gui(){
+	/*public void gui(){
 
 		GUI gui=new GUI(fileName,profile,path);
 		gui.storeOS(profile);
 		gui.storeCmd_Mac();
 		gui.storeCmd_Win();
 		gui.makeFrame();	
-	}
+	}*/
 
 	public void readFile() throws IOException {
 

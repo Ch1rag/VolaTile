@@ -37,7 +37,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Random;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,8 +93,10 @@ public class GUI {
 	private ArrayList<String> os = new ArrayList<String>();
 	private String dumpFile;
 	private String path;
+	private SwingWorker<ArrayList<Future<?>>, Void> worker;
 
-	public GUI(){}
+	public GUI(){
+	}
 	public GUI(String dumpFile,String profile,String path) {
 		this.dumpFile=dumpFile;
 		this.profile=profile;
@@ -127,13 +132,15 @@ public class GUI {
 		final Container cp = frame.getContentPane();
 		cp.setLayout(new BorderLayout());
 
-		// create table
+		/*// create table
 		createTable();
-
+*/
 		// Create Panels
 		JPanel panelBL = new JPanel(new BorderLayout());
-		JPanel panelTX = new JPanel(new GridLayout());
-		JPanel panelFL1 = new JPanel(new GridLayout(1, 1));
+		final JPanel panelTX = new JPanel(new GridLayout());
+		final JPanel panelFL1 = new JPanel(new GridLayout(1, 1));
+		panelFL1.setVisible(true);
+		splitPane.setDividerLocation(500);
 		// JPanel panelFL2 = new JPanel(new FlowLayout());
 
 		// set border
@@ -151,7 +158,7 @@ public class GUI {
 		// Create a split pane with the two scroll panes in it.
 		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelTX, panelBL);
 		splitPane.setOneTouchExpandable(true);
-		splitPane.setDividerLocation(500);
+		
 
 		// Provide minimum sizes for the two components in the split pane
 		Dimension minimumSize = new Dimension(100, 50);
@@ -160,16 +167,16 @@ public class GUI {
 
 		// panels for tabs
 		final JPanel p1 = new JPanel(new GridLayout());
-		tabPane.addTab("Connections", p1);
+		//tabPane.addTab("Connections", p1);
 
 		final JPanel p2 = new JPanel(new GridLayout());
-		tabPane.addTab("Sockets", p2);
+		//tabPane.addTab("Sockets", p2);
 
 		final JPanel p3 = new JPanel(new GridLayout());
-		tabPane.addTab("Threads", p3);
+		//tabPane.addTab("Threads", p3);
 
 		final JPanel p4 = new JPanel(new GridLayout());
-		tabPane.addTab("Handles", p4);
+		//tabPane.addTab("Handles", p4);
 		tabPane.setPreferredSize(new Dimension(300, 300));
 
 		// Add commands to combobox list
@@ -261,7 +268,12 @@ public class GUI {
 
 		textArea = new JTextArea(30, 30);
 		textArea.setBackground(bg);
+		textArea.append("text area");
+		// create table
+		createTable();
+
 		textArea.add(table);
+		
 
 		// Add scroll bar to tab panels
 		scrollTable = new JScrollPane(table);
@@ -301,6 +313,7 @@ public class GUI {
 		p2.add(scroll_p2Text);
 		p3.add(scroll_p3Text);
 		p4.add(scroll_p4Text);
+		
 
 		// Set frame elements
 		frame.setTitle("VolaTile");
@@ -345,16 +358,99 @@ public class GUI {
 			}
 
 		};*/
+		
+		//Swing worker for loading tabs
+		worker = new SwingWorker<ArrayList<Future<?>>, Void>() {
+			//private Future<?> future;
+			private ArrayList<Future<?>> futures=new ArrayList<Future<?>>();
+			@Override
+			public ArrayList<Future<?>> doInBackground() throws InterruptedException, ExecutionException {
+				
+				
+				Connections con=new Connections(dumpFile,profile,path);
+				//Thread conThread = new Thread(con);
+				
+				
+				Handles hnd=new Handles(dumpFile,profile, path);
+				//Thread hndThread = new Thread(hnd);
+				
+				
+				Sockets soc=new Sockets(dumpFile,profile, path);
+				//Thread socThread = new Thread(soc);
+				
+				Threads thd=new Threads(dumpFile,profile, path);
+				//Thread thdThread = new Thread(thd);
+				
+				ThreadExecutor te=new ThreadExecutor(con,hnd,soc,thd);	
+				
+				try {
+					futures=te.executor();
+					
+					if(futures.get(0).get()==null || futures.get(0).isDone()){
+						tabPane.addTab("Connections", p1);
+						tabPane.setSelectedComponent(p1);
+						p1Text.append("Connections are available!");
+						
+					}
+					if(futures.get(1).get()==null || futures.get(1).isDone()){
+						tabPane.addTab("Sockets", p2);	
+						tabPane.setSelectedComponent(p2);
+						p2Text.append("Sockets are available!");	
+					}
+					
+				   if(futures.get(2).get()==null || futures.get(2).isDone()){
+						
+						tabPane.addTab("Threads", p3);
+						tabPane.setSelectedComponent(p3);
+						p3Text.append("Threads are available!");
+					}
+				   if(futures.get(3).get()==null || futures.get(3).isDone()){
+						
+						tabPane.addTab("Handles", p4);
+						tabPane.setSelectedComponent(p4);
+						p4Text.append("Handles are available!");
+					}
+					
+					
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				return futures;
+			}
+
+			@Override
+			public void done() {
+
+				if(futures.get(3).isDone()==true){
+					panelFL1.setVisible(true);
+					panelTX.setVisible(true);
+					
+					loadButton.setVisible(true);
+					
+				}
+
+			}
+
+		};
+		worker.execute();
 
 		// Button event handler
 		runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+			   
 				command = cmdList.getSelectedItem().toString();
 				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,path);
+				Random random=new Random();
+				int time=random.nextInt(10000);
 				Thread td = new Thread(pb);
 				td.start();
+				
 				try {
-					Thread.sleep(10000);
+					Thread.sleep(time);
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -584,7 +680,7 @@ public class GUI {
 		table = new JTable();
 		table.setBackground(Color.DARK_GRAY);
 		tModel = new DefaultTableModel(0, 0);
-
+        
 		// Table row settings
 		table.setRowHeight(22);
 		table.setModel(tModel);

@@ -26,9 +26,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 
-public class Handles implements Runnable {
+public class Handles implements Callable<Object> {
 
 	private List<String> list = new ArrayList<String>();
 	private String PID;
@@ -40,8 +42,8 @@ public class Handles implements Runnable {
 	private String dumpFile;
 
 	// Deafult Constructor
-	Handles() {
-	}
+	/*Handles() {
+	}*/
 
 	// Overloaded constructor
 	Handles(String pid) {
@@ -58,7 +60,7 @@ public class Handles implements Runnable {
 		return PID;
 	}
 
-	public void run() {
+	public Future<?> call() {
 		// process two..
 		try {
 			list.add("python");
@@ -103,6 +105,7 @@ public class Handles implements Runnable {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	public ArrayList<String> readFile() throws IOException {
