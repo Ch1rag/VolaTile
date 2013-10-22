@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.regex.Pattern;
 
 public class Threads implements Callable<Object> {
 
@@ -82,7 +81,6 @@ public class Threads implements Callable<Object> {
 			process.directory(new File(volPath));
 
 			// System.out.println("DIR=>" + process.directory());
-
 			// System.out.println("List of commands" + process.command());
 
 			p2 = process.start();
@@ -100,8 +98,6 @@ public class Threads implements Callable<Object> {
 			p2.destroy();
 			System.out.println("Process four is completed!");
 
-			// Process two psxview
-
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -111,8 +107,7 @@ public class Threads implements Callable<Object> {
 	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {
-			File file=null;
-			String s=file.separator;
+			String s=File.separator;
 			fr = new FileReader(volPath+s+command+".txt");
 			br = new BufferedReader(fr);
 			String line;

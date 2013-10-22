@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
 
 public class Handles implements Callable<Object> {
 
@@ -113,8 +112,7 @@ public class Handles implements Callable<Object> {
 	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {
-			File file=null;
-			String s=file.separator;
+			String s=File.separator;
 			fr = new FileReader(volPath+s+command+".txt");
 			br = new BufferedReader(fr);
             int i=0;

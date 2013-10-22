@@ -20,32 +20,27 @@
  
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-
-public class ProcessBuilderClass implements Runnable{
+public class ProcessBuilderClass implements Callable<Object>{
 	private List<String> list = new ArrayList<String>();
 	private String command;
 	private String dumpFile;
 	private String profile;
-	private String path;
 	private String vol;
 	private String volPath;
 	
-	public ProcessBuilderClass(String command,String dumpFile,String profile, String path,String vol,String volPath){
+	public ProcessBuilderClass(String command,String dumpFile,String profile,String vol,String volPath){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
 		this.command=command;
-		this.path=path;
 		this.vol=vol;
 		this.volPath=volPath;
 		
 	}
 
-	public void run() {
+	public Future<?> call() {
 
 		try{
 			list.add("python");
@@ -65,19 +60,16 @@ public class ProcessBuilderClass implements Runnable{
 			// get the working directory for volatility folder..using .directory..
 			process.directory(new File(volPath));
 
-			System.out.println("DIR=>" + process.directory());
+			//System.out.println("DIR=>" + process.directory());
 			//System.out.println("List of commands" + process.command());
 			p1=process.start();
 
 			InputStream is = p1.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
-
 			String line;
-
 			while ((line = br.readLine()) != null) {
 				System.out.println(line.split("\\s+"));
-
 			}
 			br.close();
 			p1.destroy();
@@ -85,15 +77,13 @@ public class ProcessBuilderClass implements Runnable{
 			p1.getErrorStream();
 			String done="Process one is completed!";
 			System.out.println(done);
-       
-			// Clear command..
-			list.clear();
-			
+			list.clear();	
 		}
 
 		catch(Throwable e){
-			e.printStackTrace();
+			System.out.println("File not found"+e.getMessage());
 		}
+		return null;
 
 	}
 

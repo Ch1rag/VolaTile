@@ -113,8 +113,7 @@ public class Sockets implements Callable<Object> {
 	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {
-			File file=null;
-			String s=file.separator;
+			String s=File.separator;
 			fr = new FileReader(volPath+s+command+".txt");
 			br = new BufferedReader(fr);
 
@@ -122,14 +121,12 @@ public class Sockets implements Callable<Object> {
 			int i=0;
 			do{
 				line = br.readLine();
-				//System.out.println(line);
 				sockets.add(" "+line+"\n");
 				i++;
 			}while(i!=2);
 	
 			while ((line = br.readLine()) != null) {
 				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
-						//System.out.println(line);
 						sockets.add(line +"\n");
 					}
 			}

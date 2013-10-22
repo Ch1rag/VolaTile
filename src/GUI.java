@@ -55,13 +55,14 @@ public class GUI {
 	private JComboBox cmdList;
 	private JComboBox osList;
 	private JTextArea textArea;
+	private JTextArea output;
 	// table text areas
 	private JTextArea p1Text;
 	private JTextArea p2Text;
 	private JTextArea p3Text;
 	private JTextArea p4Text;
-	private String done = "Process one is completed!";
-
+    private JRadioButton psxview;
+    private JRadioButton pslist;
 	private JSplitPane splitPane;
 
 	private JScrollPane scrollTable;
@@ -82,7 +83,6 @@ public class GUI {
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
 	private JTabbedPane tabPane;
-	private JButton configButton;
 	private String profile;
 	private String vol;
 	private Object data;
@@ -94,22 +94,20 @@ public class GUI {
 	private ArrayList<String> winCommands = new ArrayList<String>();
 	private ArrayList<String> os = new ArrayList<String>();
 	private String dumpFile;
-	private String path;
 	private String volPath;
 	private SwingWorker<ArrayList<Future<?>>, Void> worker;
 
 	public GUI(){
 	}
-	public GUI(String dumpFile,String profile,String path,String vol,String volPath) {
+	public GUI(String dumpFile,String profile,String vol,String volPath) {
 		this.dumpFile=dumpFile;
 		this.profile=profile;
-		this.path=path;
-		this.vol=vol;
 		this.volPath=volPath;
+		this.vol=vol;	
 	}
 	public String getPath(){
-		return volPath;
-	}
+			return volPath;
+		 	}
 
 	public void storeCmd_Mac() {
 		macCommands.add("mac_pslist");
@@ -139,13 +137,12 @@ public class GUI {
 
 		// create table
 		createTable();
-		getPath();
 
 		// Create Panels
 		JPanel panelBL = new JPanel(new BorderLayout());
 		final JPanel panelTX = new JPanel(new GridLayout());
 		final JPanel panelFL1 = new JPanel(new GridLayout(1, 1));
-		panelFL1.setVisible(true);
+		
 		
 		// JPanel panelFL2 = new JPanel(new FlowLayout());
 
@@ -153,14 +150,14 @@ public class GUI {
 		panelTX.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		panelBL.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		panelBL.setBorder(new TitledBorder(new EtchedBorder(), "Tabs Area"));
-		panelTX.setBorder(new TitledBorder(new EtchedBorder(), command));
+	    panelTX.setBorder(new TitledBorder(new EtchedBorder(), command));
 		panelFL1.setBorder(new TitledBorder(new EtchedBorder(),
 				"Profile Selection"));
 
 		// create tab pane
 		tabPane = new JTabbedPane();
 		
-
+		
 		// Create a split pane with the two scroll panes in it.
 		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelTX, panelBL);
 		splitPane.setOneTouchExpandable(true);
@@ -174,16 +171,9 @@ public class GUI {
 
 		// panels for tabs
 		final JPanel p1 = new JPanel(new GridLayout());
-		//tabPane.addTab("Connections", p1);
-
 		final JPanel p2 = new JPanel(new GridLayout());
-		//tabPane.addTab("Sockets", p2);
-
 		final JPanel p3 = new JPanel(new GridLayout());
-		//tabPane.addTab("Threads", p3);
-
 		final JPanel p4 = new JPanel(new GridLayout());
-		//tabPane.addTab("Handles", p4);
 		tabPane.setPreferredSize(new Dimension(300, 300));
 
 		// Add commands to combobox list
@@ -214,32 +204,18 @@ public class GUI {
 			osList.addItem(iterOs.next());
 		}
 		
-		/*// Populate available commands for selected OS
-				osList.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-
-						if (osList.getSelectedItem().toString().contains("Mac")) {
-							cmdList.removeAllItems();
-							java.util.Iterator<String> iterCmd = macCommands.iterator();
-							while (iterCmd.hasNext()) {
-								cmdList.addItem(iterCmd.next());
-							}
-						} else if (osList.getSelectedItem().toString().contains("Win")) {
-							cmdList.removeAllItems();
-							java.util.Iterator<String> iterOs = winCommands.iterator();
-							while (iterOs.hasNext()) {
-								cmdList.addItem(iterOs.next());
-							}
-						}
-					}
-				});*/
-
-
 		// Define Components and initialize them
-
 		runButton = new JButton("Run");
 		loadButton = new JButton("Load");
-		configButton = new JButton("Config");
+		/*
+		//radio button
+		psxview=new JRadioButton("psxview");
+		pslist=new JRadioButton("pslist");
+		pslist.setSelected(true);
+	    
+		ButtonGroup group=new ButtonGroup();
+		group.add(psxview);
+		group.add(pslist);*/
 
 		// Text area to add to tab panels
 		p1Text = new JTextArea(50, 50);
@@ -274,12 +250,13 @@ public class GUI {
 		p4Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
 		textArea = new JTextArea(30, 30);
-		textArea.setBackground(bg);
 		textArea.append("text area");
-
 		textArea.add(table);
+		textArea.setVisible(false);
 		
-
+		output = new JTextArea(30, 30);
+		output.setText("text area");
+		
 		// Add scroll bar to tab panels
 		scrollTable = new JScrollPane(table);
 		scroll_p1Text = new JScrollPane(p1Text);
@@ -289,7 +266,7 @@ public class GUI {
 
 		loadButton.setVisible(false);
 		runButton.setVisible(true);
-		configButton.setVisible(false);
+		//configButton.setVisible(false);
 
 		// panelFL2.add(panelBL);
 		// cp.add(panelBL, BorderLayout.SOUTH);
@@ -299,17 +276,19 @@ public class GUI {
 
 		// Add components here
 		panelTX.add(scrollTable);
+		panelTX.add(output);
 		panelBL.add(scroll_p1Text);
 		panelBL.add(scroll_p2Text);
 		panelBL.add(scroll_p3Text);
 		panelBL.add(scroll_p4Text);
 
 		// panelFL1.add(l1,FlowLayout.LEFT);
+		
 		panelFL1.add(runButton, FlowLayout.LEFT);
 		panelFL1.add(cmdList, FlowLayout.LEFT);
 		panelFL1.add(osList, FlowLayout.LEFT);
 		panelFL1.add(loadButton, FlowLayout.LEADING);
-		panelFL1.add(configButton, FlowLayout.LEADING);
+		panelFL1.setVisible(false);
 
 		panelBL.add(tabPane, BorderLayout.CENTER);
 
@@ -318,7 +297,6 @@ public class GUI {
 		p2.add(scroll_p2Text);
 		p3.add(scroll_p3Text);
 		p4.add(scroll_p4Text);
-		
 
 		// Set frame elements
 		frame.setTitle("VolaTile");
@@ -328,79 +306,38 @@ public class GUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		
-		/*final SwingWorker worker = new SwingWorker<String, Void>() {
-			
-			public String doInBackground() throws InterruptedException {
-				command = cmdList.getSelectedItem().toString();
-				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,user);
-				Thread td = new Thread(pb);
-				td.start();
-				Thread.sleep(10000);
-				new ThreadExecutor(td);
-				return done;
-			}
-
-			@Override
-			public void done() {
-				try {
-					textArea.setText(get());
-					loadButton.setVisible(true);
-					
-					cmdList.setVisible(false);
-					osList.setVisible(false);
-					runButton.setVisible(false);
-					textArea.setText("");
-					tModel.setRowCount(0);
-					tModel.setColumnIdentifiers(columnTitles);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-
-		};*/
-		
 		//Swing worker for loading tabs
 		worker = new SwingWorker<ArrayList<Future<?>>, Void>() {
-			//private Future<?> future;
+			
 			private ArrayList<Future<?>> futures=new ArrayList<Future<?>>();
 			@Override
 			public ArrayList<Future<?>> doInBackground() throws InterruptedException, ExecutionException {
+				command = cmdList.getSelectedItem().toString();
 				
-				
+				//Instantiating all processes objects
 				Connections con=new Connections(dumpFile,profile,vol,volPath);
-				//Thread conThread = new Thread(con);
-				
-				
 				Handles hnd=new Handles(dumpFile,profile,vol,volPath);
-				//Thread hndThread = new Thread(hnd);
-				
-				
 				Sockets soc=new Sockets(dumpFile,profile,vol,volPath);
-				//Thread socThread = new Thread(soc);
-				
 				Threads thd=new Threads(dumpFile,profile,vol,volPath);
-				//Thread thdThread = new Thread(thd);
-				
-				ThreadExecutor te=new ThreadExecutor(con,hnd,soc,thd);	
+				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,vol,volPath);
+				//Passing processes objects to ThreadExecutors to manage 
+				ThreadExecutor te=new ThreadExecutor(con,hnd,soc,thd,pb);	
 				
 				try {
 					futures=te.executor();
+					output.setText("Executing processes.");
 					
 					if(futures.get(0).get()==null || futures.get(0).isDone()){
 						tabPane.addTab("Connections", p1);
 						tabPane.setSelectedComponent(p1);
 						p1Text.append("Connections are available!");
-						
+						output.setText("Executing processes...");
 					}
 					if(futures.get(1).get()==null || futures.get(1).isDone()){
 						tabPane.addTab("Sockets", p2);	
 						tabPane.setSelectedComponent(p2);
-						p2Text.append("Sockets are available!");	
+						p2Text.append("Sockets are available!");
+						output.append("..");
 					}
 					
 				   if(futures.get(2).get()==null || futures.get(2).isDone()){
@@ -408,15 +345,21 @@ public class GUI {
 						tabPane.addTab("Threads", p3);
 						tabPane.setSelectedComponent(p3);
 						p3Text.append("Threads are available!");
+						output.append("..");
 					}
 				   if(futures.get(3).get()==null || futures.get(3).isDone()){
 						
 						tabPane.addTab("Handles", p4);
 						tabPane.setSelectedComponent(p4);
 						p4Text.append("Handles are available!");
+						output.append("..");
 					}
-					
-					
+				   if(futures.get(4).get()==null || futures.get(4).isDone()){
+						
+					   output.setVisible(false);
+					  
+					}
+						
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -430,40 +373,43 @@ public class GUI {
 			@Override
 			public void done() {
 
-				if(futures.get(3).isDone()==true){
+				if(futures.get(4).isDone()==true){
+					panelTX.remove(output);
+					textArea.setVisible(true);
+					tModel.setRowCount(0);
+					readFile(volPath);
+					readRows(rf);
 					panelFL1.setVisible(true);
 					panelTX.setVisible(true);
-				
-					loadButton.setVisible(true);
-					
+						
 				}
 
 			}
 
 		};
 		worker.execute();
+		
 
 		// Button event handler
-		runButton.addActionListener(new ActionListener() {
+		/*runButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			   
 				command = cmdList.getSelectedItem().toString();
-				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,path,vol,volPath);
-				Random random=new Random();
-				int time=random.nextInt(10000);
-				Thread td = new Thread(pb);
-				td.start();
+				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,vol,volPath);
+                pb.call();
 				
 				try {
-					Thread.sleep(time);
-				} catch (InterruptedException e1) {
+					tModel.setRowCount(0);
+					readFile(volPath);
+					readPsxview(rf);
+					tabPane.addTab("pslist", p1);
+					tabPane.addTab("psscan", p2);
+					tabPane.remove(p3);
+					tabPane.remove(p4);
+				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				new ThreadExecutor(td);
-				//worker.execute();
-				//textArea.setText(get());
-				loadButton.setVisible(true);
 				
 				cmdList.setVisible(false);
 				osList.setVisible(false);
@@ -478,22 +424,12 @@ public class GUI {
 				
 			}
 		});
-
-		/*
-		 * // Clear button events clrButton.addActionListener(new
-		 * ActionListener() { public void actionPerformed(ActionEvent e) {
-		 * 
-		 * tModel.setRowCount(0); loadButton.setVisible(false);
-		 * runButton.setVisible(true); clrButton.setVisible(false);
-		 * cmdList.setVisible(true); osList.setVisible(true);
-		 * tModel.setColumnIdentifiers(columnTitles);
-		 * 
-		 * } });
-		 */
+*/
+		
 
 		// * Load Button Event handler switch Function call using Switch JRE 1.7
 		// support for String switch parameter
-		loadButton.addActionListener(new ActionListener() {
+		/*loadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				tModel.setRowCount(0);
@@ -531,7 +467,7 @@ public class GUI {
 			}
 			
 		});
-
+*/
 		// Table selection
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		boolean ROW_SELECTED = true;
@@ -608,8 +544,7 @@ public class GUI {
 								}
 
 							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
+								JOptionPane.showMessageDialog(runButton,"File not found"+e1.getMessage());
 							}
                           
 							break;
@@ -701,7 +636,7 @@ public class GUI {
 	}
 
 	// Read file and return read file object
-	public BufferedReader readFile() {
+	public BufferedReader readFile(String volPath) {
 		FileReader r = null;
 		try {
 			File file=null;

@@ -22,13 +22,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -62,10 +58,7 @@ public class Connections implements Callable<Object> {
 	// Deafult Constructor
 		/*Connections() {
 		}*/
-    public String getPath(){
-    	
-    	return volPath;
-    }
+   
 	public Future<?> call() {
 		
 		// process two..
@@ -87,8 +80,7 @@ public class Connections implements Callable<Object> {
 			// .directory..
 			process.directory(new File(volPath));
 			
-			System.out.println("DIR coonections=>" + process.directory());
-
+			//System.out.println("DIR =>" + process.directory());
 			// System.out.println("List of commands" + process.command());
 
 			p2 = process.start();
@@ -106,8 +98,6 @@ public class Connections implements Callable<Object> {
 			p2.destroy();
 			System.out.println("Process two is completed!");
 
-			// Process two psxview
-
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -117,8 +107,7 @@ public class Connections implements Callable<Object> {
 	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {
-			File file=new File("");
-			String s=file.separator;
+			String s=File.separator;
 			fr = new FileReader(volPath+s+command+".txt");
 			br = new BufferedReader(fr);
 
