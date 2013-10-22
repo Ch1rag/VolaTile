@@ -152,9 +152,10 @@ public class Configuration{
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					path=selectFile.getSelectedFile().getParent();
+					
 					//selectFile.setCurrentDirectory(new File(path));
 					File file = selectFile.getSelectedFile();
-					System.out.println(path);
+					
 					fileName=file.getName();
 					text.append("Selected dump file is:"+file.getName());
 					p3.setVisible(true);
@@ -284,8 +285,8 @@ public class Configuration{
 			public void actionPerformed(ActionEvent e) {
 				profile=osCombo.getSelectedItem().toString();
                //worker1.execute();
-				System.out.println(vol);
-				GUI gui=new GUI(fileName,profile,path,vol);
+				System.out.println(volPath);
+				GUI gui=new GUI(fileName,profile,path,vol,volPath);
 				gui.storeOS(profile);
 				gui.storeCmd_Mac();
 				gui.storeCmd_Win();
@@ -316,7 +317,7 @@ public class Configuration{
 
 		FileReader r = null;
 		try {
-			r = new FileReader(path+"imageinfo.txt");
+			r = new FileReader(volPath+"imageinfo.txt");
 			BufferedReader br = new BufferedReader(r);
 			String line;
 

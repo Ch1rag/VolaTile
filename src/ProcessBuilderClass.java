@@ -33,13 +33,16 @@ public class ProcessBuilderClass implements Runnable{
 	private String profile;
 	private String path;
 	private String vol;
+	private String volPath;
 	
-	public ProcessBuilderClass(String command,String dumpFile,String profile, String path,String vol){
+	public ProcessBuilderClass(String command,String dumpFile,String profile, String path,String vol,String volPath){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
 		this.command=command;
 		this.path=path;
 		this.vol=vol;
+		this.volPath=volPath;
+		
 	}
 
 	public void run() {
@@ -60,9 +63,9 @@ public class ProcessBuilderClass implements Runnable{
 			Process p1=process.start();
 
 			// get the working directory for volatility folder..using .directory..
-			process.directory(new File(path));
+			process.directory(new File(volPath));
 
-			//System.out.println("DIR=>" + process.directory());
+			System.out.println("DIR=>" + process.directory());
 			//System.out.println("List of commands" + process.command());
 			p1=process.start();
 

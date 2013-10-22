@@ -36,21 +36,21 @@ public class Sockets implements Callable<Object> {
 	private FileReader fr = null;
 	private ArrayList<String> sockets = new ArrayList<String>();
 	private String command="sockets";
-	private String path;
 	private String profile;
 	private String dumpFile;
 	private String vol;
+	private String volPath;
 
 	
 	// Overloaded constructor
 	Sockets(String pid) {
 		PID = pid;
 	}
-	public Sockets(String dumpFile,String profile, String path,String vol){
+	public Sockets(String dumpFile,String profile,String vol,String volPath){
 		this.profile=profile;
-		this.dumpFile=dumpFile;
-		this.path=path;	
+		this.dumpFile=dumpFile;	
 		this.vol=vol;
+		this.volPath=volPath;
 	}
 	// Deafult Constructor
 		/*Sockets() {
@@ -80,7 +80,7 @@ public class Sockets implements Callable<Object> {
 
 			// get the working directory for volatility folder..using
 			// .directory..
-			process.directory(new File(path));
+			process.directory(new File(volPath));
 
 			// System.out.println("DIR=>" + process.directory());
 
@@ -110,10 +110,12 @@ public class Sockets implements Callable<Object> {
 		return null;
 	}
 
-	public ArrayList<String> readFile() throws IOException {
+	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {
-			fr = new FileReader(path+"/"+command+".txt");
+			File file=null;
+			String s=file.separator;
+			fr = new FileReader(volPath+s+command+".txt");
 			br = new BufferedReader(fr);
 
 			String line;

@@ -42,8 +42,9 @@ public class Connections implements Callable<Object> {
 	private String command="connections";
 	private String profile;
 	private String dumpFile;
-	private String path;
 	private String vol;
+	private String volPath;
+	
 	
 
 	
@@ -51,16 +52,20 @@ public class Connections implements Callable<Object> {
 	Connections(String pid) {
 		PID = pid;
 	}
-	public Connections(String dumpFile,String profile, String path,String vol){
+	public Connections(String dumpFile,String profile,String vol,String volPath){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
-		this.path=path;	
 		this.vol=vol;
+		this.volPath=volPath;
+		System.out.println(volPath);
 	}
 	// Deafult Constructor
 		/*Connections() {
 		}*/
-
+    public String getPath(){
+    	
+    	return volPath;
+    }
 	public Future<?> call() {
 		
 		// process two..
@@ -80,9 +85,9 @@ public class Connections implements Callable<Object> {
 
 			// get the working directory for volatility folder..using
 			// .directory..
-			process.directory(new File(path));
-
-			// System.out.println("DIR=>" + process.directory());
+			process.directory(new File(volPath));
+			
+			System.out.println("DIR coonections=>" + process.directory());
 
 			// System.out.println("List of commands" + process.command());
 
@@ -109,10 +114,12 @@ public class Connections implements Callable<Object> {
 		return null;
 	}
 
-	public ArrayList<String> readFile() throws IOException {
+	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {
-			fr = new FileReader(path+"/"+command+".txt");
+			File file=new File("");
+			String s=file.separator;
+			fr = new FileReader(volPath+s+command+".txt");
 			br = new BufferedReader(fr);
 
 			String line;
@@ -133,6 +140,7 @@ public class Connections implements Callable<Object> {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("File not found, Please wait..");
+			System.out.println(volPath+"/"+command+".txt");
 		} finally {
 			br.close();
 		}

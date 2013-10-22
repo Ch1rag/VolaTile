@@ -31,6 +31,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -94,15 +95,20 @@ public class GUI {
 	private ArrayList<String> os = new ArrayList<String>();
 	private String dumpFile;
 	private String path;
+	private String volPath;
 	private SwingWorker<ArrayList<Future<?>>, Void> worker;
 
 	public GUI(){
 	}
-	public GUI(String dumpFile,String profile,String path,String vol) {
+	public GUI(String dumpFile,String profile,String path,String vol,String volPath) {
 		this.dumpFile=dumpFile;
 		this.profile=profile;
 		this.path=path;
 		this.vol=vol;
+		this.volPath=volPath;
+	}
+	public String getPath(){
+		return volPath;
 	}
 
 	public void storeCmd_Mac() {
@@ -133,6 +139,7 @@ public class GUI {
 
 		// create table
 		createTable();
+		getPath();
 
 		// Create Panels
 		JPanel panelBL = new JPanel(new BorderLayout());
@@ -365,18 +372,18 @@ public class GUI {
 			public ArrayList<Future<?>> doInBackground() throws InterruptedException, ExecutionException {
 				
 				
-				Connections con=new Connections(dumpFile,profile,path,vol);
+				Connections con=new Connections(dumpFile,profile,vol,volPath);
 				//Thread conThread = new Thread(con);
 				
 				
-				Handles hnd=new Handles(dumpFile,profile, path,vol);
+				Handles hnd=new Handles(dumpFile,profile,vol,volPath);
 				//Thread hndThread = new Thread(hnd);
 				
 				
-				Sockets soc=new Sockets(dumpFile,profile, path,vol);
+				Sockets soc=new Sockets(dumpFile,profile,vol,volPath);
 				//Thread socThread = new Thread(soc);
 				
-				Threads thd=new Threads(dumpFile,profile, path,vol);
+				Threads thd=new Threads(dumpFile,profile,vol,volPath);
 				//Thread thdThread = new Thread(thd);
 				
 				ThreadExecutor te=new ThreadExecutor(con,hnd,soc,thd);	
@@ -441,7 +448,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 			   
 				command = cmdList.getSelectedItem().toString();
-				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,path,vol);
+				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,path,vol,volPath);
 				Random random=new Random();
 				int time=random.nextInt(10000);
 				Thread td = new Thread(pb);
@@ -565,11 +572,11 @@ public class GUI {
 							socket = new Sockets(PID);
 							handle = new Handles(PID);
 
-							// inspectButton.setVisible(true);
+
 							try {
 
 								ArrayList<String> connections = new ArrayList<String>();
-								connections = connection.readFile();
+								connections = connection.readFile(volPath);
 								Iterator<String> con = connections.iterator();
 
 								while (con.hasNext()) {
@@ -577,7 +584,7 @@ public class GUI {
 								}
 
 								ArrayList<String> sockets = new ArrayList<String>();
-								sockets = socket.readFile();
+								sockets = socket.readFile(volPath);
 								Iterator<String> soc = sockets.iterator();
 
 								while (soc.hasNext()) {
@@ -585,7 +592,7 @@ public class GUI {
 								}
 
 								ArrayList<String> threads = new ArrayList<String>();
-								threads = thread.readFile();
+								threads = thread.readFile(volPath);
 								Iterator<String> thd = threads.iterator();
 
 								while (thd.hasNext()) {
@@ -593,7 +600,7 @@ public class GUI {
 								}
 
 								ArrayList<String> handles = new ArrayList<String>();
-								handles = handle.readFile();
+								handles = handle.readFile(volPath);
 								Iterator<String> hnd = handles.iterator();
 
 								while (hnd.hasNext()) {
@@ -619,7 +626,7 @@ public class GUI {
 							thread = new Threads(PID);
 							ArrayList<String> threads = new ArrayList<String>();
 							try {
-								threads = thread.readFile();
+								threads = thread.readFile(volPath);
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -640,7 +647,7 @@ public class GUI {
 							handle = new Handles(PID);
 							ArrayList<String> handles = new ArrayList<String>();
 							try {
-								handles = handle.readFile();
+								handles = handle.readFile(volPath);
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -697,7 +704,9 @@ public class GUI {
 	public BufferedReader readFile() {
 		FileReader r = null;
 		try {
-			r = new FileReader(path+"/"+command+".txt");
+			File file=null;
+			String s=file.separator;
+			r = new FileReader(volPath+s+command+".txt");
 		} catch (FileNotFoundException e1) {
 			Component frame = null;
 			// TODO Auto-generated catch block

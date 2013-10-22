@@ -37,10 +37,10 @@ public class Handles implements Callable<Object> {
 	private FileReader fr = null;
 	private ArrayList<String> handles = new ArrayList<String>();
 	private String command="handles";
-	private String path;
 	private String profile;
 	private String dumpFile;
 	private String vol;
+	private String volPath;
 
 	// Deafult Constructor
 	/*Handles() {
@@ -51,11 +51,11 @@ public class Handles implements Callable<Object> {
 		PID = pid;
 	}
 	
-	public Handles(String dumpFile,String profile, String path,String vol){
+	public Handles(String dumpFile,String profile,String vol,String volPath){
 		this.profile=profile;
-		this.dumpFile=dumpFile;
-		this.path=path;	
+		this.dumpFile=dumpFile;	
 		this.vol=vol;
+		this.volPath=volPath;
 	}
 
 	public String getPID() {
@@ -80,7 +80,7 @@ public class Handles implements Callable<Object> {
 
 			// get the working directory for volatility folder..using
 			// .directory..
-			process.directory(new File(path));
+			process.directory(new File(volPath));
 
 			// System.out.println("DIR=>" + process.directory());
 
@@ -110,10 +110,12 @@ public class Handles implements Callable<Object> {
 		return null;
 	}
 
-	public ArrayList<String> readFile() throws IOException {
+	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {
-			fr = new FileReader(path+"/"+command+".txt");
+			File file=null;
+			String s=file.separator;
+			fr = new FileReader(volPath+s+command+".txt");
 			br = new BufferedReader(fr);
             int i=0;
 			String line;
