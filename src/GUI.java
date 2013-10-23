@@ -156,6 +156,7 @@ public class GUI {
 
 		// create tab pane
 		tabPane = new JTabbedPane();
+		tabPane.setPreferredSize(new Dimension(300, 300));
 		
 		
 		// Create a split pane with the two scroll panes in it.
@@ -174,7 +175,7 @@ public class GUI {
 		final JPanel p2 = new JPanel(new GridLayout());
 		final JPanel p3 = new JPanel(new GridLayout());
 		final JPanel p4 = new JPanel(new GridLayout());
-		tabPane.setPreferredSize(new Dimension(300, 300));
+		
 
 		// Add commands to combobox list
 		cmdList = new JComboBox();
@@ -250,7 +251,6 @@ public class GUI {
 		p4Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
 		textArea = new JTextArea(30, 30);
-		textArea.append("text area");
 		textArea.add(table);
 		textArea.setVisible(false);
 		
@@ -275,7 +275,7 @@ public class GUI {
 		cp.add(splitPane);
 
 		// Add components here
-		panelTX.add(scrollTable);
+		//panelTX.add(scrollTable);
 		panelTX.add(output);
 		panelBL.add(scroll_p1Text);
 		panelBL.add(scroll_p2Text);
@@ -327,34 +327,34 @@ public class GUI {
 					futures=te.executor();
 					output.setText("Executing processes.");
 					
-					if(futures.get(0).get()==null || futures.get(0).isDone()){
+					if(futures.get(4).get()==null || futures.get(4).isDone()){
 						tabPane.addTab("Connections", p1);
 						tabPane.setSelectedComponent(p1);
 						p1Text.append("Connections are available!");
 						output.setText("Executing processes...");
 					}
-					if(futures.get(1).get()==null || futures.get(1).isDone()){
+					if(futures.get(2).get()==null || futures.get(2).isDone()){
 						tabPane.addTab("Sockets", p2);	
 						tabPane.setSelectedComponent(p2);
 						p2Text.append("Sockets are available!");
 						output.append("..");
 					}
 					
-				   if(futures.get(2).get()==null || futures.get(2).isDone()){
+				   if(futures.get(0).get()==null || futures.get(0).isDone()){
 						
 						tabPane.addTab("Threads", p3);
 						tabPane.setSelectedComponent(p3);
 						p3Text.append("Threads are available!");
 						output.append("..");
 					}
-				   if(futures.get(3).get()==null || futures.get(3).isDone()){
+				   if(futures.get(1).get()==null || futures.get(1).isDone()){
 						
 						tabPane.addTab("Handles", p4);
 						tabPane.setSelectedComponent(p4);
 						p4Text.append("Handles are available!");
 						output.append("..");
 					}
-				   if(futures.get(4).get()==null || futures.get(4).isDone()){
+				   if(futures.get(3).get()==null || futures.get(3).isDone()){
 						
 					   output.setVisible(false);
 					  
@@ -373,8 +373,9 @@ public class GUI {
 			@Override
 			public void done() {
 
-				if(futures.get(4).isDone()==true){
+				if(futures.get(2).isDone()==true){
 					panelTX.remove(output);
+					panelTX.add(scrollTable);
 					textArea.setVisible(true);
 					tModel.setRowCount(0);
 					readFile(volPath);
@@ -544,7 +545,7 @@ public class GUI {
 								}
 
 							} catch (IOException e1) {
-								JOptionPane.showMessageDialog(runButton,"File not found"+e1.getMessage());
+								JOptionPane.showMessageDialog(runButton,"Process is running, Please wait"+e1.getMessage());
 							}
                           
 							break;

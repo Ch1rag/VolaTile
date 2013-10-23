@@ -148,9 +148,8 @@ public class Configuration {
 					vol = volFile.getName();
 
 					if (vol.matches("vol.py") == true) {
-						text.append("volatility python filename:" + vol + "\n");
+						text.setText("volatility python filename:" + vol + "\n");
 						selectDump.setVisible(true);
-						text.setText("Select Image file");
 						volButton.setVisible(false);
 					} else {
 						JOptionPane
@@ -241,7 +240,6 @@ public class Configuration {
                 
 				try{
 					if(fileName!=null && profile!=null && vol!=null && volPath!=null){
-						System.out.println(volPath);
 						GUI gui = new GUI(fileName, profile, vol, volPath);
 						gui.storeOS(profile);
 						gui.storeCmd_Mac();

@@ -126,10 +126,9 @@ public class Connections implements Callable<Object> {
 					connections.add(line + "\n");
 				}
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			System.out.println("File not found, Please wait..");
-			System.out.println(volPath+"/"+command+".txt");
 		} finally {
 			br.close();
 		}

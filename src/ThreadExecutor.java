@@ -58,11 +58,13 @@ public class ThreadExecutor implements Callable<Object> {
 	public ArrayList<Future<?>> call() throws InterruptedException,
 			ExecutionException { // run the services
 		{
-			futures.add(service.submit(Con));
-			futures.add(service.submit(Soc));
-			futures.add(service.submit(Thd));
-			futures.add(service.submit(Hnd));
-			futures.add(service.submit(pb));
+			futures.add(service.submit(Thd));//0
+			futures.add(service.submit(Hnd));//1
+			futures.add(service.submit(Soc));//2
+			futures.add(service.submit(Con));//3
+			futures.add(service.submit(pb)); //4
+			
+			
 
 			service.shutdown();
 			service.shutdownNow();
