@@ -304,7 +304,6 @@ public class GUI {
 		frame.setVisible(true);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		
 		//Swing worker for loading tabs
 		worker = new SwingWorker<ArrayList<Future<?>>, Void>() {
@@ -640,8 +639,7 @@ public class GUI {
 	public BufferedReader readFile(String volPath) {
 		FileReader r = null;
 		try {
-			File file=null;
-			String s=file.separator;
+			String s=File.separator;
 			r = new FileReader(volPath+s+command+".txt");
 		} catch (FileNotFoundException e1) {
 			Component frame = null;

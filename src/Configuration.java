@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -53,6 +54,9 @@ public class Configuration {
 	private String path;
 	private JFileChooser selectVol;
 	private String volPath;
+	private JTextField box1;
+	private JTextField box2;
+	
 
 
 	public Configuration() {
@@ -88,6 +92,10 @@ public class Configuration {
 		openGUI = new JButton("Open VolaTile");
 		profileButton = new JButton("Detect Profile");
 		osCombo = new JComboBox();
+		box1=new JTextField();
+		box2=new JTextField();
+		box1.setEditable(false);
+		box2.setEditable(false);
 
 
 		java.util.Iterator<String> iterCmd = osProfiles.iterator();
@@ -97,17 +105,19 @@ public class Configuration {
 
 		text = new JTextArea(10, 20);
 		text.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		text.setBorder(new TitledBorder(new EtchedBorder(), "System Info"));
+		text.setBorder(new TitledBorder(new EtchedBorder(), ""));
 
 		text.setEditable(false);
 		text.setLineWrap(true);
 		text.getCaretPosition();
 		text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
+		p1.add(box2,FlowLayout.LEFT);
 		p1.add(selectDump, FlowLayout.LEFT);
 		p1.add(osCombo, FlowLayout.LEFT);
+		p1.add(box1,FlowLayout.LEFT);
 		p1.add(volButton, FlowLayout.LEFT);
-
+	
 		p2.add(text, BorderLayout.NORTH);
 
 		p3.add(openGUI, BorderLayout.EAST);
@@ -118,8 +128,7 @@ public class Configuration {
 		cp.add(p3, BorderLayout.SOUTH);
 
 		openGUI.setVisible(false);
-		selectDump.setVisible(false);
-		profileButton.setVisible(false);
+
 		text.setVisible(true);
 		osCombo.setVisible(true);
 		p3.setVisible(false);
@@ -129,7 +138,6 @@ public class Configuration {
 		text.append("OS Arch    :" + "\t" + arch + "\n");*/
 
 		text.setText("Select vol.py file");
-
 
 		selectFile = new JFileChooser();
 		selectVol = new JFileChooser();
@@ -142,6 +150,7 @@ public class Configuration {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					volPath = selectVol.getSelectedFile().getParent();
+					box1.setText(volPath);
 					selectFile.setCurrentDirectory(new File(volPath));
 
 					File volFile = selectVol.getSelectedFile();
@@ -150,7 +159,7 @@ public class Configuration {
 					if (vol.matches("vol.py") == true) {
 						text.setText("volatility python filename:" + vol + "\n");
 						selectDump.setVisible(true);
-						volButton.setVisible(false);
+						
 					} else {
 						JOptionPane
 						.showMessageDialog(frame,
@@ -169,6 +178,7 @@ public class Configuration {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					path = selectFile.getSelectedFile().getParent();
+					box2.setText(path);
 
 					// selectFile.setCurrentDirectory(new File(path));
 					File file = selectFile.getSelectedFile();
@@ -240,11 +250,13 @@ public class Configuration {
                 
 				try{
 					if(fileName!=null && profile!=null && vol!=null && volPath!=null){
+						
 						GUI gui = new GUI(fileName, profile, vol, volPath);
 						gui.storeOS(profile);
 						gui.storeCmd_Mac();
 						gui.storeCmd_Win();
 						gui.makeFrame();
+						frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					}
 				}
 				catch(Exception e1){
@@ -261,15 +273,16 @@ public class Configuration {
 		frame.setSize(300, 300);
 		frame.setVisible(true);
 		frame.pack();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	}
 
 	public void readFile() throws IOException {
 
 		FileReader r = null;
+		String s=File.separator;
 		try {
-			r = new FileReader(volPath + "imageinfo.txt");
+			r = new FileReader(volPath+s+"imageinfo.txt");
 			BufferedReader br = new BufferedReader(r);
 			String line;
 
