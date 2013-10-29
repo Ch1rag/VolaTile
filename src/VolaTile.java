@@ -31,7 +31,7 @@ public class VolaTile{
 	public static void main(String[] args) throws IOException, InterruptedException{
 		// TODO Auto-generated method stub	
 
-
+       
 		Configuration config=new Configuration();
 		config.addOs();
 		config.selectFile();

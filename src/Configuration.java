@@ -6,9 +6,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -112,11 +114,11 @@ public class Configuration {
 		text.getCaretPosition();
 		text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
-		p1.add(box2,FlowLayout.LEFT);
 		p1.add(selectDump, FlowLayout.LEFT);
-		p1.add(osCombo, FlowLayout.LEFT);
-		p1.add(box1,FlowLayout.LEFT);
+		p1.add(box2,FlowLayout.LEFT);
 		p1.add(volButton, FlowLayout.LEFT);
+		p1.add(box1,FlowLayout.LEFT);
+		p1.add(osCombo, FlowLayout.RIGHT);
 	
 		p2.add(text, BorderLayout.NORTH);
 
@@ -138,7 +140,7 @@ public class Configuration {
 		text.append("OS Arch    :" + "\t" + arch + "\n");*/
 
 		text.setText("Select vol.py file");
-
+		
 		selectFile = new JFileChooser();
 		selectVol = new JFileChooser();
 
@@ -182,8 +184,8 @@ public class Configuration {
 
 					// selectFile.setCurrentDirectory(new File(path));
 					File file = selectFile.getSelectedFile();
-
-					fileName = file.getName();
+                    
+					fileName = file.getAbsolutePath();
 					text.append("\n"+"Selected dump file is:" + file.getName());
 					p3.setVisible(true);
 					profileButton.setVisible(true);
@@ -249,20 +251,23 @@ public class Configuration {
 				profile = osCombo.getSelectedItem().toString();
                 
 				try{
-					if(fileName!=null && profile!=null && vol!=null && volPath!=null){
-						
+					if(fileName!=null && profile!=null && vol!=null && volPath!=null){	
 						GUI gui = new GUI(fileName, profile, vol, volPath);
-						gui.storeOS(profile);
+						gui.storeProfile(profile);//last change
 						gui.storeCmd_Mac();
 						gui.storeCmd_Win();
-						gui.makeFrame();
-						frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+						gui.makeFrame();		
+						frame.dispose();
 					}
 				}
 				catch(Exception e1){
-					JOptionPane.showMessageDialog(frame,"Please select all attributes:"+fileName+"\t"+profile+"\t"+vol+"\t"+volPath+e1.getMessage());
-				
-
+					JOptionPane.showMessageDialog(frame,"Please select all attributes:"
+				+"\n"+"Selected RAM dump:>"+fileName
+				+"\n"+"Selected profile:>" +profile
+				+"\n"+"Selected vol file:>"+vol
+				+"\n"+"Selected volatility path:>"+volPath
+				+"\n"+e1.getMessage());
+	
 				}
 
 			}
@@ -273,17 +278,18 @@ public class Configuration {
 		frame.setSize(300, 300);
 		frame.setVisible(true);
 		frame.pack();
-		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
 	}
 
 	public void readFile() throws IOException {
 
 		FileReader r = null;
+		BufferedReader br = null;
 		String s=File.separator;
 		try {
 			r = new FileReader(volPath+s+"imageinfo.txt");
-			BufferedReader br = new BufferedReader(r);
+			 br= new BufferedReader(r);
 			String line;
 
 			while ((line = br.readLine()) != null) {
@@ -293,7 +299,12 @@ public class Configuration {
 			e1.printStackTrace();
 
 		}
+		finally{
+			br.close();
+		}
 
 	}
+	
+	
 
 }

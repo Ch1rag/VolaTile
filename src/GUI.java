@@ -17,9 +17,11 @@
  * @author    (can have multiple authors)
  * http://swinbrain.ict.swin.edu.au/wiki/Swinburne_Java_Coding_Standard
  */
- 
+
 import java.awt.*;
+//import net.miginfocom.swing.MigLayout;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -29,6 +31,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,9 +41,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -50,7 +57,7 @@ import java.util.regex.Pattern;
  * 
  */
 public class GUI {
-	private JButton runButton;
+	private JButton confButton;
 	private JButton loadButton;
 	private JComboBox cmdList;
 	private JComboBox osList;
@@ -61,17 +68,18 @@ public class GUI {
 	private JTextArea p2Text;
 	private JTextArea p3Text;
 	private JTextArea p4Text;
-    private JRadioButton psxview;
-    private JRadioButton pslist;
 	private JSplitPane splitPane;
-
+    private JTextField volPathText;
 	private JScrollPane scrollTable;
+	private JScrollPane scrollTablepsx;
 	private JScrollPane scroll_p1Text;
 	private JScrollPane scroll_p2Text;
 	private JScrollPane scroll_p3Text;
 	private JScrollPane scroll_p4Text;
+	private JTabbedPane tabPaneTX;
 
 	private JTable table;
+	private JTable table1;
 	private BufferedReader rf;
 	private String command = null;
 	// private ProcessBuilderClass pb = new ProcessBuilderClass();
@@ -80,6 +88,7 @@ public class GUI {
 	private Threads thread;
 	private Handles handle;
 	private DefaultTableModel tModel;
+	private DefaultTableModel tModel1;
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
 	private JTabbedPane tabPane;
@@ -92,31 +101,33 @@ public class GUI {
 	// Array list to store strings of commands
 	private ArrayList<String> macCommands = new ArrayList<String>();
 	private ArrayList<String> winCommands = new ArrayList<String>();
-	private ArrayList<String> os = new ArrayList<String>();
+	private ArrayList<String> profileList = new ArrayList<String>();
 	private String dumpFile;
 	private String volPath;
 	private SwingWorker<ArrayList<Future<?>>, Void> worker;
 
-	public GUI(){
+	public GUI() {
 	}
-	public GUI(String dumpFile,String profile,String vol,String volPath) {
-		this.dumpFile=dumpFile;
-		this.profile=profile;
-		this.volPath=volPath;
-		this.vol=vol;	
+
+	public GUI(String dumpFile, String profile, String vol, String volPath) {
+		this.dumpFile = dumpFile;
+		this.profile = profile;
+		this.volPath = volPath;
+		this.vol = vol;
 	}
-	public String getPath(){
-			return volPath;
-		 	}
+
+	public String getPath() {
+		return volPath;
+	}
 
 	public void storeCmd_Mac() {
 		macCommands.add("mac_pslist");
-		macCommands.add("mac_psxview");	
-		 macCommands.add("mac_notifiers"); 
-		 macCommands.add("mac_pstree");
-		 macCommands.add("mac_tasks");
-		 macCommands.add("mac_ifconfig");
-		 
+		macCommands.add("mac_psxview");
+		macCommands.add("mac_notifiers");
+		macCommands.add("mac_pstree");
+		macCommands.add("mac_tasks");
+		macCommands.add("mac_ifconfig");
+
 	}
 
 	public void storeCmd_Win() {
@@ -124,46 +135,47 @@ public class GUI {
 		winCommands.add("psxview");
 	}
 
-	public void storeOS(String profile) {
-		os.add(profile);
+	public void storeProfile(String profile) {
+		profileList.add(profile);
 	}
 
 	public void makeFrame() {
 		// Create JFrame with content pane and set layout
-		JFrame frame = new JFrame();
+		final JFrame frame = new JFrame();
 
 		final Container cp = frame.getContentPane();
 		cp.setLayout(new BorderLayout());
 
 		// create table
 		createTable();
+		
 
 		// Create Panels
+
 		JPanel panelBL = new JPanel(new BorderLayout());
 		final JPanel panelTX = new JPanel(new GridLayout());
 		final JPanel panelFL1 = new JPanel(new GridLayout(1, 1));
-		
-		
+
 		// JPanel panelFL2 = new JPanel(new FlowLayout());
 
 		// set border
 		panelTX.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		panelBL.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		panelBL.setBorder(new TitledBorder(new EtchedBorder(), "Tabs Area"));
-	    panelTX.setBorder(new TitledBorder(new EtchedBorder(), command));
+		panelBL.setBorder(new TitledBorder(new EtchedBorder(), "Details"));
+		panelTX.setBorder(new TitledBorder(new EtchedBorder(), command));
 		panelFL1.setBorder(new TitledBorder(new EtchedBorder(),
 				"Profile Selection"));
 
 		// create tab pane
 		tabPane = new JTabbedPane();
 		tabPane.setPreferredSize(new Dimension(300, 300));
-		
-		
+
+		tabPaneTX = new JTabbedPane();
+
 		// Create a split pane with the two scroll panes in it.
 		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelTX, panelBL);
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setDividerLocation(500);
-		
 
 		// Provide minimum sizes for the two components in the split pane
 		Dimension minimumSize = new Dimension(100, 50);
@@ -175,22 +187,23 @@ public class GUI {
 		final JPanel p2 = new JPanel(new GridLayout());
 		final JPanel p3 = new JPanel(new GridLayout());
 		final JPanel p4 = new JPanel(new GridLayout());
-		
+		final JPanel p5 = new JPanel(new GridLayout());
+		final JPanel p6 = new JPanel(new GridLayout());
 
 		// Add commands to combobox list
 		cmdList = new JComboBox();
 		java.util.Iterator<String> iterCmd = winCommands.iterator();
 		while (iterCmd.hasNext()) {
-			cmdList.addItem(iterCmd.next());	
+			cmdList.addItem(iterCmd.next());
 		}
-		
-		if (profile.contains("Mac")==true) {
+
+		if (profile.contains("Mac") == true) {
 			cmdList.removeAllItems();
 			java.util.Iterator<String> Cmd = macCommands.iterator();
 			while (Cmd.hasNext()) {
 				cmdList.addItem(Cmd.next());
 			}
-		} else if (profile.contains("Win")==true) {
+		} else if (profile.contains("Win") == true) {
 			cmdList.removeAllItems();
 			java.util.Iterator<String> iterOs = winCommands.iterator();
 			while (iterOs.hasNext()) {
@@ -200,23 +213,20 @@ public class GUI {
 		// Add os to combobox list
 		osList = new JComboBox();
 		osList.setEditable(false);
-		java.util.Iterator<String> iterOs = os.iterator();
+		java.util.Iterator<String> iterOs = profileList.iterator();
 		while (iterOs.hasNext()) {
 			osList.addItem(iterOs.next());
 		}
-		
+
 		// Define Components and initialize them
-		runButton = new JButton("Run");
+		confButton = new JButton("Config");
+		confButton.setToolTipText("Open configuration window");
 		loadButton = new JButton("Load");
-		/*
-		//radio button
-		psxview=new JRadioButton("psxview");
-		pslist=new JRadioButton("pslist");
-		pslist.setSelected(true);
-	    
-		ButtonGroup group=new ButtonGroup();
-		group.add(psxview);
-		group.add(pslist);*/
+		
+		//Textfields
+		volPathText=new JTextField(volPath);
+		volPathText.setEditable(false);
+		volPathText.setToolTipText("Path for vol.py");
 
 		// Text area to add to tab panels
 		p1Text = new JTextArea(50, 50);
@@ -251,22 +261,25 @@ public class GUI {
 		p4Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
 		textArea = new JTextArea(30, 30);
-		textArea.add(table);
+		// textArea.add(table);
 		textArea.setVisible(false);
-		
+		p5.add(table);
+		p6.setVisible(false);
+
 		output = new JTextArea(30, 30);
 		output.setText("text area");
-		
+
 		// Add scroll bar to tab panels
-		scrollTable = new JScrollPane(table);
+		scrollTable = new JScrollPane(table);// last change
+		scrollTablepsx = new JScrollPane(table1);
 		scroll_p1Text = new JScrollPane(p1Text);
 		scroll_p2Text = new JScrollPane(p2Text);
 		scroll_p3Text = new JScrollPane(p3Text);
 		scroll_p4Text = new JScrollPane(p4Text);
 
 		loadButton.setVisible(false);
-		runButton.setVisible(true);
-		//configButton.setVisible(false);
+		confButton.setVisible(true);
+		// configButton.setVisible(false);
 
 		// panelFL2.add(panelBL);
 		// cp.add(panelBL, BorderLayout.SOUTH);
@@ -275,7 +288,7 @@ public class GUI {
 		cp.add(splitPane);
 
 		// Add components here
-		//panelTX.add(scrollTable);
+		// panelTX.add(scrollTable);
 		panelTX.add(output);
 		panelBL.add(scroll_p1Text);
 		panelBL.add(scroll_p2Text);
@@ -283,9 +296,10 @@ public class GUI {
 		panelBL.add(scroll_p4Text);
 
 		// panelFL1.add(l1,FlowLayout.LEFT);
-		
-		panelFL1.add(runButton, FlowLayout.LEFT);
+
+		panelFL1.add(confButton, FlowLayout.LEFT);
 		panelFL1.add(cmdList, FlowLayout.LEFT);
+		panelFL1.add(volPathText);
 		panelFL1.add(osList, FlowLayout.LEFT);
 		panelFL1.add(loadButton, FlowLayout.LEADING);
 		panelFL1.setVisible(false);
@@ -297,6 +311,8 @@ public class GUI {
 		p2.add(scroll_p2Text);
 		p3.add(scroll_p3Text);
 		p4.add(scroll_p4Text);
+		p5.add(scrollTable);
+		p6.add(scrollTablepsx);
 
 		// Set frame elements
 		frame.setTitle("VolaTile");
@@ -304,61 +320,70 @@ public class GUI {
 		frame.setVisible(true);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		//Swing worker for loading tabs
+
+		// Swing worker for loading tabs
 		worker = new SwingWorker<ArrayList<Future<?>>, Void>() {
-			
-			private ArrayList<Future<?>> futures=new ArrayList<Future<?>>();
+
+			private ArrayList<Future<?>> futures = new ArrayList<Future<?>>();
+
 			@Override
-			public ArrayList<Future<?>> doInBackground() throws InterruptedException, ExecutionException {
+			public ArrayList<Future<?>> doInBackground()
+					throws InterruptedException, ExecutionException {
 				command = cmdList.getSelectedItem().toString();
-				
-				//Instantiating all processes objects
-				Connections con=new Connections(dumpFile,profile,vol,volPath);
-				Handles hnd=new Handles(dumpFile,profile,vol,volPath);
-				Sockets soc=new Sockets(dumpFile,profile,vol,volPath);
-				Threads thd=new Threads(dumpFile,profile,vol,volPath);
-				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,vol,volPath);
-				//Passing processes objects to ThreadExecutors to manage 
-				ThreadExecutor te=new ThreadExecutor(con,hnd,soc,thd,pb);	
-				
+
+				// Instantiating all processes objects
+				Connections con = new Connections(dumpFile, profile, vol,
+						volPath);
+				Handles hnd = new Handles(dumpFile, profile, vol, volPath);
+				Sockets soc = new Sockets(dumpFile, profile, vol, volPath);
+				Threads thd = new Threads(dumpFile, profile, vol, volPath);
+				ProcessBuilderClass pb = new ProcessBuilderClass(command,
+						dumpFile, profile, vol, volPath);
+				// Passing processes objects to ThreadExecutors to manage
+				ThreadExecutor te = new ThreadExecutor(con, hnd, soc, thd, pb);
+
 				try {
-					futures=te.executor();
+					futures = te.executor();
 					output.setText("Executing processes.");
-					
-					if(futures.get(4).get()==null || futures.get(4).isDone()){
+
+					if (futures.get(4).get() == null || futures.get(4).isDone()) {
 						tabPane.addTab("Connections", p1);
 						tabPane.setSelectedComponent(p1);
 						p1Text.append("Connections are available!");
+						output.append("\n"+"Connections are available!");
 						output.setText("Executing processes...");
 					}
-					if(futures.get(2).get()==null || futures.get(2).isDone()){
-						tabPane.addTab("Sockets", p2);	
+					if (futures.get(2).get() == null || futures.get(2).isDone()) {
+						tabPane.addTab("Sockets", p2);
 						tabPane.setSelectedComponent(p2);
 						p2Text.append("Sockets are available!");
-						output.append("..");
+						output.append("\n"+"Sockets are available!");
+						//output.append("..");
 					}
-					
-				   if(futures.get(0).get()==null || futures.get(0).isDone()){
-						
+
+					if (futures.get(0).get() == null || futures.get(0).isDone()) {
+
 						tabPane.addTab("Threads", p3);
 						tabPane.setSelectedComponent(p3);
 						p3Text.append("Threads are available!");
-						output.append("..");
+						output.append("\n"+"Threads are available!");
+						//output.append("..");
 					}
-				   if(futures.get(1).get()==null || futures.get(1).isDone()){
-						
+					if (futures.get(1).get() == null || futures.get(1).isDone()) {
+
 						tabPane.addTab("Handles", p4);
 						tabPane.setSelectedComponent(p4);
 						p4Text.append("Handles are available!");
-						output.append("..");
+						output.append("\n"+"Handles are available!");
+						//output.append("..");
+
 					}
-				   if(futures.get(3).get()==null || futures.get(3).isDone()){
-						
-					   output.setVisible(false);
-					  
+					if (futures.get(3).get() == null || futures.get(3).isDone()) {
+
+						output.setVisible(false);
+
 					}
-						
+
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -372,102 +397,29 @@ public class GUI {
 			@Override
 			public void done() {
 
-				if(futures.get(2).isDone()==true){
+				if (futures.get(2).isDone() == true) {
 					panelTX.remove(output);
-					panelTX.add(scrollTable);
+					panelTX.add(tabPaneTX, BorderLayout.CENTER);
+					tabPaneTX.addTab(command, p5);
+					tabPaneTX.addTab("psxview", p6);
+
+					// panelTX.add(scrollTable);
+					panelTX.add(tabPaneTX);
+
 					textArea.setVisible(true);
 					tModel.setRowCount(0);
 					readFile(volPath);
 					readRows(rf);
 					panelFL1.setVisible(true);
 					panelTX.setVisible(true);
-						
+
 				}
 
 			}
 
 		};
 		worker.execute();
-		
 
-		// Button event handler
-		/*runButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			   
-				command = cmdList.getSelectedItem().toString();
-				ProcessBuilderClass pb = new ProcessBuilderClass(command,dumpFile,profile,vol,volPath);
-                pb.call();
-				
-				try {
-					tModel.setRowCount(0);
-					readFile(volPath);
-					readPsxview(rf);
-					tabPane.addTab("pslist", p1);
-					tabPane.addTab("psscan", p2);
-					tabPane.remove(p3);
-					tabPane.remove(p4);
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				cmdList.setVisible(false);
-				osList.setVisible(false);
-				runButton.setVisible(false);
-				textArea.setText("");
-				tModel.setRowCount(0);
-				tModel.setColumnIdentifiers(columnTitles);
-				
-				
-				// new Thread (new ProcessBuilderClass(profile)).start();
-
-				
-			}
-		});
-*/
-		
-
-		// * Load Button Event handler switch Function call using Switch JRE 1.7
-		// support for String switch parameter
-		/*loadButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				tModel.setRowCount(0);
-				readFile();
-				int choice = cmdList.getSelectedIndex();
-				switch (choice) {
-
-				case 0:// pslist
-				{
-					readPslist(rf);
-					break;
-				}
-				case 1: // psxview
-				{
-					try {
-						readPsxview(rf);
-						tabPane.addTab("pslist", p1);
-						tabPane.addTab("psscan", p2);
-						tabPane.remove(p3);
-						tabPane.remove(p4);
-					} catch (FileNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-					break;
-				}
-
-				default:
-					readRows(rf);
-				}
-				runButton.setVisible(true);
-				osList.setVisible(true);
-				cmdList.setVisible(true);
-			}
-			
-		});
-*/
 		// Table selection
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		boolean ROW_SELECTED = true;
@@ -489,15 +441,17 @@ public class GUI {
 						p4Text.setText("");
 						int selectedRow = lsm.getMinSelectionIndex();
 						int clm = table.getSelectedColumn();
-
+						TableRowSorter<TableModel> trs=new TableRowSorter<TableModel>(tModel);
+						
+						table.setRowSorter(trs);
 						switch (clm) {
-						case 0: 
+						case 0:
 						case 1: {
-							clm=2;
+							clm = 2;
 						}
 						case 2: {
 							tabPane.getSelectedComponent();
-							
+							trs.addRowSorterListener(table);
 							data = table.getModel()
 									.getValueAt(selectedRow, clm);
 
@@ -507,7 +461,6 @@ public class GUI {
 							connection = new Connections(PID);
 							socket = new Sockets(PID);
 							handle = new Handles(PID);
-
 
 							try {
 
@@ -544,17 +497,21 @@ public class GUI {
 								}
 
 							} catch (IOException e1) {
-								JOptionPane.showMessageDialog(runButton,"Process is running, Please wait"+e1.getMessage());
+								JOptionPane.showMessageDialog(
+										confButton,
+										"Process is running, Please wait"
+												+ e1.getMessage());
 							}
-                          
+
 							break;
 						}
-						case 3:{
+						case 3: {
 							tabPane.getSelectedComponent();
 						}
-						case 4:{
+						case 4: {
 							tabPane.setSelectedComponent(p3);
-							clm=2;
+							clm = 2;
+							
 							data = table.getModel()
 									.getValueAt(selectedRow, clm);
 							String PID = data.toString();
@@ -573,9 +530,9 @@ public class GUI {
 							}
 							break;
 						}
-						case 5:{
+						case 5: {
 							tabPane.setSelectedComponent(p4);
-							clm=2;
+							clm = 2;
 							data = table.getModel()
 									.getValueAt(selectedRow, clm);
 							String PID = data.toString();
@@ -610,6 +567,21 @@ public class GUI {
 			table.setRowSelectionAllowed(false);
 		}
 
+		confButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object[] options = { "Yes", "No" };
+				int i = JOptionPane
+						.showOptionDialog(frame, "Are you sure? This will close the current window and open the configuration window.", "",
+								JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options,
+								options[0]);
+				if (i == 0) {
+					Configuration config = new Configuration();
+					config.selectFile();
+				}
+			}
+		});
+
 	}
 
 	// * Create Table Default Rows and Columns Format specified Format table
@@ -618,14 +590,18 @@ public class GUI {
 	public void createTable() {
 		// Create Table and table model
 		table = new JTable();
+		
 		table.setBackground(Color.DARK_GRAY);
 		tModel = new DefaultTableModel(0, 0);
-        
+		
+		//trs.setSortsOnUpdates(true);
+        table.setAutoCreateRowSorter(true);
 		// Table row settings
 		table.setRowHeight(22);
 		table.setModel(tModel);
 		table.setAutoCreateRowSorter(true);
-		table.setCellSelectionEnabled(true);
+		//table.setCellSelectionEnabled(true);
+		table.setRowSelectionAllowed(true);
 		tModel.setColumnIdentifiers(columnTitles);
 		Enumeration<TableColumn> en = table.getColumnModel().getColumns();
 
@@ -635,20 +611,20 @@ public class GUI {
 		}
 	}
 
+
 	// Read file and return read file object
 	public BufferedReader readFile(String volPath) {
 		FileReader r = null;
 		try {
-			String s=File.separator;
-			r = new FileReader(volPath+s+command+".txt");
+			String s = File.separator;
+			r = new FileReader(volPath + s + command + ".txt");
 		} catch (FileNotFoundException e1) {
 			Component frame = null;
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(frame,
-					"File not found");
+			JOptionPane.showMessageDialog(frame, "File not found");
 			loadButton.setVisible(false);
 			e1.printStackTrace();
-			
+
 		}
 		return rf = new BufferedReader(r);
 
@@ -658,120 +634,52 @@ public class GUI {
 	public void readRows(BufferedReader rf) {
 		String line = null;
 		String[] splits;
-		String[] clm;
+		String[] clm = null;
+
 		int i = 0;
+		int j = 0;
 
 		try {
 			while ((line = rf.readLine()) != null) {
 				i++;
-
-				if (i >= 2 && !line.contains("--")) {
+				// && !line.contains("--")
+				if (i > 2) {
 					splits = line.split("\\s+");
+					if (splits.length > 8) {
+						StringBuilder builder = new StringBuilder();
+						builder.append(splits[8]);
+						builder.append(" ");
+						builder.append(splits[9]);
+						builder.append(" ");
+						builder.append(splits[10]);
+						splits[8] = builder.toString();
+					}
 					tModel.addRow(splits);
 				} else if (!line.contains("--")) {
 					clm = line.split("\\s+");
-					for (int j = 0; j < clm.length; j++) {
+					for (j = 0; j < (clm.length - 1); j++) {
+
 						tModel.addColumn(clm[j]);
 						tModel.setColumnIdentifiers(clm);
+                        if(j!=9){
 						Enumeration<TableColumn> en = table.getColumnModel()
 								.getColumns();
 						while (en.hasMoreElements()) {
 							TableColumn tc = en.nextElement();
 							tc.setCellRenderer(new MyTableCellRenderer());
 						}
+                        }
+
 					}
 				}
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// psxview
-	public void readPsxview(BufferedReader rf) throws FileNotFoundException {
-		/*
-		 * FileReader r = new
-		 * FileReader("/Users/chiragbarot/volatility/output.txt");
-		 * BufferedReader br=new BufferedReader(r);
-		 */
-		String line = null;
-		String[] splits;
-		String[] clm;
-		int i = 0;
-
-		try {
-			while ((line = rf.readLine()) != null) {
-				i++;
-
-				if (i >= 2 && !line.contains("--")) {
-					splits = line.split("\\s+");
-					tModel.addRow(splits);
-				} else if (!line.contains("--")) {
-					clm = line.split("\\s+");
-					for (int j = 0; j < clm.length; j++) {
-						tModel.addColumn(clm[j]);
-						tModel.setColumnIdentifiers(clm);
-
-						Enumeration<TableColumn> en = table.getColumnModel()
-								.getColumns();
-						while (en.hasMoreElements()) {
-							TableColumn tc = en.nextElement();
-							tc.setCellRenderer(new MyTableCellRenderer());
-						}
-					}
-				}
-
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	// pstree
-	public void readPslist(BufferedReader rf) {
-		String line = null;
-		String[] splits;
-		String[] clm;
-		int i = 0;
-
-		String s = "\\s+";
-		Pattern pattern = Pattern.compile("\\s+");
-		Matcher matcher = pattern.matcher(s);
-		boolean found = matcher.find();
-
-		try {
-			while ((line = rf.readLine()) != null) {
-				i++;
-				/*
-				 * if(i==1 && found){ while ((line = rf.readLine()) != null){
-				 * splits = line.split("\\s+"); tModel.addRow(splits);
-				 */
-				if (i >= 2 && !line.contains("--")) {
-					splits = line.split("\\s+");
-					// Add rows here
-					tModel.addRow(splits);
-
-				} else if (!line.contains("--")) {
-					clm = line.split("\\s+");
-					for (int j = 0; j < clm.length; j++) {
-						tModel.addColumn(clm[j]);
-						tModel.setColumnIdentifiers(clm);
-
-						Enumeration<TableColumn> en = table.getColumnModel()
-								.getColumns();
-						while (en.hasMoreElements()) {
-							TableColumn tc = en.nextElement();
-							tc.setCellRenderer(new MyTableCellRenderer());
-						}
-					}
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
+	
 	// Inner class for table cell renderer
 	public class MyTableCellRenderer extends DefaultTableCellRenderer implements
 			TableCellRenderer {
@@ -828,4 +736,5 @@ public class GUI {
 			}
 		}
 	}
+
 }
