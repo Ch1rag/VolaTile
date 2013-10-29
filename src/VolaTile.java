@@ -33,7 +33,7 @@ public class VolaTile{
 
        
 		Configuration config=new Configuration();
-		config.addOs();
+		config.addProfiles();
 		config.selectFile();
 
 	}

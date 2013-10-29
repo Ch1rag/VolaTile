@@ -67,7 +67,7 @@ public class Configuration {
 		arch = System.getProperties().getProperty("os.arch");
 	}
 
-	public void addOs() {
+	public void addProfiles() {
 		osProfiles.add("WinXPSP2x86");
 		osProfiles.add("Mac10_8_4_64bitx64");
 	}
@@ -291,9 +291,14 @@ public class Configuration {
 			r = new FileReader(volPath+s+"imageinfo.txt");
 			 br= new BufferedReader(r);
 			String line;
-
+			String found="Win";
+            int i=0;
 			while ((line = br.readLine()) != null) {
-				text.append(line + "\n");
+				if(i==0 && line.startsWith(found)==true)
+				{
+				  text.append("Found:"+line);
+				}
+				 text.append(line + "\n");
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
@@ -303,6 +308,9 @@ public class Configuration {
 			br.close();
 		}
 
+	}
+	public void readPath(String volPath){
+		box1.setText(volPath);
 	}
 	
 	
