@@ -60,7 +60,7 @@ public class ImageInfo {
 		else{
 			try{
 				list.add("python");
-				list.add("vol.py");
+				list.add(vol);
 				list.add("-f");
 				list.add(fileName);
 				list.add("--output-file=imageinfo.txt");

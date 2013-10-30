@@ -34,6 +34,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import net.miginfocom.swt.MigLayout;
+
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,16 +43,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Random;
-import java.util.Vector;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author chirag Barot
@@ -59,7 +55,7 @@ import java.util.regex.Pattern;
 public class GUI {
 	private JButton confButton;
 	private JButton loadButton;
-	//private JComboBox cmdList;
+	// private JComboBox cmdList;
 	private JComboBox proList;
 	private JTextArea textArea;
 	private JTextArea output;
@@ -154,14 +150,15 @@ public class GUI {
 		JPanel panelBL = new JPanel(new BorderLayout());
 		final JPanel panelTX = new JPanel(new GridLayout());
 		final JPanel panelFL1 = new JPanel(new GridLayout(1, 1));
+		
 
 		// JPanel panelFL2 = new JPanel(new FlowLayout());
 
 		// set border
-		//panelTX.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		//panelBL.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		//panelBL.setBorder(new TitledBorder(new EtchedBorder(), "Details"));
-		//panelTX.setBorder(new TitledBorder(new EtchedBorder(), command));
+		// panelTX.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		// panelBL.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		// panelBL.setBorder(new TitledBorder(new EtchedBorder(), "Details"));
+		// panelTX.setBorder(new TitledBorder(new EtchedBorder(), command));
 		panelFL1.setBorder(new TitledBorder(new EtchedBorder(),
 				"Profile Selection"));
 
@@ -188,28 +185,21 @@ public class GUI {
 		final JPanel p4 = new JPanel(new GridLayout());
 		final JPanel p5 = new JPanel(new GridLayout());
 		final JPanel p6 = new JPanel(new GridLayout());
-
-		// Add commands to combobox list
-		/*cmdList = new JComboBox();
-		java.util.Iterator<String> iterCmd = winCommands.iterator();
-		while (iterCmd.hasNext()) {
-			cmdList.addItem(iterCmd.next());
-		}
-
-		if (profile.contains("Mac") == true) {
-			cmdList.removeAllItems();
-			java.util.Iterator<String> Cmd = macCommands.iterator();
-			while (Cmd.hasNext()) {
-				cmdList.addItem(Cmd.next());
-			}
-		} else if (profile.contains("Win") == true) {
-			cmdList.removeAllItems();
-			java.util.Iterator<String> iterOs = winCommands.iterator();
-			while (iterOs.hasNext()) {
-				cmdList.addItem(iterOs.next());
-			}
-		}*/
 		
+		// Add commands to combobox list
+		/*
+		 * cmdList = new JComboBox(); java.util.Iterator<String> iterCmd =
+		 * winCommands.iterator(); while (iterCmd.hasNext()) {
+		 * cmdList.addItem(iterCmd.next()); }
+		 * 
+		 * if (profile.contains("Mac") == true) { cmdList.removeAllItems();
+		 * java.util.Iterator<String> Cmd = macCommands.iterator(); while
+		 * (Cmd.hasNext()) { cmdList.addItem(Cmd.next()); } } else if
+		 * (profile.contains("Win") == true) { cmdList.removeAllItems();
+		 * java.util.Iterator<String> iterOs = winCommands.iterator(); while
+		 * (iterOs.hasNext()) { cmdList.addItem(iterOs.next()); } }
+		 */
+
 		// Add os to combobox list
 		proList = new JComboBox();
 		proList.setEditable(false);
@@ -282,7 +272,7 @@ public class GUI {
 		scroll_p4Text = new JScrollPane(p4Text);
 
 		confButton.setVisible(true);
-		
+
 		cp.add(panelFL1, BorderLayout.NORTH);
 		// cp.add(panelTX);
 		cp.add(splitPane);
@@ -298,7 +288,7 @@ public class GUI {
 		// panelFL1.add(l1,FlowLayout.LEFT);
 
 		panelFL1.add(confButton, FlowLayout.LEFT);
-		//panelFL1.add(cmdList, FlowLayout.LEFT);
+		// panelFL1.add(cmdList, FlowLayout.LEFT);
 		panelFL1.add(volPathText);
 		panelFL1.add(proList, FlowLayout.LEFT);
 
@@ -329,8 +319,8 @@ public class GUI {
 			@Override
 			public ArrayList<Future<?>> doInBackground()
 					throws InterruptedException, ExecutionException {
-				//command = cmdList.getSelectedItem().toString();
-                command=winCommands.get(0);
+				// command = cmdList.getSelectedItem().toString();
+				command = winCommands.get(0);
 				// Instantiating all processes objects
 				Connections con = new Connections(dumpFile, profile, vol,
 						volPath);
@@ -418,10 +408,10 @@ public class GUI {
 		if (ROW_SELECTED) {
 			ListSelectionModel rowSL = table.getSelectionModel();
 			rowSL.addListSelectionListener(new ListSelectionListener() {
-            
+
 				public void valueChanged(ListSelectionEvent e) {
 					if (e.getValueIsAdjusting())
-                   
+
 						return;
 
 					ListSelectionModel lsm = (ListSelectionModel) e.getSource();
@@ -432,7 +422,7 @@ public class GUI {
 						p2Text.setText("");
 						p3Text.setText("");
 						p4Text.setText("");
-					
+
 						int selectedRow = lsm.getMinSelectionIndex();
 						int clm = table.getSelectedColumn();
 						int modelRow = table
@@ -573,8 +563,8 @@ public class GUI {
 					Configuration config = new Configuration();
 					config.addProfiles();
 					config.selectFile();
-					String s=File.separator;
-					config.readPath(volPath+s+vol);
+					// String s=File.separator;
+					// config.readPath(volPath+s+vol);
 				}
 			}
 		});
@@ -693,8 +683,8 @@ public class GUI {
 		// private final Color alt2 = new Color(235, 244, 250);
 		private final Color alt1 = Color.WHITE;
 		private final Color invalidStatus = Color.RED;
-		private final Color foreGround=new Color(61, 38, 57);
-		private final Color backGround=new Color(161, 138, 157);
+		private final Color foreGround = new Color(61, 38, 57);
+		private final Color backGround = new Color(161, 138, 157);
 
 		public void AlternateTableRowColorRenderer() {
 			setOpaque(true);
@@ -710,11 +700,11 @@ public class GUI {
 			Object o = table.getModel().getValueAt(row, column);
 			String s = "";
 			if (isSelected) {
-				//super.setForeground(Color.BLACK);
-				
+				// super.setForeground(Color.BLACK);
+
 				table.setSelectionForeground(foreGround);
 				table.setSelectionBackground(backGround);
-				//super.setBackground(table.getSelectionBackground());
+				// super.setBackground(table.getSelectionBackground());
 			} else {
 
 				super.setBackground(colorAlternator(row));
