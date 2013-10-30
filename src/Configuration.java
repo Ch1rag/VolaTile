@@ -199,7 +199,7 @@ public class Configuration {
 			@Override
 			public Void doInBackground() throws InterruptedException,
 			IOException {
-				new ImageInfo(fileName, path, vol);
+				new ImageInfo(fileName, volPath, vol);
 				text.setText("");
 				text.setVisible(true);
 				text.setBorder(new TitledBorder(new EtchedBorder(),
@@ -221,7 +221,7 @@ public class Configuration {
 					if (get() == null) {
 						osCombo.setVisible(true);
 						openGUI.setVisible(true);
-						System.out.println(profile);
+
 					}
 
 				} catch (InterruptedException e) {

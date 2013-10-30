@@ -17,7 +17,7 @@ public class ImageInfo {
 	
 
 	public ImageInfo(){}
-	public ImageInfo(String fileName,String path,String vol) throws IOException, InterruptedException {
+	public ImageInfo(String fileName,String volPath,String vol) throws IOException, InterruptedException {
 		if(fileName.contains("mach-o")){
 			list.add("python");
 			list.add(vol);
@@ -33,7 +33,7 @@ public class ImageInfo {
 			Process p1=process.start();
 
 			// get the working directory for volatility folder..using .directory..
-			process.directory(new File(path));
+			process.directory(new File(volPath));
 
 			//System.out.println("DIR=>" + process.directory());
 			System.out.println("List of commands" + process.command());
@@ -72,7 +72,7 @@ public class ImageInfo {
 				Process p1=process.start();
 
 				// get the working directory for volatility folder..using .directory..
-				process.directory(new File(path));
+				process.directory(new File(volPath));
 
 				//System.out.println("DIR=>" + process.directory());
 				System.out.println("List of commands" + process.command());
