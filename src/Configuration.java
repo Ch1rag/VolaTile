@@ -89,8 +89,8 @@ public class Configuration {
 		p3.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		p3.setBorder(new TitledBorder(new EtchedBorder(), ""));
 
-		selectDump = new JButton("Select Image");
-		volButton = new JButton("vol.py");
+		selectDump = new JButton("Select RAM Dump");
+		volButton = new JButton("Volatility Script(vol.py)");
 		openGUI = new JButton("Open VolaTile");
 		profileButton = new JButton("Detect Profile");
 		osCombo = new JComboBox();

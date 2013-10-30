@@ -73,7 +73,8 @@ public class GUI {
 	private JScrollPane scroll_p3Text;
 	private JScrollPane scroll_p4Text;
 	private JTabbedPane tabPaneTX;
-
+    private JPanel p3;
+    private JPanel p4;
 	private JTable table;
 	private JTable table1;
 	private BufferedReader rf;
@@ -144,21 +145,13 @@ public class GUI {
 
 		// create table
 		createTable();
+		
 
 		// Create Panels
-
 		JPanel panelBL = new JPanel(new BorderLayout());
 		final JPanel panelTX = new JPanel(new GridLayout());
 		final JPanel panelFL1 = new JPanel(new GridLayout(1, 1));
 		
-
-		// JPanel panelFL2 = new JPanel(new FlowLayout());
-
-		// set border
-		// panelTX.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		// panelBL.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-		// panelBL.setBorder(new TitledBorder(new EtchedBorder(), "Details"));
-		// panelTX.setBorder(new TitledBorder(new EtchedBorder(), command));
 		panelFL1.setBorder(new TitledBorder(new EtchedBorder(),
 				"Profile Selection"));
 
@@ -181,25 +174,11 @@ public class GUI {
 		// panels for tabs
 		final JPanel p1 = new JPanel(new GridLayout());
 		final JPanel p2 = new JPanel(new GridLayout());
-		final JPanel p3 = new JPanel(new GridLayout());
-		final JPanel p4 = new JPanel(new GridLayout());
+		p3 = new JPanel(new GridLayout());
+		p4 = new JPanel(new GridLayout());
 		final JPanel p5 = new JPanel(new GridLayout());
 		final JPanel p6 = new JPanel(new GridLayout());
 		
-		// Add commands to combobox list
-		/*
-		 * cmdList = new JComboBox(); java.util.Iterator<String> iterCmd =
-		 * winCommands.iterator(); while (iterCmd.hasNext()) {
-		 * cmdList.addItem(iterCmd.next()); }
-		 * 
-		 * if (profile.contains("Mac") == true) { cmdList.removeAllItems();
-		 * java.util.Iterator<String> Cmd = macCommands.iterator(); while
-		 * (Cmd.hasNext()) { cmdList.addItem(Cmd.next()); } } else if
-		 * (profile.contains("Win") == true) { cmdList.removeAllItems();
-		 * java.util.Iterator<String> iterOs = winCommands.iterator(); while
-		 * (iterOs.hasNext()) { cmdList.addItem(iterOs.next()); } }
-		 */
-
 		// Add os to combobox list
 		proList = new JComboBox();
 		proList.setEditable(false);
@@ -274,27 +253,19 @@ public class GUI {
 		confButton.setVisible(true);
 
 		cp.add(panelFL1, BorderLayout.NORTH);
-		// cp.add(panelTX);
 		cp.add(splitPane);
 
 		// Add components here
-		// panelTX.add(scrollTable);
 		panelTX.add(output);
 		panelBL.add(scroll_p1Text);
 		panelBL.add(scroll_p2Text);
 		panelBL.add(scroll_p3Text);
 		panelBL.add(scroll_p4Text);
-
-		// panelFL1.add(l1,FlowLayout.LEFT);
-
-		panelFL1.add(confButton, FlowLayout.LEFT);
-		// panelFL1.add(cmdList, FlowLayout.LEFT);
-		panelFL1.add(volPathText);
-		panelFL1.add(proList, FlowLayout.LEFT);
-
-		panelFL1.setVisible(false);
-
 		panelBL.add(tabPane, BorderLayout.CENTER);
+		panelFL1.add(proList, FlowLayout.LEFT);
+		panelFL1.add(confButton, FlowLayout.LEFT);
+		panelFL1.add(volPathText,FlowLayout.LEFT);
+		panelFL1.setVisible(false);
 
 		// table panel add components
 		p1.add(scroll_p1Text);
@@ -334,7 +305,7 @@ public class GUI {
 
 				try {
 					futures = te.executor();
-					output.setText("Executing processes(Connections, Sockets, Threads, Handles)");
+					output.setText("Executing processes(Connections, Sockets, Threads, Handles).");
 
 					if (futures.get(4).get() == null || futures.get(4).isDone()) {
 						tabPane.addTab("Connections", p1);
@@ -383,11 +354,8 @@ public class GUI {
 					panelTX.remove(output);
 					panelTX.add(tabPaneTX, BorderLayout.CENTER);
 					tabPaneTX.addTab(command, p5);
-					tabPaneTX.addTab("psxview", p6);
-
-					// panelTX.add(scrollTable);
+					//tabPaneTX.addTab("psxview", p6);
 					panelTX.add(tabPaneTX);
-
 					textArea.setVisible(true);
 					tModel.setRowCount(0);
 					readFile(volPath);
@@ -411,9 +379,7 @@ public class GUI {
 
 				public void valueChanged(ListSelectionEvent e) {
 					if (e.getValueIsAdjusting())
-
 						return;
-
 					ListSelectionModel lsm = (ListSelectionModel) e.getSource();
 					if (lsm.isSelectionEmpty()) {
 						System.out.println("No rows are selected.");
@@ -422,121 +388,17 @@ public class GUI {
 						p2Text.setText("");
 						p3Text.setText("");
 						p4Text.setText("");
-
+						
 						int selectedRow = lsm.getMinSelectionIndex();
 						int clm = table.getSelectedColumn();
+						int modelClm=table.convertColumnIndexToModel(clm);
 						int modelRow = table
 								.convertRowIndexToModel(selectedRow);
+						table.isCellEditable(modelRow, modelClm);
+						
+						selectCell(modelRow, modelClm);
 
-						switch (clm) {
-						case 0:
-						case 1: {
-							clm = 2;
-						}
-						case 2: {
-							tabPane.getSelectedComponent();
-
-							data = table.getModel().getValueAt(modelRow, clm);
-
-							String PID = data.toString();
-
-							thread = new Threads(PID);
-							connection = new Connections(PID);
-							socket = new Sockets(PID);
-							handle = new Handles(PID);
-
-							try {
-
-								ArrayList<String> connections = new ArrayList<String>();
-								connections = connection.readFile(volPath);
-								Iterator<String> con = connections.iterator();
-
-								while (con.hasNext()) {
-									p1Text.append(con.next());
-								}
-
-								ArrayList<String> sockets = new ArrayList<String>();
-								sockets = socket.readFile(volPath);
-								Iterator<String> soc = sockets.iterator();
-
-								while (soc.hasNext()) {
-									p2Text.append(soc.next());
-								}
-
-								ArrayList<String> threads = new ArrayList<String>();
-								threads = thread.readFile(volPath);
-								Iterator<String> thd = threads.iterator();
-
-								while (thd.hasNext()) {
-									p3Text.append(thd.next());
-								}
-
-								ArrayList<String> handles = new ArrayList<String>();
-								handles = handle.readFile(volPath);
-								Iterator<String> hnd = handles.iterator();
-
-								while (hnd.hasNext()) {
-									p4Text.append(hnd.next());
-								}
-
-							} catch (IOException e1) {
-								JOptionPane.showMessageDialog(
-										confButton,
-										"Process is running, Please wait"
-												+ e1.getMessage());
-							}
-
-							break;
-						}
-						case 3: {
-							tabPane.getSelectedComponent();
-						}
-						case 4: {
-							tabPane.setSelectedComponent(p3);
-							clm = 2;
-
-							data = table.getModel().getValueAt(modelRow, clm);
-							String PID = data.toString();
-							thread = new Threads(PID);
-							ArrayList<String> threads = new ArrayList<String>();
-							try {
-								threads = thread.readFile(volPath);
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-							Iterator<String> thd = threads.iterator();
-
-							while (thd.hasNext()) {
-								p3Text.append(thd.next());
-							}
-							break;
-						}
-						case 5: {
-							tabPane.setSelectedComponent(p4);
-							clm = 2;
-							data = table.getModel().getValueAt(modelRow, clm);
-							String PID = data.toString();
-							handle = new Handles(PID);
-							ArrayList<String> handles = new ArrayList<String>();
-							try {
-								handles = handle.readFile(volPath);
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-							Iterator<String> hnd = handles.iterator();
-
-							while (hnd.hasNext()) {
-								p4Text.append(hnd.next());
-							}
-							break;
-						}
-						default: {
-							System.out.println("No rows are selected");
-						}
-
-						}
+						
 
 					}
 
@@ -570,31 +432,155 @@ public class GUI {
 		});
 
 	}
+	public void selectCell(int row,int column){
+		switch (column) {
+		case 0:
+		case 1: {
+			column= 2;
+		}
+		case 2: {
+			tabPane.getSelectedComponent();
+			data = table.getModel().getValueAt(row,column);
+			String PID = data.toString();
+			callProcesses(PID);
+
+			break;
+		}
+		case 3: {
+			tabPane.getSelectedComponent();
+		}
+		case 4: {//Threads
+			tabPane.setSelectedComponent(p3);
+			column= 2;
+
+			data = table.getModel().getValueAt(row, column);
+			String PID = data.toString();
+			thread = new Threads(PID);
+			ArrayList<String> threads = new ArrayList<String>();
+			try {
+				threads = thread.readFile(volPath);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			Iterator<String> thd = threads.iterator();
+
+			while (thd.hasNext()) {
+				p3Text.append(thd.next());
+			}
+			break;
+		}
+		case 5: {//Handles
+			tabPane.setSelectedComponent(p4);
+			column= 2;
+			data = table.getModel().getValueAt(row, column);
+			String PID = data.toString();
+			handle = new Handles(PID);
+			ArrayList<String> handles = new ArrayList<String>();
+			try {
+				handles = handle.readFile(volPath);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			Iterator<String> hnd = handles.iterator();
+
+			while (hnd.hasNext()) {
+				p4Text.append(hnd.next());
+			}
+			break;
+		}
+		case 6:{
+			
+		}
+		case 7:{
+			
+		}
+		case 8:{
+			
+		}
+		case 9:{
+			
+		}
+		case 10:{
+			
+		}
+		default: {
+			System.out.println("No rows are selected");
+		}
+
+		}
+	}
+	
+	public void callProcesses(String PID){
+		thread = new Threads(PID);
+		connection = new Connections(PID);
+		socket = new Sockets(PID);
+		handle = new Handles(PID);
+
+		try {
+
+			ArrayList<String> connections = new ArrayList<String>();
+			connections = connection.readFile(volPath);
+			Iterator<String> con = connections.iterator();
+
+			while (con.hasNext()) {
+				p1Text.append(con.next());
+			}
+
+			ArrayList<String> sockets = new ArrayList<String>();
+			sockets = socket.readFile(volPath);
+			Iterator<String> soc = sockets.iterator();
+
+			while (soc.hasNext()) {
+				p2Text.append(soc.next());
+			}
+
+			ArrayList<String> threads = new ArrayList<String>();
+			threads = thread.readFile(volPath);
+			Iterator<String> thd = threads.iterator();
+
+			while (thd.hasNext()) {
+				p3Text.append(thd.next());
+			}
+
+			ArrayList<String> handles = new ArrayList<String>();
+			handles = handle.readFile(volPath);
+			Iterator<String> hnd = handles.iterator();
+
+			while (hnd.hasNext()) {
+				p4Text.append(hnd.next());
+			}
+
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(
+					confButton,
+					"Process is running, Please wait"
+							+ e1.getMessage());
+		}
+	}
 
 	// * Create Table Default Rows and Columns Format specified Format table
 	// with
 	// * Set attributes
+	 	
 	public void createTable() {
 		// Create Table and table model
 		// table = new JTable();
 
 		tModel = new DefaultTableModel(0, 0);
-
 		TableRowSorter<TableModel> trs = new TableRowSorter<TableModel>(tModel);
 		trs.addRowSorterListener(table);
 		table = new JTable(tModel);
 		table.setRowSorter(trs);
-
 		table.setBackground(Color.DARK_GRAY);
 		trs.setSortsOnUpdates(true);
 
-		// table.setAutoCreateRowSorter(true);
 		// Table row settings
 		table.setRowHeight(22);
 		table.setModel(tModel);
 		table.setAutoCreateRowSorter(true);
-		// table.setCellSelectionEnabled(true);
-		table.setRowSelectionAllowed(true);
+		//table.setRowSelectionAllowed(true);
 		tModel.setColumnIdentifiers(columnTitles);
 		Enumeration<TableColumn> en = table.getColumnModel().getColumns();
 
@@ -603,7 +589,7 @@ public class GUI {
 			tc.setCellRenderer(new MyTableCellRenderer());
 		}
 	}
-
+	 
 	// Read file and return read file object
 	public BufferedReader readFile(String volPath) {
 		FileReader r = null;
@@ -689,7 +675,10 @@ public class GUI {
 		public void AlternateTableRowColorRenderer() {
 			setOpaque(true);
 		}
-
+		public boolean isCellEditable(int row, int column) {
+		       //all cells false
+		       return false;
+		    }
 		@Override
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
@@ -698,6 +687,7 @@ public class GUI {
 					isSelected, hasFocus, row, column);
 
 			Object o = table.getModel().getValueAt(row, column);
+			
 			String s = "";
 			if (isSelected) {
 				// super.setForeground(Color.BLACK);
@@ -736,5 +726,7 @@ public class GUI {
 			}
 		}
 	}
+	
+	  
 
 }

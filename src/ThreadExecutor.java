@@ -64,8 +64,6 @@ public class ThreadExecutor implements Callable<Object> {
 			futures.add(service.submit(Con));//3
 			futures.add(service.submit(pb)); //4
 			
-			
-
 			service.shutdown();
 			service.shutdownNow();
 			service.isTerminated();
