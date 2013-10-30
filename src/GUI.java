@@ -433,6 +433,7 @@ public class GUI {
 
 	}
 	public void selectCell(int row,int column){
+		
 		switch (column) {
 		case 0:
 		case 1: {
@@ -448,6 +449,10 @@ public class GUI {
 		}
 		case 3: {
 			tabPane.getSelectedComponent();
+			data = table.getModel().getValueAt(row,column);
+			String PID = data.toString();
+			callProcesses(PID);
+			break;
 		}
 		case 4: {//Threads
 			tabPane.setSelectedComponent(p3);
@@ -468,6 +473,7 @@ public class GUI {
 			while (thd.hasNext()) {
 				p3Text.append(thd.next());
 			}
+			callProcesses(PID);
 			break;
 		}
 		case 5: {//Handles
@@ -488,28 +494,55 @@ public class GUI {
 			while (hnd.hasNext()) {
 				p4Text.append(hnd.next());
 			}
+			callProcesses(PID);
 			break;
 		}
 		case 6:{
-			
+			column= 2;
+			tabPane.getSelectedComponent();
+			data = table.getModel().getValueAt(row,column);
+			String PID = data.toString();
+			callProcesses(PID);
+			break;
 		}
 		case 7:{
-			
+			column= 2;
+			tabPane.getSelectedComponent();
+			data = table.getModel().getValueAt(row,column);
+			String PID = data.toString();
+			callProcesses(PID);
+			break;
 		}
 		case 8:{
-			
+			column= 2;
+			tabPane.getSelectedComponent();
+			data = table.getModel().getValueAt(row,column);
+			String PID = data.toString();
+			callProcesses(PID);
+			break;
 		}
 		case 9:{
-			
+			column= 2;
+			tabPane.getSelectedComponent();
+			data = table.getModel().getValueAt(row,column);
+			String PID = data.toString();
+			callProcesses(PID);
+			break;
 		}
 		case 10:{
-			
+			column= 2;
+			tabPane.getSelectedComponent();
+			data = table.getModel().getValueAt(row,column);
+			String PID = data.toString();
+			callProcesses(PID);
+			break;
 		}
 		default: {
 			System.out.println("No rows are selected");
 		}
 
 		}
+		
 	}
 	
 	public void callProcesses(String PID){

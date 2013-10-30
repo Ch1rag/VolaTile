@@ -159,7 +159,7 @@ public class Configuration {
 					vol = volFile.getName();
 
 					if (vol.matches("vol.py") == true) {
-						text.setText("volatility python filename:" + vol + "\n");
+						text.setText("Selected Volatility script:" + vol + "\n");
 						selectDump.setVisible(true);
 						
 					} else {
@@ -186,7 +186,9 @@ public class Configuration {
 					File file = selectFile.getSelectedFile();
                     
 					fileName = file.getAbsolutePath();
-					text.append("\n"+"Selected dump file is:" + file.getName());
+					text.setText("");
+					text.setText("\n"+"Selected Volatility script:" + vol
+					+"\n"+"Selected RAM dump:" + file.getName());
 					p3.setVisible(true);
 					profileButton.setVisible(true);
 					openGUI.setVisible(true);
