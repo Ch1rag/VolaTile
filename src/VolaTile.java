@@ -1,24 +1,13 @@
-/**    
- * A concise description of the class (including invariants if any)
- *    
- * @
- * PUBLIC FEATURES:
- * // Constructors
- *    each constructor should be listed here
- * // Methods
- *    The signature and a brief comment (if needed)
- *    In alphabetic order
- *
- * COLLABORATORS:
- *    Names of classes (other than System and java.lang)
- *
- * MODIFIED:
- * @version number, date last changed and author’s initials &/or what changed (very brief)
- * @author    (can have multiple authors)
- */
-
 import java.io.IOException;
 
+/**    
+ * The Main Class for VolTile.
+ * This is the first class to be called 
+ * when executing the VolTile programm.
+ * 
+ * @author	Chirag Barot
+ * @version	1.0
+ */
 public class VolaTile{
 
 	/**
@@ -26,12 +15,13 @@ public class VolaTile{
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
-
-
 	public static void main(String[] args) throws IOException, InterruptedException{
 		// TODO Auto-generated method stub	
 
-       
+		/**
+		 * Calling the Configuration class and also add 
+		 * profile method and select file method.
+		 */       
 		Configuration config=new Configuration();
 		config.addProfiles();
 		config.selectFile();

@@ -1,28 +1,16 @@
-/**    
- * A concise description of the class (including invariants if any)
- *    
- * @
- * PUBLIC FEATURES:
- * // Constructors
- *    each constructor should be listed here
- * // Methods
- *    The signature and a brief comment (if needed)
- *    In alphabetic order
- *
- * COLLABORATORS:
- *    Names of classes (other than System and java.lang)
- *
- * MODIFIED:
- * @version number, date last changed and author’s initials &/or what changed (very brief)
- * @author    (can have multiple authors)
- * http://swinbrain.ict.swin.edu.au/wiki/Swinburne_Java_Coding_Standard
- */
- 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+/**    
+ * This is the Process Builder Class.
+ * This class is used to retrieve pslist 
+ * information from the memory dump.
+ * 
+ * @author	Chirag Barot
+ * @version	1.0
+ */
 public class ProcessBuilderClass implements Callable<Object>{
 	private List<String> list = new ArrayList<String>();
 	private String command;
@@ -31,6 +19,16 @@ public class ProcessBuilderClass implements Callable<Object>{
 	private String vol;
 	private String volPath;
 	
+	/**
+     * The overloaded constructor for Process Builder Class.
+     * This is the constructor that used to display the information 
+	 * on the connections of the PID selected
+	 *
+	 * @param	dumpFile	Memory dump file
+	 * @param	profile		Profile Name of the Memory Dump
+	 * @param	vol			vol.py
+	 * @param	volPath		path of the vol.py file
+     */		
 	public ProcessBuilderClass(String command,String dumpFile,String profile,String vol,String volPath){
 		this.profile=profile;
 		this.dumpFile=dumpFile;

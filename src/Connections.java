@@ -1,23 +1,3 @@
-/**    
- * A concise description of the class (including invariants if any)
- *    
- * @
- * PUBLIC FEATURES:
- * // Constructors
- *    each constructor should be listed here
- * // Methods
- *    The signature and a brief comment (if needed)
- *    In alphabetic order
- *
- * COLLABORATORS:
- *    Names of classes (other than System and java.lang)
- *
- * MODIFIED:
- * @version number, date last changed and author’s initials &/or what changed (very brief)
- * @author    (can have multiple authors)
- * http://swinbrain.ict.swin.edu.au/wiki/Swinburne_Java_Coding_Standard
- */
- 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -29,6 +9,14 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+/**    
+ * This class is used to deal with the connections tab of the GUI,
+ * choosing a particular PID from the pslist will show 
+ * whether there are connections available of that particular PID
+ * 
+ * @author	Chirag Barot
+ * @version	1.0
+ */
 public class Connections implements Callable<Object> {
 
 	private List<String> list = new ArrayList<String>();
@@ -48,6 +36,17 @@ public class Connections implements Callable<Object> {
 	Connections(String pid) {
 		PID = pid;
 	}
+
+	/**
+     * The overloaded constructor for Connections Class.
+     * This is the constructor that used to display the information 
+	 * on the connections of the PID selected
+	 *
+	 * @param	dumpFile	Memory dump file
+	 * @param	profile		Profile Name of the Memory Dump
+	 * @param	vol			vol.py
+	 * @param	volPath		path of the vol.py file
+     */	
 	public Connections(String dumpFile,String profile,String vol,String volPath){
 		this.profile=profile;
 		this.dumpFile=dumpFile;
@@ -55,10 +54,16 @@ public class Connections implements Callable<Object> {
 		this.volPath=volPath;
 	}
 
-   
+ 	/**
+	 * The Future Method of Connections class is defined here,
+	 * this is useful when using multi threading. 
+	 * <p>
+	 * When the user clicks "Open Volatile" four processes runs
+	 * consecutively including connections process
+	 */     
 	public Future<?> call() {
 		
-		// process two..
+		
 		try {
 			list.add("python");
 			list.add(vol);
@@ -101,6 +106,12 @@ public class Connections implements Callable<Object> {
 		return null;
 	}
 
+	/**
+	 * Reading information from the buffer reader and 
+	 * pass them into connections.txt file where vol.py file exists
+	 * 
+	 * @Exception	File not found
+	 */
 	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {

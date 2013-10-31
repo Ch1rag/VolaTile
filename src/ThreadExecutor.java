@@ -1,23 +1,3 @@
-/**    
- * A concise description of the class (including invariants if any)
- *    
- * @
- * PUBLIC FEATURES:
- * // Constructors
- *    each constructor should be listed here
- * // Methods
- *    The signature and a brief comment (if needed)
- *    In alphabetic order
- *
- * COLLABORATORS:
- *    Names of classes (other than System and java.lang)
- *
- * MODIFIED:
- * @version number, date last changed and author’s initials &/or what changed (very brief)
- * @author    (can have multiple authors)
- * http://swinbrain.ict.swin.edu.au/wiki/Swinburne_Java_Coding_Standard
- */
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -26,6 +6,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+/**    
+ * The Thread Executor class is used to execute the processes consecutively
+ * 
+ * @author	Chirag Barot
+ * @version	1.0
+ */
 public class ThreadExecutor implements Callable<Object> {
 	private static ExecutorService service = null;
 	private ArrayList<Future<?>> futures = new ArrayList<Future<?>>();
@@ -35,6 +21,15 @@ public class ThreadExecutor implements Callable<Object> {
 	private Threads Thd;
 	private ProcessBuilderClass pb;
 
+	/**
+     * The overloaded constructor for Thread Executor Class.
+	 *
+	 * @param	Con			Connection Process
+	 * @param	Soc			Sockets Process
+	 * @param	Thd			Thread Process
+	 * @param	Hnd			Handles Process
+	 * @param 	pb			Process Builder (pslist)
+     */
 	ThreadExecutor(Connections Con, Handles Hnd, Sockets Soc, Threads Thd,
 			ProcessBuilderClass pb) {
 		this.Con = Con;

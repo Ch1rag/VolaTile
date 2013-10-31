@@ -1,23 +1,3 @@
-/**    
- * A concise description of the class (including invariants if any)
- *    
- * @
- * PUBLIC FEATURES:
- * // Constructors
- *    each constructor should be listed here
- * // Methods
- *    The signature and a brief comment (if needed)
- *    In alphabetic order
- *
- * COLLABORATORS:
- *    Names of classes (other than System and java.lang)
- *
- * MODIFIED:
- * @version number, date last changed and author’s initials &/or what changed (very brief)
- * @author    (can have multiple authors)
- * http://swinbrain.ict.swin.edu.au/wiki/Swinburne_Java_Coding_Standard
- */
-
 import java.awt.*;
 //import net.miginfocom.swing.MigLayout;
 import java.awt.event.*;
@@ -46,8 +26,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * @author chirag Barot
+ * Class for display the Graphical User Interface
+ * <p> This class is responsible for running the GUI front end for text based volatility
+ * All the Buttons, Text Areas and Lists which are visible on the interface are defined in this class
  * 
+ * @author 		Chirag Barot
+ * @version		1.0
  */
 public class GUI {
 	private JButton confButton;
@@ -99,9 +83,26 @@ public class GUI {
 	private String volPath;
 	private SwingWorker<ArrayList<Future<?>>, Void> worker;
 
+	/**
+     * The default constructor method. 
+     * Used only the first time when the application is run.
+	 * Used only when  the overloaded constructor is not used
+     */
 	public GUI() {
 	}
 
+	/**
+     * The overloaded constructor for GUI Class.
+     * This is the constructor used by configuration class.
+	 * When the user wants to select the memory dump file, the profile and the volatility path
+     * this method will be called. 
+     * 
+     * @param   dumpFile     The Memory dump file which selected by browsing the computer will be called by this string variable
+	 * @param   profile      The Profile of the chosen dump file will be called by this string variable
+	 * @param   path         The Path to the Memory dump file will be called by this string variable
+	 * @param   vol          vol.py file will be called
+     * @param   volPath      The Path to the vol.py will be called by this string variable
+	 */
 	public GUI(String dumpFile, String profile, String vol, String volPath) {
 		this.dumpFile = dumpFile;
 		this.profile = profile;
@@ -109,10 +110,26 @@ public class GUI {
 		this.vol = vol;
 	}
 
+	/**
+     * Get Path method.  When the class instance is constructed with the overloaded constructor,
+     * this method returns the path of the vol.py, from which the class was instantiated.
+     * 
+     * @return  volPath		The Path of the vol.py will be returned when this method is called
+     */	
 	public String getPath() {
 		return volPath;
 	}
 
+	/**
+     * This method particularly used by apple mac os.
+     * In order to retrieve the pslist, psxview, notifiers, pstree, tasks and ifconfig,
+	 * the following method will be used.
+     * 
+     * @param  pslist		The Process List of the Memory dump
+	 * @param  psxview		Will enable to view the hidden processes of the memory dump
+	 * @param  pstree		The Process List will be displayed in a tree form
+	 * @param  ifconfig		The IP configuration of the system when the mem dump was taken
+     */	
 	public void storeCmd_Mac() {
 		macCommands.add("mac_pslist");
 		macCommands.add("mac_psxview");
@@ -123,27 +140,60 @@ public class GUI {
 
 	}
 
+	/**
+     * This method particularly used by windows os.
+     * In order to retrieve the pslist and psxview
+	 * the following method will be used.
+     * 
+     * @param  pslist		The Process List of the Memory dump
+	 * @param  psxview		Will enable to view the hidden processes of the memory dump
+     */	
 	public void storeCmd_Win() {
 		winCommands.add("pslist");
 		winCommands.add("psxview");
 	}
 
+	/**
+     * This method stores the information of the current working OS.
+     * 
+     * @param  profile		The Profile of the OS where the VolaTile runs
+     */	
 	public void storeProfile(String profile) {
 		profileList.add(profile);
 	}
 
+	/**
+     * This method is used for creating the Frame. Any essential changes 
+	 * to the display of the frame should be done by overriding this method.
+     * <p>
+	 * This is the method which is used to display the face of the GUI
+	 * <p>
+	 * Inside the Java Frame a panel is used to set the grid layouts
+	 * also setting the border is done using this method.
+	 * <p>
+	 * Run button uses an action listener in order to handle its events.
+     */	
 	public void makeFrame() {
-		// Create JFrame with content pane and set layout
+		
+		/** 
+		 * Create a JFrame with content pane and setting the
+		 * layout to display the pslist information in a table.
+		 * in the VolaTile window.
+		 */
 		final JFrame frame = new JFrame();
 
 		final Container cp = frame.getContentPane();
 		cp.setLayout(new BorderLayout());
 
-		// create table
+		/** 
+		 *	Create the table 
+		 */
 		createTable();
 		
 
-		// Create Panels
+		/** 
+		 *	Create the Panels inside the JFrame
+		 */
 		JPanel panelBL = new JPanel(new BorderLayout());
 		final JPanel panelTX = new JPanel(new GridLayout());
 		final JPanel panelFL1 = new JPanel(new GridLayout(1, 1));
@@ -151,23 +201,32 @@ public class GUI {
 		panelFL1.setBorder(new TitledBorder(new EtchedBorder(),
 				"Profile Selection"));
 
-		// create tab pane
+		/** 
+		 *	Create the tab panes
+		 */
 		tabPane = new JTabbedPane();
 		tabPane.setPreferredSize(new Dimension(300, 300));
 
 		tabPaneTX = new JTabbedPane();
 
-		// Create a split pane with the two scroll panes in it.
+		/** 
+		 *	Create a split pane with the two scroll panes in it.
+		 */
 		splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panelTX, panelBL);
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setDividerLocation(350);
 
-		// Provide minimum sizes for the two components in the split pane
+		/** 
+		 *	Provide minimum sizes for the two components in the split pane
+		 */		
 		Dimension minimumSize = new Dimension(100, 50);
 		panelBL.setMinimumSize(minimumSize);
 		panelTX.setMinimumSize(minimumSize);
 
-		// panels for tabs
+		
+		/** 
+		 *	Panels for four tabs on the bottom of the window
+		 */			
 		final JPanel p1 = new JPanel(new GridLayout());
 		final JPanel p2 = new JPanel(new GridLayout());
 		p3 = new JPanel(new GridLayout());
@@ -175,7 +234,10 @@ public class GUI {
 		final JPanel p5 = new JPanel(new GridLayout());
 		final JPanel p6 = new JPanel(new GridLayout());
 		
-		// Add os to combobox list
+
+		/** 
+		 *	Add os to combobox list
+		 */			
 		proList = new JComboBox();
 		proList.setEditable(false);
 		java.util.Iterator<String> iterOs = profileList.iterator();
@@ -183,17 +245,28 @@ public class GUI {
 			proList.addItem(iterOs.next());
 		}
 
-		// Define Components and initialize them
+		/** 
+		 *	Define Components and initialize them.
+		 * <p>
+		 * Config (confButton) will lead to the main configuration window.
+		 * Also when the user hover the mouse over this button a tool tip 
+		 * will be displayed.
+		 */			
 		confButton = new JButton("Config");
 		confButton.setToolTipText("Open configuration window");
 		loadButton = new JButton("Load");
 
-		// Textfields
+		/** 
+		 *	The path for the vol.py file is displayed inside this 
+		 *  text box.
+		 */	
 		volPathText = new JTextField(volPath);
 		volPathText.setEditable(false);
 		volPathText.setToolTipText("Path for vol.py");
 
-		// Text area to add to tab panels
+		/** 
+		 *	Text area to add to tab panels
+		 */			
 		p1Text = new JTextArea(50, 50);
 		p1Text.setBackground(bg);
 		p1Text.setEditable(false);
@@ -201,7 +274,9 @@ public class GUI {
 		p1Text.getCaretPosition();
 		p1Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
-		// Text area to add to tab panels
+		/** 
+		 *	Text area to add to tab panels
+		 */	
 		p2Text = new JTextArea(50, 50);
 		p2Text.setBackground(bg);
 		p2Text.setEditable(false);
@@ -209,7 +284,9 @@ public class GUI {
 		p2Text.getCaretPosition();
 		p2Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
-		// Text area to add to tab panels
+		/** 
+		 *	Text area to add to tab panels
+		 */	
 		p3Text = new JTextArea(10, 40);
 		p3Text.setBackground(bg);
 		p3Text.setEditable(false);
@@ -217,7 +294,9 @@ public class GUI {
 		p3Text.getCaretPosition();
 		p3Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
-		// Text area to add to tab panels
+		/** 
+		 *	Text area to add to tab panels
+		 */	
 		p4Text = new JTextArea(10, 40);
 		p4Text.setBackground(bg);
 		p4Text.setEditable(false);
@@ -238,7 +317,9 @@ public class GUI {
 		output.setForeground(Color.BLACK);
 		output.setBackground(bg);
 
-		// Add scroll bar to tab panels
+		/** 
+		 *	Adding a scroll bar to the tab panels
+		 */	
 		scrollTable = new JScrollPane(table);// last change
 		scrollTablepsx = new JScrollPane(table1);
 		scroll_p1Text = new JScrollPane(p1Text);
@@ -251,7 +332,9 @@ public class GUI {
 		cp.add(panelFL1, BorderLayout.NORTH);
 		cp.add(splitPane);
 
-		// Add components here
+		/** 
+		 *	Adding the components to the Java Panel
+		 */	
 		panelTX.add(output);
 		panelBL.add(scroll_p1Text);
 		panelBL.add(scroll_p2Text);
@@ -263,7 +346,9 @@ public class GUI {
 		panelFL1.add(volPathText,FlowLayout.LEFT);
 		panelFL1.setVisible(false);
 
-		// table panel add components
+		/** 
+		 *	Adding the components inside the table panel
+		 */	
 		p1.add(scroll_p1Text);
 		p2.add(scroll_p2Text);
 		p3.add(scroll_p3Text);
@@ -271,14 +356,18 @@ public class GUI {
 		p5.add(scrollTable);
 		p6.add(scrollTablepsx);
 
-		// Set frame elements
+		/** 
+		 *	Setting the frame elements of the VolaTile window
+		 */	
 		frame.setTitle("VolaTile");
 		frame.setSize(700, 900);
 		frame.setVisible(true);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		// Swing worker for loading tabs
+		/** 
+		 *	Swing worker for loading tabs
+		 */	
 		worker = new SwingWorker<ArrayList<Future<?>>, Void>() {
 
 			private ArrayList<Future<?>> futures = new ArrayList<Future<?>>();
@@ -299,10 +388,23 @@ public class GUI {
 				// Passing processes objects to ThreadExecutors to manage
 				ThreadExecutor te = new ThreadExecutor(con, hnd, soc, thd, pb);
 
+				/** 
+				 * Executing the processes in the background 
+				 * while checking for exceptions. Once each process is complete
+				 * a tab will appear on the bottom of the window
+				 * 
+				 * @Exception	InterruptedException
+				 * @Exception	IOException
+				 */				
 				try {
 					futures = te.executor();
 					output.setText("Executing processes(Connections, Sockets, Threads, Handles).");
 
+					/**
+					 * After the Connection Process is complete,
+					 * connections tab will appear and display a message
+					 * "Connections are available"
+					 */					
 					if (futures.get(4).get() == null || futures.get(4).isDone()) {
 						tabPane.addTab("Connections", p1);
 						tabPane.setSelectedComponent(p1);
@@ -310,25 +412,44 @@ public class GUI {
 						output.append("\n" + "Connections are available");
 
 					}
+					
+					/**
+					 * After the Sockets Process is complete,
+					 * sockets tab will appear and display a message
+					 * "Sockets are available"
+					 */					
 					if (futures.get(2).get() == null || futures.get(2).isDone()) {
 						tabPane.addTab("Sockets", p2);
 						tabPane.setSelectedComponent(p2);
 						p2Text.append("Sockets are available!");
 						output.append("\n" + "Sockets are available");
 					}
-
+					
+				    /**
+					 * After the Threads Process is complete,
+					 * threads tab will appear and display a message
+					 * "Threads are available"
+					 */
 					if (futures.get(0).get() == null || futures.get(0).isDone()) {
 						tabPane.addTab("Threads", p3);
 						tabPane.setSelectedComponent(p3);
 						p3Text.append("Threads are available!");
 						output.append("\n" + "Threads are available");
 					}
+					
+					/**
+					 * After the Handles Process is complete,
+					 * handles tab will appear and display a message
+					 * "Handles are available"
+					 */					
 					if (futures.get(1).get() == null || futures.get(1).isDone()) {
 						tabPane.addTab("Handles", p4);
 						tabPane.setSelectedComponent(p4);
 						p4Text.append("Handles are available!");
 						output.append("\n" + "Handles are available");
 					}
+					
+					
 					if (futures.get(3).get() == null || futures.get(3).isDone()) {
 						output.setVisible(false);
 					}
@@ -366,7 +487,9 @@ public class GUI {
 		};
 		worker.execute();
 
-		// Table selection
+		/**
+		 * Table Selection
+		 */
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		boolean ROW_SELECTED = true;
 		if (ROW_SELECTED) {
@@ -403,6 +526,11 @@ public class GUI {
 			table.setRowSelectionAllowed(false);
 		}
 
+		/**
+		 * Once the user clicks the Config button a message box will
+		 * be displayed asking to close the VolaTile window to go back to the 
+		 * configuration window.
+		 */
 		confButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object[] options = { "Yes", "No" };
@@ -447,7 +575,11 @@ public class GUI {
 			callProcesses(PID);
 			break;
 		}
-		case 4: {//Threads
+		
+		/**
+		 * Threads
+		 */
+		case 4: {
 			tabPane.setSelectedComponent(p3);
 			column= 2;
 
@@ -469,7 +601,11 @@ public class GUI {
 			
 			break;
 		}
-		case 5: {//Handles
+		
+		/**
+		 * Handles
+		 */		
+		case 5: {
 			tabPane.setSelectedComponent(p4);
 			column= 2;
 			data = table.getModel().getValueAt(row, column);
@@ -586,13 +722,17 @@ public class GUI {
 		}
 	}
 
-	// * Create Table Default Rows and Columns Format specified Format table
-	// with
-	// * Set attributes
-	 	
+	/** 
+	 * Create Table Default Rows and Columns Format specified Format table
+	 * with Set attributes
+	 */	
 	public void createTable() {
-		// Create Table and table model
+		
+		/** 
+	     * Creating Tables and modelling them
+		 */
 		tModel = new DefaultTableModel(){
+			
 			/**
 			 * The following method is used to make cells non-editable for the given table model
 			 */
@@ -609,15 +749,19 @@ public class GUI {
 		table.setBackground(Color.DARK_GRAY);
 		trs.setSortsOnUpdates(true);
 
-		// Table row settings
+		/**
+		 * Table Row Settings
+		 */
 		table.setRowHeight(22);
 		table.setModel(tModel);
 		table.setAutoCreateRowSorter(true);
 		tModel.setColumnIdentifiers(columnTitles);
 		
 	}
-	 
-	// Read file and return read file object
+
+	/**
+	 * Read file and return read file object
+	 */	
 	public BufferedReader readFile(String volPath) {
 		FileReader r = null;
 		try {
@@ -632,7 +776,9 @@ public class GUI {
 		return rf = new BufferedReader(r);
 	}
 
-	// Default function call for switch statement..
+	/** 
+	 * Default function call for switch statement..
+	 */
 	public void readRows(BufferedReader rf) {
 		String line = null;
 		String[] splits;
@@ -681,7 +827,9 @@ public class GUI {
 		}
 	}
 
-	// Inner class for table cell renderer
+	/** 
+	 * Inner class used for cell renderring of the table
+	 */
 	public class MyTableCellRenderer extends DefaultTableCellRenderer implements
 			TableCellRenderer {
 		private static final long serialVersionUID = 1L;
