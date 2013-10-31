@@ -41,9 +41,7 @@ public class Threads implements Callable<Object> {
 	private String vol;
 	private String volPath;
 
-	// Deafult Constructor
-	/*Threads() {
-	}*/
+	
 
 	// Overloaded constructor
 	Threads(String pid) {
@@ -72,7 +70,7 @@ public class Threads implements Callable<Object> {
 			list.add(command);
 			
 			ProcessBuilder process = new ProcessBuilder(list);
-			System.out.println("Executing Process Four(Threads)");
+			//System.out.println("Executing Process Four(Threads)");
 
 			Process p2 = process.start();
 

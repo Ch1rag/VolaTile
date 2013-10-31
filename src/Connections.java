@@ -53,11 +53,8 @@ public class Connections implements Callable<Object> {
 		this.dumpFile=dumpFile;
 		this.vol=vol;
 		this.volPath=volPath;
-		System.out.println(volPath);
 	}
-	// Deafult Constructor
-		/*Connections() {
-		}*/
+
    
 	public Future<?> call() {
 		
@@ -72,7 +69,7 @@ public class Connections implements Callable<Object> {
 			list.add(command);
 
 			ProcessBuilder process = new ProcessBuilder(list);
-			System.out.println("Executing Process Two(Connections)");
+			//System.out.println("Executing Process Two(Connections)");
 
 			Process p2 = process.start();
 
@@ -115,14 +112,14 @@ public class Connections implements Callable<Object> {
 			int i = 0;
 			do {
 				line = br.readLine();
-				//System.out.println(line);
+				
 				connections.add(" " + line + "\n");
 				i++;
 			} while (i != 2);
-			// int id=Integer.parseInt(PID);
+		
 			while ((line = br.readLine()) != null) {
 				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
-					//System.out.println(line);
+					
 					connections.add(line + "\n");
 				}
 			}

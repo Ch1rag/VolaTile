@@ -33,9 +33,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-
-import net.miginfocom.swt.MigLayout;
-
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
 import java.io.File;
@@ -85,7 +82,6 @@ public class GUI {
 	private Threads thread;
 	private Handles handle;
 	private DefaultTableModel tModel;
-	private DefaultTableModel tModel1;
 	private String[] columnTitles = { "", "", "", "", "", "", "", "", "", "",
 			"", "" };
 	private JTabbedPane tabPane;
@@ -395,11 +391,8 @@ public class GUI {
 						int modelRow = table
 								.convertRowIndexToModel(selectedRow);
 						table.isCellEditable(modelRow, modelClm);
-						
+                        //Call method and pass row, Column
 						selectCell(modelRow, modelClm);
-
-						
-
 					}
 
 				}
@@ -473,7 +466,7 @@ public class GUI {
 			while (thd.hasNext()) {
 				p3Text.append(thd.next());
 			}
-			callProcesses(PID);
+			
 			break;
 		}
 		case 5: {//Handles
@@ -494,7 +487,7 @@ public class GUI {
 			while (hnd.hasNext()) {
 				p4Text.append(hnd.next());
 			}
-			callProcesses(PID);
+			
 			break;
 		}
 		case 6:{
@@ -599,9 +592,16 @@ public class GUI {
 	 	
 	public void createTable() {
 		// Create Table and table model
-		// table = new JTable();
-
-		tModel = new DefaultTableModel(0, 0);
+		tModel = new DefaultTableModel(){
+			/**
+			 * The following method is used to make cells non-editable for the given table model
+			 */
+			private static final long serialVersionUID = 1L;
+			public boolean isCellEditable(int row, int column) {
+			       //all cells false
+			       return false;
+			    }
+		};
 		TableRowSorter<TableModel> trs = new TableRowSorter<TableModel>(tModel);
 		trs.addRowSorterListener(table);
 		table = new JTable(tModel);
@@ -613,14 +613,8 @@ public class GUI {
 		table.setRowHeight(22);
 		table.setModel(tModel);
 		table.setAutoCreateRowSorter(true);
-		//table.setRowSelectionAllowed(true);
 		tModel.setColumnIdentifiers(columnTitles);
-		Enumeration<TableColumn> en = table.getColumnModel().getColumns();
-
-		while (en.hasMoreElements()) {
-			TableColumn tc = en.nextElement();
-			tc.setCellRenderer(new MyTableCellRenderer());
-		}
+		
 	}
 	 
 	// Read file and return read file object
@@ -633,12 +627,9 @@ public class GUI {
 			Component frame = null;
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(frame, "File not found");
-			loadButton.setVisible(false);
 			e1.printStackTrace();
-
 		}
 		return rf = new BufferedReader(r);
-
 	}
 
 	// Default function call for switch statement..
@@ -653,7 +644,6 @@ public class GUI {
 		try {
 			while ((line = rf.readLine()) != null) {
 				i++;
-				// && !line.contains("--")
 				if (i > 2) {
 					splits = line.split("\\s+");
 					if (splits.length > 8) {
@@ -666,23 +656,20 @@ public class GUI {
 						splits[8] = builder.toString();
 					}
 					tModel.addRow(splits);
-				} else if (!line.contains("--")) {
+				} else if (!line.contains("--") && i<2) {
 					clm = line.split("\\s+");
 					for (j = 0; j < (clm.length - 1); j++) {
-						if (j == 9) {
-							TableColumn tcol = table.getColumnModel()
-									.getColumn(j);
-							table.getColumnModel().removeColumn(tcol);
-						}
+		               
 						tModel.addColumn(clm[j]);
 						tModel.setColumnIdentifiers(clm);
-
 						Enumeration<TableColumn> en = table.getColumnModel()
 								.getColumns();
-
+								
 						while (en.hasMoreElements()) {
 							TableColumn tc = en.nextElement();
-							tc.setCellRenderer(new MyTableCellRenderer());
+							
+								tc.setCellRenderer(new MyTableCellRenderer());
+							
 						}
 
 					}
@@ -708,10 +695,7 @@ public class GUI {
 		public void AlternateTableRowColorRenderer() {
 			setOpaque(true);
 		}
-		public boolean isCellEditable(int row, int column) {
-		       //all cells false
-		       return false;
-		    }
+		
 		@Override
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
@@ -723,30 +707,27 @@ public class GUI {
 			
 			String s = "";
 			if (isSelected) {
-				// super.setForeground(Color.BLACK);
-
+				
 				table.setSelectionForeground(foreGround);
 				table.setSelectionBackground(backGround);
-				// super.setBackground(table.getSelectionBackground());
+				
 			} else {
 
-				super.setBackground(colorAlternator(row));
+				table.setSelectionBackground(backGround);
 			}
 			setFont(table.getFont());
 			setValue(value);
 
 			if (o != null) {
 				s = o.toString();
-				if ((s.equalsIgnoreCase("UNKNOWN") || s.isEmpty() || s
+				if ((s.equalsIgnoreCase("UNKNOWN") || s
 						.equalsIgnoreCase("FALSE")) == true) {
 					setBackground(invalidStatus);
 				} else {
 					setBackground(colorAlternator(row));
-
 				}
 			} else {
 				setBackground(colorAlternator(row));
-
 			}
 			return cell;
 		}

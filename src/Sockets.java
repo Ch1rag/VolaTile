@@ -52,10 +52,7 @@ public class Sockets implements Callable<Object> {
 		this.vol=vol;
 		this.volPath=volPath;
 	}
-	// Deafult Constructor
-		/*Sockets() {
-		}*/
-
+	
 
 	public String getPID() {
 		return PID;
@@ -74,7 +71,7 @@ public class Sockets implements Callable<Object> {
 
 
 			ProcessBuilder process = new ProcessBuilder(list);
-			System.out.println("Executing Process Three(Sockets)");
+			//System.out.println("Executing Process Three(Sockets)");
 
 			Process p2 =process.start();
 

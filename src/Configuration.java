@@ -134,13 +134,7 @@ public class Configuration {
 		text.setVisible(true);
 		osCombo.setVisible(true);
 		p3.setVisible(false);
-
-		/*text.append("Detected OS:" + "\t" + os + "\n");
-		text.append("Version    :" + "\t" + version + "\n");
-		text.append("OS Arch    :" + "\t" + arch + "\n");*/
-
 		text.setText("Select vol.py file");
-		
 		selectFile = new JFileChooser();
 		selectVol = new JFileChooser();
 
@@ -181,8 +175,6 @@ public class Configuration {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					path = selectFile.getSelectedFile().getParent();
 					box2.setText(path);
-
-					// selectFile.setCurrentDirectory(new File(path));
 					File file = selectFile.getSelectedFile();
                     
 					fileName = file.getAbsolutePath();
@@ -223,7 +215,6 @@ public class Configuration {
 					if (get() == null) {
 						osCombo.setVisible(true);
 						openGUI.setVisible(true);
-
 					}
 
 				} catch (InterruptedException e) {
@@ -255,7 +246,7 @@ public class Configuration {
 				try{
 					if(fileName!=null && profile!=null && vol!=null && volPath!=null){	
 						GUI gui = new GUI(fileName, profile, vol, volPath);
-						gui.storeProfile(profile);//last change
+						gui.storeProfile(profile);
 						gui.storeCmd_Mac();
 						gui.storeCmd_Win();
 						gui.makeFrame();		
