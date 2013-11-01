@@ -36,7 +36,17 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 
-public class Configuration {
+/**
+ * Class for displaying open handles
+ * <p> This class is resposible for running the volatility command to list open handles in the RAM image. 
+ * Because volatility takes considerable time to run each command, this command is run only once.
+ * The output is stored in a Text file which is recalled every time a user requests the
+ * list of opened handles, using the provided tab in the GUI
+ * 
+ * @author      Chirag Barot
+ * @version     1.0
+ */
+ public class Configuration {
 	private JFrame frame;
 	private JFileChooser selectFile;
 	private JButton selectDump;
@@ -60,28 +70,58 @@ public class Configuration {
 	private JTextField box2;
 	
 
-
+    /**
+     * The overloaded constructor for Configuration Class.
+     * This is the constructor used by VolaTile to configure the main interface.
+	 * <p>
+	 * The name of the OS, the version and the type of architecture is displayed 
+	 * on the main interface.
+     */
 	public Configuration() {
 		os = System.getProperties().getProperty("os.name");
 		version = System.getProperties().getProperty("os.version");
 		arch = System.getProperties().getProperty("os.arch");
 	}
 
+	 /**
+      * Adding the OS (profile) of the memory dumps into an array named osProfile
+      */
 	public void addProfiles() {
 		osProfiles.add("WinXPSP2x86");
 		osProfiles.add("Mac10_8_4_64bitx64");
 	}
 
+    /**
+     * This method is used to select the vol.py file and memory dump file. 
+	 * Also retrieving the path of the vol.py file and memory dump file is being done here.
+	 * <p>
+	 * Setting up a JFrame in order, for the user to select the vol.py file and the
+	 * memory dump file.
+	 * <p>
+	 * Setting up an action listener for the volButton and the selectDump,
+	 * this is done to handle the events of the volButton and the selectDump.
+	 * Such as opening up a dialog box to browse into vol.py file and memory dump file.
+     */
 	public void selectFile() {
 
+		/**
+		 * Creating a new JFrame object to setting up the borders 
+		 * of the layout.
+		 */	
 		frame = new JFrame();
 		final Container cp = frame.getContentPane();
 
+		/**
+		 * Creating the JPanels and its objects
+		 */	
 		cp.setLayout(new BorderLayout());
 		final JPanel p1 = new JPanel(new GridLayout(2, 2));
 		JPanel p2 = new JPanel(new GridLayout(1, 1));
 		final JPanel p3 = new JPanel(new GridLayout(1, 1));
 
+		/**
+		 * Setting up the borders of the JPanels.
+		 */	
 		p1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		p2.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		p2.setBorder(new TitledBorder(new EtchedBorder(), "Profile Info"));
@@ -89,6 +129,9 @@ public class Configuration {
 		p3.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		p3.setBorder(new TitledBorder(new EtchedBorder(), ""));
 
+		/**
+		 * Implementation of JButtons for the JPanel.
+		 */			
 		selectDump = new JButton("Select RAM Dump");
 		volButton = new JButton("Volatility Script(vol.py)");
 		openGUI = new JButton("Open VolaTile");
@@ -99,36 +142,65 @@ public class Configuration {
 		box1.setEditable(false);
 		box2.setEditable(false);
 
-
+		/**
+		 * Read from the osProfile array and repeat until end of array.
+		 */		
 		java.util.Iterator<String> iterCmd = osProfiles.iterator();
 		while (iterCmd.hasNext()) {
 			osCombo.addItem(iterCmd.next());
 		}
 
+		/**
+		 * Implementation of a new Text area for the system information to be diaplayed.
+		 */	
 		text = new JTextArea(10, 20);
 		text.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		text.setBorder(new TitledBorder(new EtchedBorder(), ""));
 
+		/**
+		 * Disabling the text area from editing, setting the allignment and setting the font.
+		 */	
 		text.setEditable(false);
 		text.setLineWrap(true);
 		text.getCaretPosition();
 		text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
+		/**
+		 * Adding the Text boxes, Buttons and the Combo Box 
+		 * inside the p1 (Profile Selection) JPanel. 
+		 */	
 		p1.add(selectDump, FlowLayout.LEFT);
 		p1.add(box2,FlowLayout.LEFT);
 		p1.add(volButton, FlowLayout.LEFT);
 		p1.add(box1,FlowLayout.LEFT);
 		p1.add(osCombo, FlowLayout.RIGHT);
-	
+
+		/**
+		 * JPanel2 (Profile Info) is added. In GUI 
+		 * the user can see the selected profile information in this area.
+		 * Also it displays messages when the vol.py and memory dump files are selected.
+		 */			
 		p2.add(text, BorderLayout.NORTH);
 
+		/**
+		 * JPanel3, Two buttons Open Volatile and Detect Profile is 
+		 * added into this JPanel.
+		 */	
 		p3.add(openGUI, BorderLayout.EAST);
 		p3.add(profileButton, BorderLayout.WEST);
 
+		/**
+		 * Putting the Profile Selection (p1) on top, 
+		 * Profile Info(p2) on the middle and the third panel on the 
+		 * bottom of the configuration window.
+		 */	
 		cp.add(p1, BorderLayout.NORTH);
 		cp.add(p2, BorderLayout.CENTER);
 		cp.add(p3, BorderLayout.SOUTH);
 
+		/**
+		 * Disable the Open Volatile Button.
+		 */	
 		openGUI.setVisible(false);
 
 		text.setVisible(true);
@@ -144,7 +216,11 @@ public class Configuration {
 		selectFile = new JFileChooser();
 		selectVol = new JFileChooser();
 
-		// selectFile.setCurrentDirectory(new File(user+"/volatility"));
+		/**
+		 * Setting up an Action Listener for the Volatility Script(vol.py).
+		 * <p>
+		 * Check whether the correct vol.py file has been chosen or not
+		 */	
 		volButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -173,6 +249,11 @@ public class Configuration {
 			}
 		});
 
+		/**
+		 * Setting up an Action Listener for the Select RAM Dump button.
+		 * <p>
+		 * Check whether the correct memory dump file has been chosen or not
+		 */	
 		selectDump.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -193,6 +274,8 @@ public class Configuration {
 				}
 			}
 		});
+		
+		
 		final SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			private Void future;
 
@@ -235,6 +318,12 @@ public class Configuration {
 
 		};
 
+		/**
+		 * Setting up an Action Listener for the Detect Profile Button
+		 * <p>
+		 * Clicking on Detect Profile button will display the 
+		 * imageinfo of the chosen memory dump file
+		 */	
 		profileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -245,6 +334,12 @@ public class Configuration {
 			}
 		});
 
+		/**
+		 * Setting up an Action Listener for the Open VolaTile Button
+		 * <p>
+		 * Clicking on Open VolTile button will display the 
+		 * pslist information on a seperate window.
+		 */			
 		openGUI.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				profile = osCombo.getSelectedItem().toString();
@@ -272,7 +367,9 @@ public class Configuration {
 			}
 		});
 
-		// Set frame elements
+		/**
+		 * Setting up the Frame elements for the Configuration Window.
+		 */	
 		frame.setTitle("Configuration");
 		frame.setSize(300, 300);
 		frame.setVisible(true);
@@ -281,6 +378,11 @@ public class Configuration {
         
 	}
 
+	/**
+     * This method is used to read from file.
+	 * 
+	 * @exception 	IOException 	if the file doesn't exist it will throw an exception
+     */	
 	public void readFile() throws IOException {
 
 		FileReader r = null;
