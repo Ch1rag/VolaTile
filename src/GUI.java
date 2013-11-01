@@ -189,9 +189,9 @@ public class GUI {
 		loadButton = new JButton("Load");
 
 		// Textfields
-		volPathText = new JTextField(volPath);
+		volPathText = new JTextField(dumpFile);
 		volPathText.setEditable(false);
-		volPathText.setToolTipText("Path for vol.py");
+		volPathText.setToolTipText("Selected RAM dump path");
 
 		// Text area to add to tab panels
 		p1Text = new JTextArea(50, 50);
@@ -258,8 +258,8 @@ public class GUI {
 		panelBL.add(scroll_p3Text);
 		panelBL.add(scroll_p4Text);
 		panelBL.add(tabPane, BorderLayout.CENTER);
-		panelFL1.add(proList, FlowLayout.LEFT);
 		panelFL1.add(confButton, FlowLayout.LEFT);
+		panelFL1.add(proList, FlowLayout.LEFT);
 		panelFL1.add(volPathText,FlowLayout.LEFT);
 		panelFL1.setVisible(false);
 

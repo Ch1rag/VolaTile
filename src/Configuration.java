@@ -134,6 +134,12 @@ public class Configuration {
 		text.setVisible(true);
 		osCombo.setVisible(true);
 		p3.setVisible(false);
+		try {
+			readPath();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		text.setText("Select vol.py file");
 		selectFile = new JFileChooser();
 		selectVol = new JFileChooser();
@@ -284,13 +290,9 @@ public class Configuration {
 			r = new FileReader(volPath+s+"imageinfo.txt");
 			 br= new BufferedReader(r);
 			String line;
-			String found="Win";
-            int i=0;
+           
 			while ((line = br.readLine()) != null) {
-				if(i==0 && line.startsWith(found)==true)
-				{
-				  text.append("Found:"+line);
-				}
+				
 				 text.append(line + "\n");
 			}
 		} catch (FileNotFoundException e1) {
@@ -302,8 +304,31 @@ public class Configuration {
 		}
 
 	}
-	public void readPath(String volPath){
-		box1.setText(volPath);
+	public void readPath() throws IOException{
+		FileReader r = null;
+		BufferedReader br = null;
+		String s=File.separator;
+		try {
+			r = new FileReader(volPath+s+"imageinfo.txt");
+			 br= new BufferedReader(r);
+			String line;
+			
+			while ((line = br.readLine()) != null) {
+				if(!line.isEmpty()){
+					box1.setText(line);
+				}
+				else{
+					text.setText("Select vol.py file.");
+				}
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+
+		}
+		finally{
+			br.close();
+		}
+		
 	}
 	
 	
