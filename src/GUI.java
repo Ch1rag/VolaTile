@@ -587,20 +587,7 @@ public class GUI {
 
 			data = table.getModel().getValueAt(row, column);
 			String PID = data.toString();
-			thread = new Threads(PID);
-			ArrayList<String> threads = new ArrayList<String>();
-			try {
-				threads = thread.readFile(volPath);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			Iterator<String> thd = threads.iterator();
-
-			while (thd.hasNext()) {
-				p3Text.append(thd.next());
-			}
-			
+			callProcesses(PID);
 			break;
 		}
 		
@@ -612,20 +599,7 @@ public class GUI {
 			column= 2;
 			data = table.getModel().getValueAt(row, column);
 			String PID = data.toString();
-			handle = new Handles(PID);
-			ArrayList<String> handles = new ArrayList<String>();
-			try {
-				handles = handle.readFile(volPath);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			Iterator<String> hnd = handles.iterator();
-
-			while (hnd.hasNext()) {
-				p4Text.append(hnd.next());
-			}
-			
+			callProcesses(PID);
 			break;
 		}
 		case 6:{
