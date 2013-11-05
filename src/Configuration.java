@@ -135,7 +135,7 @@ import javax.swing.border.TitledBorder;
 		text.setEditable(false);
 		text.setLineWrap(true);
 		text.getCaretPosition();
-		text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
+		text.setFont(new Font("Courier", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
 		/**
 		 * Adding the Text boxes, Buttons and the Combo Box 
