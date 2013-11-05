@@ -273,7 +273,7 @@ public class GUI {
 		p1Text.setEditable(false);
 		p1Text.setLineWrap(true);
 		p1Text.getCaretPosition();
-		p1Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
+		p1Text.setFont(new Font("Courier", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
 		/** 
 		 *	Text area to add to tab panels
@@ -283,7 +283,7 @@ public class GUI {
 		p2Text.setEditable(false);
 		p2Text.setLineWrap(true);
 		p2Text.getCaretPosition();
-		p2Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
+		p2Text.setFont(new Font("Courier", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
 		/** 
 		 *	Text area to add to tab panels
@@ -293,7 +293,7 @@ public class GUI {
 		p3Text.setEditable(false);
 		p3Text.setLineWrap(true);
 		p3Text.getCaretPosition();
-		p3Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
+		p3Text.setFont(new Font("Courier", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
 		/** 
 		 *	Text area to add to tab panels
@@ -303,7 +303,7 @@ public class GUI {
 		p4Text.setEditable(false);
 		p4Text.setLineWrap(true);
 		p4Text.getCaretPosition();
-		p4Text.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
+		p4Text.setFont(new Font("Courier", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 
 		textArea = new JTextArea(30, 30);
 		textArea.setVisible(false);
@@ -314,7 +314,7 @@ public class GUI {
 		output.setText("text area");
 		output.setLineWrap(true);
 		output.setEditable(false);
-		output.setFont(new Font("Monaco", Font.LAYOUT_LEFT_TO_RIGHT, 12));
+		output.setFont(new Font("Courier", Font.LAYOUT_LEFT_TO_RIGHT, 12));
 		output.setForeground(Color.BLACK);
 		output.setBackground(bg);
 
@@ -548,8 +548,7 @@ public class GUI {
 					Configuration config = new Configuration();
 					config.addProfiles();
 					config.selectFile();
-					// String s=File.separator;
-					// config.readPath(volPath+s+vol);
+					
 				}
 			}
 		});
