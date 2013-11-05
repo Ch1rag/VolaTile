@@ -1,7 +1,5 @@
 import java.awt.*;
-//import net.miginfocom.swing.MigLayout;
 import java.awt.event.*;
-
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -35,11 +33,12 @@ import java.util.concurrent.Future;
  */
 public class GUI {
 	private JButton confButton;
-	private JButton loadButton;
+	
 	// private JComboBox cmdList;
 	private JComboBox proList;
 	private JTextArea textArea;
 	private JTextArea output;
+	
 	// table text areas
 	private JTextArea p1Text;
 	private JTextArea p2Text;
@@ -60,7 +59,6 @@ public class GUI {
 	private JTable table1;
 	private BufferedReader rf;
 	private String command = null;
-	// private ProcessBuilderClass pb = new ProcessBuilderClass();
 	private Connections connection;
 	private Sockets socket;
 	private Threads thread;
@@ -73,7 +71,6 @@ public class GUI {
 	private String vol;
 	private Object data;
 	private Color bg = new Color(249, 246, 244);
-	// private String OS=null;
 
 	// Array list to store strings of commands
 	private ArrayList<String> macCommands = new ArrayList<String>();
@@ -181,12 +178,11 @@ public class GUI {
 		 * in the VolaTile window.
 		 */
 		final JFrame frame = new JFrame();
-
 		final Container cp = frame.getContentPane();
 		cp.setLayout(new BorderLayout());
 
 		/** 
-		 *	Create the table 
+		 *	Create new JTable and DefaultTableModel
 		 */
 		createTable();
 		
@@ -240,6 +236,7 @@ public class GUI {
 		 */			
 		proList = new JComboBox();
 		proList.setEditable(false);
+		proList.setToolTipText("Selected OS profile");
 		java.util.Iterator<String> iterOs = profileList.iterator();
 		while (iterOs.hasNext()) {
 			proList.addItem(iterOs.next());
@@ -250,22 +247,21 @@ public class GUI {
 		 * <p>
 		 * Config (confButton) will lead to the main configuration window.
 		 * Also when the user hover the mouse over this button a tool tip 
-		 * will be displayed.
+		 * will be displayed. Set tool tips
 		 */			
 		confButton = new JButton("Config");
 		confButton.setToolTipText("Open configuration window");
-		loadButton = new JButton("Load");
 
-<<<<<<< HEAD
+
 		// Textfields
 		volPathText = new JTextField(dumpFile);
-=======
+
 		/** 
 		 *	The path for the vol.py file is displayed inside this 
 		 *  text box.
 		 */	
 		volPathText = new JTextField(volPath);
->>>>>>> bd662398868ad6c1d6cbff3c5300a680314cfc97
+
 		volPathText.setEditable(false);
 		volPathText.setToolTipText("Selected RAM dump path");
 
@@ -359,7 +355,6 @@ public class GUI {
 		p3.add(scroll_p3Text);
 		p4.add(scroll_p4Text);
 		p5.add(scrollTable);
-		p6.add(scrollTablepsx);
 
 		/** 
 		 *	Setting the frame elements of the VolaTile window
@@ -520,7 +515,9 @@ public class GUI {
 								.convertRowIndexToModel(selectedRow);
 						table.isCellEditable(modelRow, modelClm);
                         //Call method and pass row, Column
-						selectCell(modelRow, modelClm);
+						
+							selectCell(modelRow, modelClm);
+						
 					}
 
 				}
@@ -718,12 +715,20 @@ public class GUI {
 			while (hnd.hasNext()) {
 				p4Text.append(hnd.next());
 			}
-
-		} catch (IOException e1) {
+			
+		} 
+		
+		catch (FileNotFoundException e1) {
 			JOptionPane.showMessageDialog(
 					confButton,
-					"Process is running, Please wait"
+					"File not found"
 							+ e1.getMessage());
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(
+					confButton,
+					"General I/O Exception"
+							+ e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -734,7 +739,7 @@ public class GUI {
 	public void createTable() {
 		
 		/** 
-	     * Creating Tables and modelling them
+	     * Creating Tables and modeling them
 		 */
 		tModel = new DefaultTableModel(){
 			

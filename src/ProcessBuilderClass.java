@@ -50,8 +50,10 @@ public class ProcessBuilderClass implements Callable<Object>{
 			list.add("--output-file="+command+".txt");
 			
 			ProcessBuilder process = new ProcessBuilder(list);
-			
-			System.out.println("Executing Process one("+command+")");
+			/*
+			 * Debugging code for process Execution problem
+			 */
+			//System.out.println("Executing Process one("+command+")");
 
 			Process p1=process.start();
 

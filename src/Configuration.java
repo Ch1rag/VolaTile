@@ -6,27 +6,18 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout.Group;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -34,7 +25,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * Class for displaying open handles
@@ -54,14 +44,10 @@ import javax.swing.filechooser.FileFilter;
 	private String fileName;
 	private String vol;
 	private JButton openGUI;
-	private String os;
-	private Group group;
 	private JButton profileButton;
 	private JComboBox osCombo;
 	private List<String> osProfiles = new ArrayList<String>();
 	private JTextArea text;;
-	private String version;
-	private String arch;
 	private String profile;
 	private String path;
 	private JFileChooser selectVol;
@@ -69,26 +55,12 @@ import javax.swing.filechooser.FileFilter;
 	private JTextField box1;
 	private JTextField box2;
 	
-
-    /**
-     * The overloaded constructor for Configuration Class.
-     * This is the constructor used by VolaTile to configure the main interface.
-	 * <p>
-	 * The name of the OS, the version and the type of architecture is displayed 
-	 * on the main interface.
-     */
-	public Configuration() {
-		os = System.getProperties().getProperty("os.name");
-		version = System.getProperties().getProperty("os.version");
-		arch = System.getProperties().getProperty("os.arch");
-	}
-
 	 /**
-      * Adding the OS (profile) of the memory dumps into an array named osProfile
+      * Adding the OS (profile) of the memory dumps into an array named addProfile
       */
 	public void addProfiles() {
 		osProfiles.add("WinXPSP2x86");
-		osProfiles.add("Mac10_8_4_64bitx64");
+		//osProfiles.add("Mac10_8_4_64bitx64");
 	}
 
     /**
@@ -202,16 +174,10 @@ import javax.swing.filechooser.FileFilter;
 		 * Disable the Open Volatile Button.
 		 */	
 		openGUI.setVisible(false);
-
 		text.setVisible(true);
 		osCombo.setVisible(true);
 		p3.setVisible(false);
-		try {
-			readPath();
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+		
 		text.setText("Select vol.py file");
 		selectFile = new JFileChooser();
 		selectVol = new JFileChooser();
@@ -261,10 +227,11 @@ import javax.swing.filechooser.FileFilter;
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					path = selectFile.getSelectedFile().getParent();
-					box2.setText(path);
+					
 					File file = selectFile.getSelectedFile();
                     
 					fileName = file.getAbsolutePath();
+					box2.setText(fileName);
 					text.setText("");
 					text.setText("\n"+"Selected Volatility script:" + vol
 					+"\n"+"Selected RAM dump:" + file.getName());
@@ -398,7 +365,7 @@ import javax.swing.filechooser.FileFilter;
 				 text.append(line + "\n");
 			}
 		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
+			JOptionPane.showConfirmDialog(frame,"File not found");
 
 		}
 		finally{
@@ -406,33 +373,6 @@ import javax.swing.filechooser.FileFilter;
 		}
 
 	}
-	public void readPath() throws IOException{
-		FileReader r = null;
-		BufferedReader br = null;
-		String s=File.separator;
-		try {
-			r = new FileReader(volPath+s+"imageinfo.txt");
-			 br= new BufferedReader(r);
-			String line;
-			
-			while ((line = br.readLine()) != null) {
-				if(!line.isEmpty()){
-					box1.setText(line);
-				}
-				else{
-					text.setText("Select vol.py file.");
-				}
-			}
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-
-		}
-		finally{
-			br.close();
-		}
 		
-	}
-	
-	
 
 }

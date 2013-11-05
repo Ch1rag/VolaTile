@@ -109,6 +109,7 @@ public class Connections implements Callable<Object> {
 	/**
 	 * Reading information from the buffer reader and 
 	 * pass them into connections.txt file where vol.py file exists
+	 * @throws IOException 
 	 * 
 	 * @Exception	File not found
 	 */
@@ -134,10 +135,12 @@ public class Connections implements Callable<Object> {
 					connections.add(line + "\n");
 				}
 			}
-		} catch (Throwable e) {
-			e.printStackTrace();
-			System.out.println("File not found, Please wait..");
-		} finally {
+			
+		}  catch (Exception e) {
+			System.err.println("File not found" + e.getMessage());
+			
+		}
+		finally {
 			br.close();
 		}
 		return connections;
