@@ -11,6 +11,15 @@ import java.util.List;
  * Once a User clicks on Detect Profile information of the 
  * image (memory dump) will be displayed.
  * 
+ * @
+ * PUBLIC FEATURES:
+ * // Constructors
+ * ImageInfo()
+ * ImageInfo(String fileName, String volPath, String vol)
+			throws IOException, InterruptedException
+ * // Methods
+ *
+ *
  * @author	Chirag Barot
  * @version	1.0
  */

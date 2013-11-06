@@ -13,19 +13,19 @@ import java.util.concurrent.Future;
  * This class is used to deal with the sockets tab of the GUI,
  * choosing a particular PID from the pslist will show 
  * whether there are sockets available of that particular PID
- *
+ * <p>
  * @
  * PUBLIC FEATURES:
  * // Constructors
  * Sockets(String pid)
  * Sockets(String dumpFile,String profile,String vol,String volPath)
- * 
+ * <p>
  * // Methods
  * Future<?> call()
  * String getPID()
  * ArrayList<String> readFile(String volPath)
  * String toString()
- *
+ * <p>
  * @author Chirag Barot
  * @version	1.0
  * 20131107 Updated comments - AN.
@@ -54,7 +54,7 @@ public class Sockets implements Callable<Object> {
      * The overloaded constructor for Sockets Class.
      * This is the constructor that used to display the information 
 	 * on the sockets of the PID selected
-	 *
+	 * <p>
 	 * @param	dumpFile	Memory dump file
 	 * @param	profile		Profile Name of the Memory Dump
 	 * @param	vol			vol.py
@@ -134,7 +134,7 @@ public class Sockets implements Callable<Object> {
 	/**
 	 * Reading information from the buffer reader and 
 	 * pass them into sockets.txt file where vol.py file exists
-	 * 
+	 * <p>
 	 * @param volPath Folder containing output file.
 	 * @return sockets used by pid in an ArrayList<String>
 	 * @throws IOException if problem reading from file.
@@ -173,6 +173,7 @@ public class Sockets implements Callable<Object> {
 
 	/**
 	 * Return list of sockets being used by process.
+	 * <p>
 	 * @return Collection of sockets used by process.	
 	 */
 	

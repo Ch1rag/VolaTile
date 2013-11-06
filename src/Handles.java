@@ -13,20 +13,21 @@ import java.util.concurrent.Future;
  * This class is used to deal with the handles tab of the GUI,
  * choosing a particular PID from the pslist will show 
  * whether there are handles available of that particular PID
- *
+ * <p>
  * @
  * PUBLIC FEATURES:
  * // Constructors
  *    each constructor should be listed here
  * Handles(String pid)
  * Handles(String dumpFile,String profile,String vol,String volPath)
+ * <p>
  * // Methods
  *    The signature and a brief comment (if needed)
  *    In alphabetic order
  * String getPID()
  * Future<?> call()
  * ArrayList<String> readFile(String volPath)
- * 
+ * <p>
  * @author	Chirag Barot
  * @version	1.0
  *
@@ -133,10 +134,10 @@ public class Handles implements Callable<Object> {
 	/**
 	 * Reading information from the buffer reader and 
 	 * pass them into handles.txt file where vol.py file exists
-	 * 
+	 * <p>
 	 * @param volPath Folder to find the output file in.
 	 * @return handles being used by process in an arraylist
-	 * @throws IOException if problem reading from file.
+	 * @exception IOException if problem reading from file.
 	 */
 	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
