@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-/**    
- * This class is used to deal with the threads tab of the GUI,
- * choosing a particular PID from the pslist will show 
- * whether there are threads available of that particular PID
+<<<<<<< HEAD
+/**
+ * This class is used to deal with the threads tab of the GUI, choosing a
+ * particular PID from the pslist will show whether there are threads available
+ * of that particular PID
  * 
- * @author	Chirag Barot
- * @version	1.0
+ * @author Chirag Barot
+ * @version 1.0
  */
 public class Threads implements Callable<Object> {
 
@@ -23,13 +24,46 @@ public class Threads implements Callable<Object> {
 	private String PID;
 	private FileReader fr = null;
 	private ArrayList<String> threads = new ArrayList<String>();
-	private String command="threads";
+	private String command = "threads";
 	private String profile;
 	private String dumpFile;
 	private String vol;
 	private String volPath;
+=======
+/**    
+ * This class is used to deal with the threads tab of the GUI,
+ * choosing a particular PID from the pslist will show 
+ * whether there are threads available of that particular PID
+ * @
+ * PUBLIC FEATURES:
+ * // Constructors
+ * Threads(String pid)
+ * Threads(String dumpFile,String profile,String vol,String volPath)
+ * // Methods
+ * Future<?> call()
+ * String getPID()
+ * ArrayList<String> readFile(String volPath)
+ * String toString()
+ *
+ * @author	Chirag Barot
+ * @version	1.0
+ *
+ * 20131107 Updated comments - AN.
+ * 20131106 Added Method Comments - Sri
+ * 20131106 Original code - CB 
+ */
+public class Threads implements Callable<Object> {
 
-	
+	private List<String> list = new ArrayList<String>();	// list of arguments used by process builder
+	private String PID;		// process ID that we are interested in.
+	private FileReader fr = null;	// used to read results file 
+	private ArrayList<String> threads = new ArrayList<String>();	// collection of matching threads
+	private String command="threads";	// command issued to volatility.
+	private String profile;				// operating system profile to be used.
+	private String dumpFile;			// memory image we are using.
+	private String vol;					// name of volatility command (.py or .exe)
+	private String volPath;				// folder to find volatility in.
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 
 	// Overloaded constructor
 	Threads(String pid) {
@@ -37,49 +71,54 @@ public class Threads implements Callable<Object> {
 	}
 
 	/**
-     * The overloaded constructor for Threads Class.
-     * This is the constructor that used to display the information 
-	 * on the threads of the PID selected
-	 *
-	 * @param	dumpFile	Memory dump file
-	 * @param	profile		Profile Name of the Memory Dump
-	 * @param	vol			vol.py
-	 * @param	volPath		path of the vol.py file
-     */
-	public Threads(String dumpFile,String profile,String vol,String volPath){
-		this.profile=profile;
-		this.dumpFile=dumpFile;	
-		this.vol=vol;
-		this.volPath=volPath;
+	 * The overloaded constructor for Threads Class. This is the constructor
+	 * that used to display the information on the threads of the PID selected
+	 * 
+	 * @param dumpFile
+	 *            Memory dump file
+	 * @param profile
+	 *            Profile Name of the Memory Dump
+	 * @param vol
+	 *            vol.py
+	 * @param volPath
+	 *            path of the vol.py file
+	 */
+	public Threads(String dumpFile, String profile, String vol, String volPath) {
+		this.profile = profile;
+		this.dumpFile = dumpFile;
+		this.vol = vol;
+		this.volPath = volPath;
 	}
-	
+
 	/**
 	 * Get Process ID method of Threads class
+	 * @return PID process ID that we are interested in.
 	 */
 	public String getPID() {
 		return PID;
 	}
 
-	 /**
-	 * The Future Method of Threads class is defined here,
-	 * this is useful when using multi threading. 
+	/**
+	 * The Future Method of Threads class is defined here, this is useful when
+	 * using multi threading.
 	 * <p>
-	 * When the user clicks "Open Volatile" five processes runs
-	 * consecutively including threads process
-	 */  
+	 * When the user clicks "Open Volatile" five processes runs consecutively
+	 * including threads process
+	 */
 	public Future<?> call() {
-		// process four
+		// Threads process four
 		try {
+			// create argument list for process builder.
 			list.add("python");
 			list.add(vol);
-			list.add("--profile="+profile);
+			list.add("--profile=" + profile);
 			list.add("-f");
 			list.add(dumpFile);
-			list.add("--output-file="+command+".txt");
+			list.add("--output-file=" + command + ".txt");
 			list.add(command);
-			
+
 			ProcessBuilder process = new ProcessBuilder(list);
-			//System.out.println("Executing Process Four(Threads)");
+			// System.out.println("Executing Process Four(Threads)");
 
 			Process p2 = process.start();
 
@@ -103,7 +142,7 @@ public class Threads implements Callable<Object> {
 			}
 			br.close();
 			p2.destroy();
-			System.out.println("Process four is completed!");
+			System.out.println("Thread process (four) has completed.");
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -112,19 +151,26 @@ public class Threads implements Callable<Object> {
 	}
 
 	/**
-	 * Reading information from the buffer reader and 
-	 * pass them into threads.txt file where vol.py file exists
+	 * Reading information from the buffer reader and pass them into threads.txt
+	 * file where vol.py file exists
 	 * 
-	 * @Exception	File not found
+<<<<<<< HEAD
+	 * @throws IOException
+	 */
+=======
+	 * @param volPath path to find results file in.
+	 * @throws IOException if problem reading file.
 	 */		
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {
-			String s=File.separator;
-			fr = new FileReader(volPath+s+command+".txt");
+			String s = File.separator;
+			fr = new FileReader(volPath + s + command + ".txt");
 			br = new BufferedReader(fr);
 			String line;
-
+			
+			// add results to our thread collection.
 			while ((line = br.readLine()) != null) {
 				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
 					System.out.println(line);
@@ -139,17 +185,19 @@ public class Threads implements Callable<Object> {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("File not found!!");
+			System.out.println("File not found!! "+e.getMessage());
 		} finally {
 			br.close();
 		}
-		return threads;
+		return threads;	// return matching thread entries.
 	}
 
+	/**
+	 * Updated toString operator.
+	 * @return threads being used by pid.
+	 */
 	@Override
 	public String toString() {
-
 		return "" + threads;
-
 	}
 }

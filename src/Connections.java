@@ -9,81 +9,117 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+<<<<<<< HEAD
+/**
+ * This class is used to deal with the connections tab of the GUI, choosing a
+ * particular PID from the pslist will show whether there are connections
+ * available of that particular PID
+ * 
+ * @author Chirag Barot
+ * @version 1.0
+=======
 /**    
  * This class is used to deal with the connections tab of the GUI,
  * choosing a particular PID from the pslist will show 
  * whether there are connections available of that particular PID
- * 
+ * <p>
+ * @
+ * PUBLIC FEATURES:
+ * // Constructors
+ * Connections(String pid)
+ * Connections(String dumpFile,String profile,String vol,String volPath)
+ * <p>
+ * // Methods
+ * Future<?> call()
+ * ArrayList<String> readFile(String volPath)
+ * String toString()
+ * <p>
  * @author	Chirag Barot
  * @version	1.0
+ * 20131107 Updated comments - AN.
+ * 20131106 Added method headers - Sri
+ * 20131106 Original code - CB 
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
  */
 public class Connections implements Callable<Object> {
 
-	private List<String> list = new ArrayList<String>();
-	private String PID;
+	private List<String> list = new ArrayList<String>();	// argument list used by process builder.
+	private String PID;		// process id we are interested in.
 	private FileReader fr = null;
+<<<<<<< HEAD
 	private ArrayList<String> connections = new ArrayList<String>();
-	private String command="connections";
+	private String command = "connections";
 	private String profile;
 	private String dumpFile;
 	private String vol;
 	private String volPath;
-	
-	
 
+=======
+	private ArrayList<String> connections = new ArrayList<String>();	// list of connections used by process.
+	private String command="connections";								// argument to be passed to volatility.
+	private String profile;			// operating system profile used by memory image.
+	private String dumpFile;		// name of memory image we are using.
+	private String vol;				// name of volatility command (.py or .exe)
+	private String volPath;			// folder to find volatility in. Also used by results.
 	
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	// Overloaded constructor
 	Connections(String pid) {
 		PID = pid;
 	}
 
 	/**
-     * The overloaded constructor for Connections Class.
-     * This is the constructor that used to display the information 
-	 * on the connections of the PID selected
-	 *
-	 * @param	dumpFile	Memory dump file
-	 * @param	profile		Profile Name of the Memory Dump
-	 * @param	vol			vol.py
-	 * @param	volPath		path of the vol.py file
-     */	
-	public Connections(String dumpFile,String profile,String vol,String volPath){
-		this.profile=profile;
-		this.dumpFile=dumpFile;
-		this.vol=vol;
-		this.volPath=volPath;
+	 * The overloaded constructor for Connections Class. This is the constructor
+	 * that used to display the information on the connections of the PID
+	 * selected
+	 * 
+	 * @param dumpFile
+	 *            Memory dump file
+	 * @param profile
+	 *            Profile Name of the Memory Dump
+	 * @param vol
+	 *            vol.py
+	 * @param volPath
+	 *            path of the vol.py file
+	 */
+	public Connections(String dumpFile, String profile, String vol,
+			String volPath) {
+		this.profile = profile;
+		this.dumpFile = dumpFile;
+		this.vol = vol;
+		this.volPath = volPath;
 	}
 
- 	/**
-	 * The Future Method of Connections class is defined here,
-	 * this is useful when using multi threading. 
+	/**
+	 * The Future Method of Connections class is defined here, this is useful
+	 * when using multi threading.
 	 * <p>
-	 * When the user clicks "Open Volatile" four processes runs
-	 * consecutively including connections process
-	 */     
+	 * When the user clicks "Open Volatile" four processes runs consecutively
+	 * including connections process
+	 */
 	public Future<?> call() {
-		
-		
+
 		try {
+			// create argument list for process builder
 			list.add("python");
 			list.add(vol);
-			list.add("--profile="+profile);
+			list.add("--profile=" + profile);
 			list.add("-f");
 			list.add(dumpFile);
-			list.add("--output-file="+command+".txt");
+			list.add("--output-file=" + command + ".txt");
 			list.add(command);
 
 			ProcessBuilder process = new ProcessBuilder(list);
-			//System.out.println("Executing Process Two(Connections)");
+			// System.out.println("Executing Process Two(Connections)");
 
 			Process p2 = process.start();
 
 			// get the working directory for volatility folder..using
 			// .directory..
 			process.directory(new File(volPath));
-			
-			//System.out.println("DIR =>" + process.directory());
-			//System.out.println("List of commands" + process.command());
+
+			// System.out.println("DIR =>" + process.directory());
+			// System.out.println("List of commands" + process.command());
 
 			p2 = process.start();
 
@@ -92,13 +128,14 @@ public class Connections implements Callable<Object> {
 			BufferedReader br = new BufferedReader(isr);
 
 			String line1;
-
+			
+			// print out any messages to our log screen.
 			while ((line1 = br.readLine()) != null) {
 				System.out.println(line1);
 			}
 			br.close();
 			p2.destroy();
-			System.out.println("Process two is completed!");
+			System.out.println("Connections process (two) has  completed.");
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -107,50 +144,80 @@ public class Connections implements Callable<Object> {
 	}
 
 	/**
+<<<<<<< HEAD
+	 * Reading information from the buffer reader and pass them into
+	 * connections.txt file where vol.py file exists
+	 * 
+	 * @throws IOException
+=======
 	 * Reading information from the buffer reader and 
 	 * pass them into connections.txt file where vol.py file exists
-	 * @throws IOException 
-	 * 
-	 * @Exception	File not found
+	 * @param 	volPath Folder to find the output file in.
+	 * @return 	connections being used by process PID.
+	 * @throws	IOException if problem reading file.
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	 */
 	public ArrayList<String> readFile(String volPath) throws IOException {
 		BufferedReader br = null;
 		try {
+<<<<<<< HEAD
+			String s = File.separator;
+			fr = new FileReader(volPath + s + command + ".txt");
+=======
 			String s=File.separator;
-			fr = new FileReader(volPath+s+command+".txt");
+			fr = new FileReader(volPath+s+command+".txt");	// open results file.
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 			br = new BufferedReader(fr);
 
-			String line;
+			String line;	// 
 			int i = 0;
+			
+			// for each line in file, add to connections collection.
 			do {
 				line = br.readLine();
-				
+<<<<<<< HEAD
+
 				connections.add(" " + line + "\n");
 				i++;
 			} while (i != 2);
-		
+
 			while ((line = br.readLine()) != null) {
 				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
-					
+
+=======
+				connections.add(" " + line + "\n");
+				i++;
+			} while (i != 2);	// include first 2 header lines.
+		
+			// Find all lines matching PID we are looking for, and add to our collection.
+			while ((line = br.readLine()) != null) {
+				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 					connections.add(line + "\n");
 				}
 			}
-			
-		}  catch (Exception e) {
+
+		} catch (Exception e) {
 			System.err.println("File not found" + e.getMessage());
-			
+<<<<<<< HEAD
+
+		} finally {
+=======
 		}
 		finally {
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 			br.close();
 		}
-		return connections;
+		return connections;	// return collection of matching connections used by process id.
 	}
 
+	/**
+	 * Updated toString operator.
+	 * @return connections being used by pid.
+	 */
+	
 	@Override
 	public String toString() {
-
 		return "" + connections;
-
 	}
-
 }

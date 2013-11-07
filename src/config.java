@@ -1,5 +1,5 @@
 // singleton config
-public class Config
+public class Config implements java.io.Serializable
 {
 	// alternatively, we can eagerly create instance 
 	private volatile static Config uniqueInstance;

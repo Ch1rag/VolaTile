@@ -6,13 +6,27 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-/**    
- * This class is used to retrieve the information of the profile.
- * Once a User clicks on Detect Profile information of the 
- * image (memory dump) will be displayed.
+/**
+ * This class is used to retrieve the information of the profile. Once a User
+ * clicks on Detect Profile information of the image (memory dump) will be
+ * displayed.
  * 
+<<<<<<< HEAD
+ * @author Chirag Barot
+ * @version 1.0
+=======
+ * @
+ * PUBLIC FEATURES:
+ * // Constructors
+ * ImageInfo()
+ * ImageInfo(String fileName, String volPath, String vol)
+			throws IOException, InterruptedException
+ * // Methods
+ *
+ *
  * @author	Chirag Barot
  * @version	1.0
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
  */
 public class ImageInfo {
 	private List<String> list = new ArrayList<String>();
@@ -26,20 +40,23 @@ public class ImageInfo {
 	/**
 	 * The overloaded constructor for ImageInfo class is defined here.
 	 * 
-	 * @param	fileName	Profile Name of the Memory Dump
-	 * @param	path		path to vol.py
-	 * @param	vol			vol.py
-	 *
-	 * @exception	IOException		File Not Found
+	 * @param fileName
+	 *            Profile Name of the Memory Dump
+	 * @param volPath
+	 *            path to vol.py
+	 * @param vol
+	 *            vol.py
+	 * 
+	 * @exception IOException
+	 *                File Not Found
 	 */
 	public ImageInfo(String fileName, String volPath, String vol)
 			throws IOException, InterruptedException {
-		
+
 		/**
-		 * The following IF condition states if imageinfo 
-		 * contains mach-o, it will display the information 
-		 * of the Mac OS.
-		 */		
+		 * The following IF condition states if imageinfo contains mach-o, it
+		 * will display the information of the Mac OS.
+		 */
 		if (fileName.contains("mach-o")) {
 			list.add("python");
 			list.add(vol);
@@ -55,8 +72,9 @@ public class ImageInfo {
 			Process p1 = process.start();
 
 			/**
-			 * Get the working directory for volatility folder..using .directory..
-			 */	
+			 * Get the working directory for volatility folder..using
+			 * .directory..
+			 */
 			process.directory(new File(volPath));
 
 			// System.out.println("DIR=>" + process.directory());
@@ -80,14 +98,13 @@ public class ImageInfo {
 
 			// Clear command..
 			list.clear();
-		} 
-		
+		}
+
 		/**
-		 * The following else condition states if imageinfo 
-		 * contains anything else other than mach-o, it 
-		 * will display the information 
-		 * of the relevent image. 
-		 */		
+		 * The following else condition states if imageinfo contains anything
+		 * else other than mach-o, it will display the information of the
+		 * relevent image.
+		 */
 		else {
 			try {
 				list.add("python");
@@ -103,7 +120,8 @@ public class ImageInfo {
 				Process p1 = process.start();
 
 				/**
-				 * Get the working directory for volatility folder..using .directory..
+				 * Get the working directory for volatility folder..using
+				 * .directory..
 				 */
 				process.directory(new File(volPath));
 
