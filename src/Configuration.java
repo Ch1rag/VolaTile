@@ -29,6 +29,7 @@ import javax.swing.border.TitledBorder;
 
 /**
 <<<<<<< HEAD
+<<<<<<< HEAD
  * Class for displaying open handles
  * <p>
  * This class is resposible for running the volatility command to list open
@@ -54,6 +55,19 @@ public class Configuration {
  */
  public class Configuration implements Serializable {
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
+ * Class for Configuration
+ * <p> 
+ * This class manages variables used by Volatility. 
+ * 
+ * @author      Chirag Barot, Anthony Nowlan
+ * @version     1.1
+ * 20131107 Added save state to variables. -AN
+ * 20131106 Original Release.
+ *
+ */
+ public class Configuration implements Serializable {
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	private JFrame frame;
 	private JFileChooser selectFile;
 	private JButton selectDump;
@@ -66,7 +80,12 @@ public class Configuration {
 	private List<String> osProfiles = new ArrayList<String>();
 	private JTextArea text;;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	private String profile;
+=======
+	private String profile; //
+	private String path;	//
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 =======
 	private String profile; //
 	private String path;	//
@@ -76,12 +95,15 @@ public class Configuration {
 	private JTextField box1;
 	private JTextField box2;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	/**
 	 * Adding the OS (profile) of the memory dumps into an array named
 	 * addProfile
 	 */
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	private File file;
 	private JPanel p3;
 	
@@ -358,6 +380,9 @@ public class Configuration {
 						
 						saveConfig(fileName, profile, vol, volPath);
 						
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 						GUI gui = new GUI(fileName, profile, vol, volPath);
 						gui.storeProfile(profile);
@@ -421,7 +446,10 @@ public class Configuration {
 
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	
 	/**
 	 * saveConfig

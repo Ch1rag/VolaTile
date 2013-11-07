@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 /**
  * This class is used to deal with the threads tab of the GUI, choosing a
  * particular PID from the pslist will show whether there are threads available
@@ -54,6 +55,32 @@ public class Threads implements Callable<Object> {
  */
 public class Threads implements Callable<Object> {
 
+=======
+/**    
+ * This class is used to deal with the threads tab of the GUI,
+ * choosing a particular PID from the pslist will show 
+ * whether there are threads available of that particular PID
+ * @
+ * PUBLIC FEATURES:
+ * // Constructors
+ * Threads(String pid)
+ * Threads(String dumpFile,String profile,String vol,String volPath)
+ * // Methods
+ * Future<?> call()
+ * String getPID()
+ * ArrayList<String> readFile(String volPath)
+ * String toString()
+ *
+ * @author	Chirag Barot
+ * @version	1.0
+ *
+ * 20131107 Updated comments - AN.
+ * 20131106 Added Method Comments - Sri
+ * 20131106 Original code - CB 
+ */
+public class Threads implements Callable<Object> {
+
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	private List<String> list = new ArrayList<String>();	// list of arguments used by process builder
 	private String PID;		// process ID that we are interested in.
 	private FileReader fr = null;	// used to read results file 
@@ -63,6 +90,9 @@ public class Threads implements Callable<Object> {
 	private String dumpFile;			// memory image we are using.
 	private String vol;					// name of volatility command (.py or .exe)
 	private String volPath;				// folder to find volatility in.
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 
 	// Overloaded constructor
@@ -155,9 +185,12 @@ public class Threads implements Callable<Object> {
 	 * file where vol.py file exists
 	 * 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	 * @throws IOException
 	 */
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	 * @param volPath path to find results file in.
 	 * @throws IOException if problem reading file.
 	 */		

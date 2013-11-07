@@ -39,6 +39,9 @@ import java.util.concurrent.Future;
  * 20131107 Updated comments - AN.
  * 20131106 Added method headers - Sri
  * 20131106 Original code - CB 
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
  */
 public class Connections implements Callable<Object> {
@@ -46,6 +49,7 @@ public class Connections implements Callable<Object> {
 	private List<String> list = new ArrayList<String>();	// argument list used by process builder.
 	private String PID;		// process id we are interested in.
 	private FileReader fr = null;
+<<<<<<< HEAD
 <<<<<<< HEAD
 	private ArrayList<String> connections = new ArrayList<String>();
 	private String command = "connections";
@@ -55,6 +59,8 @@ public class Connections implements Callable<Object> {
 	private String volPath;
 
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	private ArrayList<String> connections = new ArrayList<String>();	// list of connections used by process.
 	private String command="connections";								// argument to be passed to volatility.
 	private String profile;			// operating system profile used by memory image.
@@ -155,6 +161,9 @@ public class Connections implements Callable<Object> {
 	 * @param 	volPath Folder to find the output file in.
 	 * @return 	connections being used by process PID.
 	 * @throws	IOException if problem reading file.
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	 */
 	public ArrayList<String> readFile(String volPath) throws IOException {
@@ -166,6 +175,9 @@ public class Connections implements Callable<Object> {
 =======
 			String s=File.separator;
 			fr = new FileReader(volPath+s+command+".txt");	// open results file.
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 			br = new BufferedReader(fr);
 
@@ -175,6 +187,7 @@ public class Connections implements Callable<Object> {
 			// for each line in file, add to connections collection.
 			do {
 				line = br.readLine();
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 				connections.add(" " + line + "\n");
@@ -187,11 +200,18 @@ public class Connections implements Callable<Object> {
 =======
 				connections.add(" " + line + "\n");
 				i++;
+=======
+				connections.add(" " + line + "\n");
+				i++;
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 			} while (i != 2);	// include first 2 header lines.
 		
 			// Find all lines matching PID we are looking for, and add to our collection.
 			while ((line = br.readLine()) != null) {
 				if (line.matches(".*\\b" + PID + "\\b.*") == true) {
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 					connections.add(line + "\n");
 				}
@@ -200,9 +220,12 @@ public class Connections implements Callable<Object> {
 		} catch (Exception e) {
 			System.err.println("File not found" + e.getMessage());
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 		} finally {
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 		}
 		finally {
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185

@@ -10,9 +10,12 @@ import java.util.concurrent.Future;
  * The Thread Executor class is used to execute the processes consecutively
  * 
 <<<<<<< HEAD
+<<<<<<< HEAD
  * @author Chirag Barot
  * @version 1.0
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
  * <p>
  * @
  * PUBLIC FEATURES:
@@ -27,6 +30,9 @@ import java.util.concurrent.Future;
  * @version	1.0
  *
  * 20131107 Updated headers and comments - AN
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
  */
 public class ThreadExecutor implements Callable<Object> {

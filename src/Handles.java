@@ -43,6 +43,9 @@ import java.util.concurrent.Future;
  * 20131107 Updated comments - AN.
  * 20131106 Added Method Comments - Sri
  * 20131106 Original code - CB 
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
  */
 public class Handles implements Callable<Object> {
@@ -52,17 +55,23 @@ public class Handles implements Callable<Object> {
 	private FileReader fr = null;		// used to read results from file.
 	private ArrayList<String> handles = new ArrayList<String>();
 <<<<<<< HEAD
+<<<<<<< HEAD
 	private String command = "handles";
 	private String profile;
 	private String dumpFile;
 	private String vol;
 	private String volPath;
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	private String command="handles";	// volatility command used to find "handles" in process.
 	private String profile;				// which operating system profile to be used.
 	private String dumpFile;			// the memory image 
 	private String vol;					// name of volatility program. script or exe.
 	private String volPath;				// folder to find volatility.
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 
 	// Overloaded constructor
@@ -94,8 +103,11 @@ public class Handles implements Callable<Object> {
 	/**
 	 * Get Process Id method
 <<<<<<< HEAD
+<<<<<<< HEAD
 	 */
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	 * @return process ID being used.
 	 */	
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
@@ -108,10 +120,13 @@ public class Handles implements Callable<Object> {
 	 * using multi threading.
 	 * <p>
 <<<<<<< HEAD
+<<<<<<< HEAD
 	 * When the user clicks "Open Volatile" five processes runs consecutively
 	 * including handles process
 	 */
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	 * Calls volatility to find all Handles currently being used by process identified in PID.f
 	 * 
 	 */	
@@ -155,8 +170,13 @@ public class Handles implements Callable<Object> {
 			br.close();
 			p2.destroy();
 <<<<<<< HEAD
+<<<<<<< HEAD
 			System.out.println("Process Five is completed!");
 
+=======
+			System.out.println("Handles process (Five) has completed!");
+			
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 =======
 			System.out.println("Handles process (Five) has completed!");
 			
@@ -180,6 +200,9 @@ public class Handles implements Callable<Object> {
 	 * @param volPath Folder to find the output file in.
 	 * @return handles being used by process in an arraylist
 	 * @exception IOException if problem reading from file.
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 	 */
 	public ArrayList<String> readFile(String volPath) throws IOException {
@@ -191,21 +214,30 @@ public class Handles implements Callable<Object> {
 			int i = 0;
 			String line;
 <<<<<<< HEAD
+<<<<<<< HEAD
 			do {
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 			
 			// add each handle matching our process id to results.
 			do
 			{
+<<<<<<< HEAD
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
+=======
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 				line = br.readLine();
 				// System.out.println(line);
 				handles.add(" " + line + "\n");
 				i++;
 <<<<<<< HEAD
+<<<<<<< HEAD
 			} while (i != 2);
 
 =======
+=======
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 			}while(i!=2);	// only include first 2 headers.
 	
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
@@ -241,9 +273,13 @@ public class Handles implements Callable<Object> {
 	@Override
 	public String toString() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 		return "" + handles;
 
+=======
+		return ""+handles;
+>>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
 =======
 		return ""+handles;
 >>>>>>> 5fa5305112beb35f0a4326348418ca0e5fde3185
