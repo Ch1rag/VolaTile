@@ -1,3 +1,4 @@
+import java.io.*;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -27,16 +28,17 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 /**
- * Class for displaying open handles
- * <p> This class is resposible for running the volatility command to list open handles in the RAM image. 
- * Because volatility takes considerable time to run each command, this command is run only once.
- * The output is stored in a Text file which is recalled every time a user requests the
- * list of opened handles, using the provided tab in the GUI
+ * Class for Configuration
+ * <p> 
+ * This class manages variables used by Volatility. 
  * 
- * @author      Chirag Barot
- * @version     1.0
+ * @author      Chirag Barot, Anthony Nowlan
+ * @version     1.1
+ * 20131107 Added save state to variables. -AN
+ * 20131106 Original Release.
+ *
  */
- public class Configuration {
+ public class Configuration implements Serializable {
 	private JFrame frame;
 	private JFileChooser selectFile;
 	private JButton selectDump;
@@ -48,12 +50,14 @@ import javax.swing.border.TitledBorder;
 	private JComboBox osCombo;
 	private List<String> osProfiles = new ArrayList<String>();
 	private JTextArea text;;
-	private String profile;
-	private String path;
+	private String profile; //
+	private String path;	//
 	private JFileChooser selectVol;
-	private String volPath;
+	private String volPath; // 
 	private JTextField box1;
 	private JTextField box2;
+	private File file;
+	private JPanel p3;
 	
 	 /**
       * Adding the OS (profile) of the memory dumps into an array named addProfile
@@ -89,7 +93,8 @@ import javax.swing.border.TitledBorder;
 		cp.setLayout(new BorderLayout());
 		final JPanel p1 = new JPanel(new GridLayout(2, 2));
 		JPanel p2 = new JPanel(new GridLayout(1, 1));
-		final JPanel p3 = new JPanel(new GridLayout(1, 1));
+		// final JPanel p3 = new JPanel(new GridLayout(1, 1));
+		p3 = new JPanel(new GridLayout(1, 1));
 
 		/**
 		 * Setting up the borders of the JPanels.
@@ -228,7 +233,7 @@ import javax.swing.border.TitledBorder;
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					path = selectFile.getSelectedFile().getParent();
 					
-					File file = selectFile.getSelectedFile();
+					file = selectFile.getSelectedFile();
                     
 					fileName = file.getAbsolutePath();
 					box2.setText(fileName);
@@ -313,6 +318,9 @@ import javax.swing.border.TitledBorder;
                 
 				try{
 					if(fileName!=null && profile!=null && vol!=null && volPath!=null){	
+						
+						saveConfig(fileName, profile, vol, volPath);
+						
 						GUI gui = new GUI(fileName, profile, vol, volPath);
 						gui.storeProfile(profile);
 						gui.storeCmd_Mac();
@@ -334,6 +342,7 @@ import javax.swing.border.TitledBorder;
 			}
 		});
 
+		loadConfig(); 
 		/**
 		 * Setting up the Frame elements for the Configuration Window.
 		 */	
@@ -372,6 +381,106 @@ import javax.swing.border.TitledBorder;
 			br.close();
 		}
 
+	}
+	
+	/**
+	 * saveConfig
+	 * <p>
+	 * @param fn filename we are using
+	 * @param prof profile we are using
+	 * @param vola is the executable name of volatility
+	 * @param volpath is the folder where volatility is installed.
+	 *
+	 * @author Anthony Nowlan
+	 * 20131107
+	 */
+		
+	private void saveConfig(String fn, String prof, String vola, String volpath)
+	{
+		// save the important parameters to file.
+		try (
+		  OutputStream save = new FileOutputStream("config.ser");
+		  OutputStream buffer = new BufferedOutputStream(save);
+		  ObjectOutput output = new ObjectOutputStream(buffer);
+		){
+			System.out.println("Saving parameters to config.ser... ");
+			output.writeObject(fn);
+			output.writeObject(prof);
+			output.writeObject(vola);
+			output.writeObject(volpath);
+		}  
+		catch(IOException ex)
+		{
+			// expect the unexpected.
+			System.err.println("saveConfig generated an exception "+ex.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * loadConfig
+	 * <p>
+	 * loads config details which were saved previously to config.ser
+	 *
+	 * @author Anthony Nowlan
+	 * 20131107
+	 */
+	private void loadConfig()
+	{
+	//deserialize the save file
+		try(
+		  InputStream save = new FileInputStream("config.ser");
+		  InputStream buffer = new BufferedInputStream(save);
+		  ObjectInput input = new ObjectInputStream (buffer);
+		){
+		  //deserialize from file
+		  fileName = (String)input.readObject();
+		  profile = (String)input.readObject();
+		  vol = (String)input.readObject();
+		  volPath = (String)input.readObject();
+		  
+		  //display data in log window
+		  System.out.println("Filename:"+fileName);
+		  System.out.println("Profile:"+profile);
+		  System.out.println("Volatility:"+vol);
+		  System.out.println("VolPath:"+volPath);
+		  
+		  // show details in main window. Gets over written once buttons enable.
+		  text.append("\nLoaded Config\n");
+		  text.append(fileName+"\n");
+		  text.append(profile+"\n");
+		  text.append(vol+"\n");
+		  text.append(volPath+"\n");
+		  
+			// show the loaded volatility path in text field.
+			box1.setText(volPath);
+			selectFile.setCurrentDirectory(new File(volPath));
+			text.setText("Selected Volatility script:" + vol + "\n");
+			selectDump.setVisible(true);
+			
+			// show the loaded memory file name in text field.
+			box2.setText(fileName);
+			text.setText("");
+			text.setText("\n"+"Selected Volatility script:" + vol +"\n"+"Selected RAM dump:" + fileName);
+			
+			// ENABLE BOXES
+			p3.setVisible(true);
+			profileButton.setVisible(true);
+			openGUI.setVisible(true);
+
+		}
+		catch(FileNotFoundException ex)
+		{
+			System.out.println("No config save found");	// if no save found, continue without a fuss.
+		}
+		catch(ClassNotFoundException ex){
+		  System.out.println("loadConfig Class not found " + ex.getMessage());	// will trigger if save is wrong format.
+		}
+		catch(IOException ex){
+		  System.out.println("loadConfig generated an IOException " + ex.getMessage());	// something bad happened.
+		}
+		
+	
 	}
 		
 
